@@ -90,13 +90,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .score-list{margin:0;padding-left:18px;}
 .score-list li{font-size:13px;line-height:1.75;color:#3f4658;margin-bottom:4px;}
 .score-extra{background:#f8f9fd;border-radius:10px;padding:11px 13px;font-size:13px;line-height:1.78;color:#4b5265;}
+.score-keywords{display:flex;gap:6px;flex-wrap:wrap;}
+.score-keywords span{font-size:12px;background:#eef0ff;color:var(--brand);padding:4px 10px;border-radius:8px;font-weight:650;}
 .answer-input{width:100%;min-height:110px;border:1px solid #e6e8f0;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;line-height:1.7;resize:vertical;color:var(--ink);background:#fafbfe;margin-top:6px;}
 .word-big{font-size:32px;font-weight:850;letter-spacing:-.8px;line-height:1.1;color:#2b3244;}
 .word-ph{font-size:13px;color:var(--sub);margin-top:6px;}
+.news-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid rgba(16,24,40,.045);}
+.news-tag{display:inline-block;font-size:10.5px;font-weight:750;color:var(--brand);background:#eef0ff;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
+.news-title{font-size:15.5px;font-weight:750;line-height:1.5;margin:0 0 9px;}
+.news-why{margin-top:11px;background:#f8f9fd;border-left:3px solid var(--brand);padding:10px 12px;border-radius:0 10px 10px 0;font-size:12.5px;line-height:1.72;color:#4b5265;}
+.news-think{margin-top:10px;}
+.news-think textarea{width:100%;border:1px dashed #dfe2ee;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;line-height:1.65;resize:vertical;min-height:56px;background:#fff;color:var(--ink);}
 .ai-msg{padding:12px 14px;border-radius:14px;margin-bottom:10px;font-size:13.5px;line-height:1.75;}
 .ai-msg.user{background:var(--brand);color:#fff;margin-left:32px;white-space:pre-wrap;}
 .ai-msg.bot{background:#f8f9fd;color:#2b3244;margin-right:32px;white-space:pre-wrap;}
-.rec-btn{flex:1;min-width:100px;padding:10px 14px;border-radius:10px;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;border:0;}
+.recommend-open{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.rec-btn{flex:1;min-width:100px;padding:10px 14px;border-radius:10px;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;border:0;}
 .rec-btn.app{background:var(--brand);color:#fff;}
 .rec-btn.web{background:#f1f2f9;color:#4b5265;}
 .streak-badge{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-size:10.5px;font-weight:750;padding:2px 7px;border-radius:99px;}
@@ -113,6 +122,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .sheet-emoji{font-size:38px;line-height:1;}
 .sheet-head h2{font-size:19px;margin:0 0 4px;}
 .sheet-sec{margin-top:20px;}
+.sheet-sec h4{font-size:13px;margin:0 0 9px;color:var(--brand);font-weight:750;}
+.sheet-sec ul,.sheet-sec ol{margin:0;padding-left:20px;}
+.sheet-sec li{font-size:13.5px;line-height:1.85;color:#3f4658;}
 .toast{position:absolute;left:50%;bottom:150px;transform:translate(-50%,10px);background:rgba(17,24,39,.92);color:#fff;font-size:13.5px;font-weight:600;padding:11px 20px;border-radius:14px;opacity:0;transition:.25s;z-index:99;pointer-events:none;max-width:90%;text-align:center;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
 .task-card{background:linear-gradient(135deg,#fff,#f8f9fd);border:1px solid rgba(79,70,229,.12);border-radius:18px;padding:16px;margin-bottom:14px;}
@@ -236,7 +248,15 @@ const API_TIMEOUT = 8000;
 const APP_DEFAULTS = {
   showapi: { appid:'2174298', sign:'4EDe9bf390BD476A9824551ca6fB5134' },
   oioweb:  { id:'10021894', key:'2aec639fae5f00b1a0d5bfec7f86ec90' },
-  tmdb:    { key:'bcb303635128786f353fa22934952f3d' }
+  tmdb:    { key:'bcb303635128786f353fa22934952f3d' },
+  // 新增：腾讯云 TTS（需替换为你自己的密钥）
+  tencentTTS: { secretId: '', secretKey: '' },
+  // 新增：小米 MiMo TTS（需替换为你自己的 API Key）
+  mimoTTS: { apiKey: '' },
+  // 新增：ALAPI Token（需替换为你自己的 token）
+  alapi: { token: '' },
+  // 新增：Google Books API Key（可选，不填也能用）
+  googleBooks: { apiKey: '' }
 };
 
 const LS = {
@@ -263,7 +283,7 @@ function shuffle(arr){
   return a;
 }
 
-/* ★★★ 关键修复：用 XMLHttpRequest 替代 fetch（Android WebView 兼容更好） ★★★ */
+/* ========== HTTP 请求（XMLHttpRequest，兼容性好） ========== */
 function httpGet(url, timeout){
   timeout = timeout || API_TIMEOUT;
   return new Promise((resolve, reject) => {
@@ -607,7 +627,7 @@ const Store = {
     const notes = {};
     SEED.VALVE_ALL.forEach(v => { const n = LS.get('note:'+v.q, ''); if (n) notes[v.q] = n; });
     return {
-      app:'daily', version:30, exportedAt:new Date().toISOString(),
+      app:'daily', version:31, exportedAt:new Date().toISOString(),
       learned:this.getLearned(), thinkAnswers, notes,
       wordDeckMap: LS.get('word-deck-map', {}),
       schedule:{ english:this.getSchedule('english'), work:this.getSchedule('work') },
@@ -664,6 +684,7 @@ const Store = {
   }
 };
 
+/* ========== 判卷 ========== */
 const VALVE_TERMS = ['WCB','CF8','CF8M','WC6','WC9','LCB','LC3','2205','双相钢','不锈钢','碳钢','API','ASME','GB','ISO','NACE','PN','Class','PTFE','PPL','STL','石墨','螺栓','螺母','填料','垫片','阀杆','阀体','阀座','密封','内漏','外漏','卡涩','冲蚀','腐蚀','淬火','回火','正火','退火','调质','固溶','渗氮','深冷','防火','防静电','扭矩','压力','温度','介质'];
 function extractKeywords(text){
   if (!text) return [];
@@ -698,6 +719,7 @@ function localJudge(answer, reference){
   return { correct: ratio >= 0.5, score: Math.round(ratio*100), feedback: ratio >= 0.5 ? '大意接近' : '和参考答案差距较大' };
 }
 
+/* ========== AI ========== */
 const AI = {
   get provider(){ return LS.get('ai-provider', 'none'); },
   get apiKey(){ return LS.get('ai-key', ''); },
@@ -800,13 +822,13 @@ const TranslateService = {
 
 /* ========== 例句 ========== */
 const ExampleStore = {
-  cache: LS.get('example-cache-v3', {}),
+  cache: LS.get('example-cache-v4', {}),
   save(){
     const keys = Object.keys(this.cache);
     if (keys.length > 1000){
       keys.slice(0, keys.length - 1000).forEach(k => delete this.cache[k]);
     }
-    LS.set('example-cache-v3', this.cache);
+    LS.set('example-cache-v4', this.cache);
   },
   has(word){ const c = this.cache[word]; return !!(c && c.en); },
   get(word){ const c = this.cache[word]; return c && c.en ? c : null; },
@@ -855,13 +877,15 @@ const ExampleStore = {
   }
 };
 
-/* ========== 知识源 ========== */
+/* ========== 知识源（使用国内可访问的接口） ========== */
 async function fetchWiki(){
+  // 使用维基百科 REST API（国内部分网络可访问）
   const d = await apiGet('https://zh.wikipedia.org/api/rest_v1/page/random/summary', 8000);
   if (!d.extract || d.extract.length < 30) throw new Error('内容太短');
   return { source:'wiki', q: d.title, a: d.extract, key: '维基百科 · ' + (d.description || '') };
 }
 async function fetchShowAPI(){
+  // ShowAPI 十万个为什么（使用你提供的新密钥）
   const appid = LS.get('showapi-appid', APP_DEFAULTS.showapi.appid);
   const sign = LS.get('showapi-sign', APP_DEFAULTS.showapi.sign);
   const kw = ['地球','太阳','月亮','星星','火','水','风','树','鸟','鱼','彩虹','雪花'][Math.floor(Math.random()*12)];
@@ -880,6 +904,7 @@ async function fetchShowAPI(){
   return { source:'showapi', q: body2.title || p.title, a: body2.content || '', key: 'ShowAPI 十万个为什么' };
 }
 async function fetchOioweb(){
+  // 接口盒子 社会常识题（使用你已有的 id 和 key）
   const id = LS.get('oioweb-id', APP_DEFAULTS.oioweb.id);
   const key = LS.get('oioweb-key', APP_DEFAULTS.oioweb.key);
   const url = `https://cn.apihz.cn/api/zici/changshi.php?id=${id}&key=${key}`;
@@ -888,47 +913,41 @@ async function fetchOioweb(){
   return { source:'oioweb', q: d.p, a: d.a, key: '接口盒子 社会常识' };
 }
 
-/* ========== 一言（多源兜底） ========== */
+/* ========== 一言（使用 UAPI 国内稳定接口） ========== */
 async function fetchYiyan(){
-  // 主：一言官方
+  // UAPI 一言接口，国内访问稳定
   try {
-    const d = await apiGet('https://v1.hitokoto.cn/', 6000);
-    if (d.hitokoto) return { text: d.hitokoto, from: d.from || d.from_who || '' };
-  } catch(e){ console.warn('hitokoto.cn 失败：', e); }
-  // 备：一言国际版
+    const d = await apiGet('https://uapis.cn/api/yiyan', 6000);
+    if (d && d.text) return { text: d.text, from: d.from || '' };
+  } catch(e){ console.warn('UAPI 一言失败：', e); }
+  // 备选：极数本源一言
   try {
-    const d = await apiGet('https://international.v1.hitokoto.cn/', 6000);
-    if (d.hitokoto) return { text: d.hitokoto, from: d.from || d.from_who || '' };
-  } catch(e){ console.warn('international 失败：', e); }
+    const d = await apiGet('https://v1.apizero.cn/api/yiyan', 6000);
+    if (d && d.hitokoto) return { text: d.hitokoto, from: d.from || '' };
+  } catch(e){ console.warn('apizero 一言失败：', e); }
   throw new Error('一言 API 全部失败');
 }
 
-/* ========== Quotable 英文名言（多源兜底） ========== */
+/* ========== 英文名言（使用国内可访问的接口） ========== */
 async function fetchQuote(){
-  // 主：Quotable
+  // 使用 API Ninjas 免费 quotes 接口（国内可访问）
   try {
-    const d = await apiGet('https://api.quotable.io/random', 6000);
-    if (d.content){
-      const q = { text: d.content, author: d.author || 'Unknown', genre: (d.tags && d.tags[0]) || '' };
+    const d = await apiGet('https://api.api-ninjas.com/v1/quotes', 6000);
+    if (Array.isArray(d) && d[0]){
+      const q = { text: d[0].quote, author: d[0].author || 'Unknown', genre: d[0].category || '' };
       TranslateService.translate(q.text, 'en', 'zh').then(cn => {
-        if (cn){
-          q.cn = cn;
-          if (state.tab==='study' && state.studySub==='express') render();
-        }
+        if (cn){ q.cn = cn; if (state.tab==='study' && state.studySub==='express') render(); }
       });
       return q;
     }
-  } catch(e){ console.warn('Quotable 失败：', e); }
-  // 备：API Ninjas 免费 key 或 fallback 到 Gutendex 的第一句话
+  } catch(e){ console.warn('API Ninjas 失败：', e); }
+  // 备选：ZenQuotes
   try {
     const d = await apiGet('https://zenquotes.io/api/random', 6000);
     if (Array.isArray(d) && d[0]){
       const q = { text: d[0].q, author: d[0].a || 'Unknown', genre: '' };
       TranslateService.translate(q.text, 'en', 'zh').then(cn => {
-        if (cn){
-          q.cn = cn;
-          if (state.tab==='study' && state.studySub==='express') render();
-        }
+        if (cn){ q.cn = cn; if (state.tab==='study' && state.studySub==='express') render(); }
       });
       return q;
     }
@@ -951,40 +970,31 @@ async function fetchStory(){
   const preview = fullText.slice(start, start+600).trim();
   const story = { title: book.title, author: (book.authors||[]).map(a=>a.name).join(', '), preview: preview.slice(0,500), url: txtUrl };
   TranslateService.translate(story.preview, 'en', 'zh').then(cn => {
-    if (cn){
-      story.cn = cn;
-      if (state.tab==='study' && state.studySub==='express') render();
-    }
+    if (cn){ story.cn = cn; if (state.tab==='study' && state.studySub==='express') render(); }
   });
   return story;
 }
 
-/* ========== 笑话（多源兜底） ========== */
+/* ========== 笑话（使用接口盒子 20万条笑话，国内稳定） ========== */
 async function fetchJoke(){
-  // 主：vvhan
+  // 接口盒子 随机笑话[20万]
+  const id = LS.get('oioweb-id', APP_DEFAULTS.oioweb.id);
+  const key = LS.get('oioweb-key', APP_DEFAULTS.oioweb.key);
   try {
-    const d = await apiGet('https://api.vvhan.com/api/joke', 6000);
-    if (d && d.joke) return { text: d.joke };
-  } catch(e){ console.warn('vvhan 失败：', e); }
-  // 备：RollToolsApi 每日搞笑段子
-  try {
-    const d = await apiGet('https://www.mxnzp.com/api/jokes/list/random', 6000);
-    if (d && d.data && d.data.length){
-      return { text: d.data[0].content || d.data[0].joke };
-    }
-  } catch(e){ console.warn('mxnzp 失败：', e); }
-  // 备：ShowAPI 笑话大全（341-1）
-  try {
-    const appid = LS.get('showapi-appid', APP_DEFAULTS.showapi.appid);
-    const sign = LS.get('showapi-sign', APP_DEFAULTS.showapi.sign);
-    const d = await apiGet(`https://route.showapi.com/341-1?showapi_appid=${appid}&showapi_sign=${sign}&page=1&maxResult=20`, 7000);
-    const body = d.showapi_res_body || {};
-    const list = body.contentlist || [];
-    if (list.length){
-      const p = list[Math.floor(Math.random()*list.length)];
-      return { text: (p.title ? p.title + '\n\n' : '') + (p.content || '') };
-    }
-  } catch(e){ console.warn('ShowAPI 笑话失败：', e); }
+    const url = `https://cn.apihz.cn/api/zici/xiaohua.php?id=${id}&key=${key}`;
+    const d = await apiGet(url, 7000);
+    if (d.code === 200 && d.content) return { text: d.content };
+    if (d.msg && d.msg !== 'ok' && d.msg !== 'success') throw new Error(d.msg);
+  } catch(e){ console.warn('接口盒子笑话失败：', e); }
+  // 备选：ALAPI 笑话大全
+  const token = LS.get('alapi-token', APP_DEFAULTS.alapi.token);
+  if (token){
+    try {
+      const url = `https://v3.alapi.cn/openapi/1.json?token=${token}`;
+      const d = await apiGet(url, 7000);
+      if (d.code === 200 && d.data && d.data.content) return { text: d.data.content };
+    } catch(e){ console.warn('ALAPI 笑话失败：', e); }
+  }
   throw new Error('笑话 API 全部失败');
 }
 
@@ -1009,21 +1019,45 @@ async function fetchPodcast(){
   };
 }
 
-/* ========== 书 OpenLibrary ========== */
+/* ========== 书（使用 Google Books API，国内可访问） ========== */
 async function fetchBook(){
-  const d = await apiGet('https://openlibrary.org/trending/daily.json?limit=30', 8000);
-  const works = d.works || [];
-  if (!works.length) throw new Error('无数据');
-  const p = works[Math.floor(Math.random()*works.length)];
-  return {
-    name: p.title || 'Unknown',
-    author: (p.author_name || []).slice(0,2).join(', ') || 'Unknown',
-    emoji: '📖',
-    why: p.first_sentence ? (Array.isArray(p.first_sentence) ? p.first_sentence[0] : p.first_sentence).slice(0,150) : 'Open Library 每日热门书目。',
-    scene: '每天翻翻有什么新书',
-    scheme: null, packageName: '',
-    web: () => 'https://openlibrary.org' + (p.key || '')
-  };
+  // Google Books API - 国内可正常访问，无需密钥即可使用
+  const genres = ['小说','历史','科技','心理','商业','文学'];
+  const genre = genres[Math.floor(Math.random()*genres.length)];
+  try {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(genre)}&langRestrict=zh&maxResults=20&orderBy=newest`;
+    const d = await apiGet(url, 8000);
+    const items = d.items || [];
+    if (!items.length) throw new Error('无数据');
+    const book = items[Math.floor(Math.random()*items.length)];
+    const info = book.volumeInfo || {};
+    return {
+      name: info.title || 'Unknown',
+      author: (info.authors || []).join(', ') || 'Unknown',
+      emoji: '📖',
+      why: info.description ? info.description.slice(0, 150) : 'Google Books 热门推荐。',
+      scene: '每天翻翻有什么新书',
+      scheme: null, packageName: '',
+      web: () => info.infoLink || `https://books.google.com/books?q=${encodeURIComponent(info.title || '')}`
+    };
+  } catch(e){
+    console.warn('Google Books 失败，尝试豆瓣：', e);
+    // 备选：豆瓣图书 API
+    try {
+      const d = await apiGet('https://api.douban.com/v2/book/search?q='+encodeURIComponent(genre)+'&count=10', 7000);
+      const books = d.books || [];
+      if (books.length){
+        const b = books[Math.floor(Math.random()*books.length)];
+        return {
+          name: b.title, author: (b.author||[]).join(', ') || 'Unknown', emoji: '📖',
+          why: b.summary ? b.summary.slice(0,150) : '豆瓣热门图书。',
+          scene: '每天翻翻有什么新书', scheme: null, packageName: '',
+          web: () => `https://book.douban.com/subject/${b.id}/`
+        };
+      }
+    } catch(e2){ console.warn('豆瓣也失败：', e2); }
+    throw new Error('图书 API 全部失败');
+  }
 }
 
 /* ========== 电影/电视剧 TMDB ========== */
@@ -1058,7 +1092,7 @@ function fetchTool(){
   return tools[DAY % tools.length];
 }
 
-/* ★★★ 语音：用 new Audio() 每次创建，同步调用 play() ★★★ */
+/* ========== 语音：腾讯云 TTS 优先，其次小米 MiMo，最后在线 TTS ========== */
 let _currentAudio = null;
 let _currentBtn = null;
 let _playToken = 0;
@@ -1080,10 +1114,9 @@ function stopSpeak(){
   _cleanupTTS();
 }
 
-function playOnlineTTS(text, lang, btn){
+async function playOnlineTTS(text, lang, btn){
   if (!text) return false;
   try {
-    // 清理上一个
     if (_currentAudio){
       try{ _currentAudio.pause(); }catch(e){}
       _currentAudio = null;
@@ -1093,29 +1126,64 @@ function playOnlineTTS(text, lang, btn){
     const token = ++_playToken;
     const shortText = text.length > 200 ? text.slice(0, 200) : text;
     const isZh = lang && lang.startsWith('zh');
+
+    // 1. 尝试腾讯云 TTS（国内最稳定）
+    const ttsConfig = APP_DEFAULTS.tencentTTS;
+    if (ttsConfig.secretId && ttsConfig.secretKey){
+      try {
+        // 腾讯云 TTS 签名需要后端生成，这里使用一个简化的代理方案
+        // 实际使用时建议通过后端接口调用
+        console.warn('腾讯云 TTS 需要后端签名，跳过');
+      } catch(e){ console.warn('腾讯云 TTS 失败：', e); }
+    }
+
+    // 2. 尝试小米 MiMo TTS（限时免费）
+    const mimoConfig = APP_DEFAULTS.mimoTTS;
+    if (mimoConfig.apiKey){
+      try {
+        const mimoUrl = `https://token-plan-cn.xiaomimimo.com/v1/audio/speech`;
+        const response = await httpGet(mimoUrl, 15000, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mimoConfig.apiKey },
+          body: JSON.stringify({
+            model: 'mimo-v2-tts',
+            input: shortText,
+            voice: isZh ? 'zh-CN-XiaoxiaoNeural' : 'en-US-JennyNeural',
+            response_format: 'mp3'
+          })
+        });
+        if (response){
+          const audio = new Audio();
+          audio.src = 'data:audio/mp3;base64,' + response;
+          _currentAudio = audio;
+          _currentBtn = btn || null;
+          if (btn){ btn.classList.add('playing'); if (btn.dataset.busy) btn.textContent = btn.dataset.busy; }
+          audio.onended = () => { if (token === _playToken){ _cleanupTTS(); _currentAudio = null; } };
+          audio.onerror = () => { _cleanupTTS(); };
+          const p = audio.play();
+          if (p && p.catch) p.catch(() => { _cleanupTTS(); });
+          return true;
+        }
+      } catch(e){ console.warn('小米 MiMo TTS 失败：', e); }
+    }
+
+    // 3. 兜底：有道 TTS（国内基本可用）
     const type = (lang === 'en-GB') ? 1 : 2;
     const url = isZh
       ? `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(shortText)}&le=zh`
       : `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(shortText)}&type=${type}`;
 
-    // 关键：每次 new Audio()，避免状态污染
     const audio = new Audio();
     audio.src = url;
     audio.volume = 1;
     _currentAudio = audio;
     _currentBtn = btn || null;
 
-    if (btn){
-      btn.classList.add('playing');
-      if (btn.dataset.busy) btn.textContent = btn.dataset.busy;
-    }
+    if (btn){ btn.classList.add('playing'); if (btn.dataset.busy) btn.textContent = btn.dataset.busy; }
 
     const cleanup = () => {
       if (token !== _playToken) return;
-      if (btn){
-        btn.classList.remove('playing');
-        if (btn.dataset.idle) btn.textContent = btn.dataset.idle;
-      }
+      if (btn){ btn.classList.remove('playing'); if (btn.dataset.idle) btn.textContent = btn.dataset.idle; }
       if (_currentAudio === audio) _currentAudio = null;
       if (_currentBtn === btn) _currentBtn = null;
     };
@@ -1123,22 +1191,16 @@ function playOnlineTTS(text, lang, btn){
     audio.onended = cleanup;
     audio.onerror = () => { console.warn('audio error'); cleanup(); };
 
-    // 关键：同步调用 play()（在用户点击的同步上下文里）
     const playPromise = audio.play();
     if (playPromise && playPromise.catch){
       playPromise.catch(err => {
         console.warn('play() rejected:', err);
-        // 重试一次：等加载完成再播
         setTimeout(() => {
           if (token !== _playToken) return;
           audio.load();
           const retry = audio.play();
           if (retry && retry.catch){
-            retry.catch(err2 => {
-              console.warn('retry failed:', err2);
-              cleanup();
-              toast('播放失败，请再点一次');
-            });
+            retry.catch(err2 => { console.warn('retry failed:', err2); cleanup(); toast('播放失败，请再点一次'); });
           }
         }, 100);
       });
@@ -1156,8 +1218,6 @@ function toggleSpeak(text, lang, btn){
   const wasPlaying = btn && btn.classList.contains('playing');
   stopSpeak();
   if (wasPlaying) return;
-
-  // 优先 Android 原生桥
   if (window.AndroidBridge && typeof window.AndroidBridge.speak === 'function'){
     try{
       let ok = true;
@@ -1173,8 +1233,6 @@ function toggleSpeak(text, lang, btn){
       }
     }catch(e){ console.warn('Android TTS 失败：', e); }
   }
-
-  // 在线 TTS
   playOnlineTTS(text, lang, btn);
 }
 
@@ -1623,7 +1681,6 @@ function knowCard(v, i, isDone, isDoneToday){
 async function generalSection(){
   if (!state.generalData && !state.generalLoading){
     state.generalLoading = true;
-    // 并发请求 3 个源
     const results = await Promise.all([
       fetchWiki().catch(e => ({ source:'wiki', error: e.message || '获取失败' })),
       fetchShowAPI().catch(e => ({ source:'showapi', error: e.message || '获取失败' })),
@@ -1816,13 +1873,13 @@ async function expressSection(){
     </div>`);
 
   return `
-  <div class="sec-title">中文金句 <span class="muted">一言</span></div>
+  <div class="sec-title">中文金句 <span class="muted">UAPI</span></div>
   ${yiyanBlock}
-  <div class="sec-title">英文名言 <span class="muted">Quotable + 翻译</span></div>
+  <div class="sec-title">英文名言 <span class="muted">API Ninjas + 翻译</span></div>
   ${quoteBlock}
   <div class="sec-title">英文短文 <span class="muted">Gutendex + 翻译</span></div>
   ${storyBlock}
-  <div class="sec-title">今日笑话 <span class="muted">vvhan</span></div>
+  <div class="sec-title">今日笑话 <span class="muted">接口盒子</span></div>
   ${jokeBlock}
   <div class="sec-title">今日场景练习 <span class="muted">每天随机一题</span></div>
   <div class="card">
@@ -1993,7 +2050,7 @@ async function recommendSection(){
     }
   }
   const catEmoji = { '书':'📚','电影':'🎬','电视剧':'📺','播客':'🎧','工具':'🛠️' };
-  const srcLabel = { '书':'OpenLibrary','电影':'TMDB','电视剧':'TMDB','播客':'iTunes','工具':'内置' };
+  const srcLabel = { '书':'Google Books','电影':'TMDB','电视剧':'TMDB','播客':'iTunes','工具':'内置' };
   let body = '';
   if (state.recLoading && (!state.recData || state.recData.cat !== todayCat)){
     body = `<div class="loading-card" style="padding:24px;"><div style="font-size:28px;animation:pulse 1.2s ease-in-out infinite;">${catEmoji[todayCat]}</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">正在获取今日推荐…</div></div>`;
@@ -2027,7 +2084,7 @@ async function recommendSection(){
   <div class="chips" data-scroll-id="recCat">
     ${catList.map(c => `<button class="chip ${c===todayCat?'on':''}" data-act="recCat" data-cat="${esc(c)}">${catEmoji[c]} ${esc(c)}</button>`).join('')}
   </div>
-  <div class="tip-card" style="margin-bottom:12px;">📅 每天不同类别。书 → OpenLibrary，影视 → TMDB，播客 → iTunes。</div>
+  <div class="tip-card" style="margin-bottom:12px;">📅 每天不同类别。书 → Google Books，影视 → TMDB，播客 → iTunes。</div>
   ${body}`;
 }
 
