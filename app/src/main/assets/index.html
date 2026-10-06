@@ -52,6 +52,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .tip-card{background:#fff;border:1px dashed #dfe2ee;border-radius:16px;padding:14px;font-size:12.5px;line-height:1.7;color:#5b6276;margin-top:4px;}
 .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e6e8f0;border-radius:14px;padding:10px 14px;margin:8px 0 4px;}
 .search-input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);padding:2px 0;}
+.search-clear{border:0;background:#f1f2f9;color:#6b7280;width:24px;height:24px;border-radius:50%;font-size:12px;cursor:pointer;display:grid;place-items:center;font-family:inherit;}
 .know-cat{display:inline-block;font-size:11px;font-weight:700;color:var(--brand);background:#eef0ff;padding:3px 9px;border-radius:6px;margin-bottom:10px;}
 .know-q{font-size:15.5px;font-weight:750;line-height:1.5;letter-spacing:-.25px;}
 .know-a{font-size:13.5px;line-height:1.78;color:#3f4658;margin-top:12px;padding-top:12px;border-top:1px dashed #eceef4;}
@@ -92,10 +93,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .answer-input{width:100%;min-height:110px;border:1px solid #e6e8f0;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;line-height:1.7;resize:vertical;color:var(--ink);background:#fafbfe;margin-top:6px;}
 .word-big{font-size:32px;font-weight:850;letter-spacing:-.8px;line-height:1.1;color:#2b3244;}
 .word-ph{font-size:13px;color:var(--sub);margin-top:6px;}
-.news-card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid rgba(16,24,40,.045);}
-.news-tag{display:inline-block;font-size:10.5px;font-weight:750;color:var(--brand);background:#eef0ff;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
-.news-title{font-size:15.5px;font-weight:750;line-height:1.5;margin:0 0 9px;}
-.news-why{margin-top:11px;background:#f8f9fd;border-left:3px solid var(--brand);padding:10px 12px;border-radius:0 10px 10px 0;font-size:12.5px;line-height:1.72;color:#4b5265;}
 .ai-msg{padding:12px 14px;border-radius:14px;margin-bottom:10px;font-size:13.5px;line-height:1.75;}
 .ai-msg.user{background:var(--brand);color:#fff;margin-left:32px;white-space:pre-wrap;}
 .ai-msg.bot{background:#f8f9fd;color:#2b3244;margin-right:32px;white-space:pre-wrap;}
@@ -116,7 +113,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .sheet-emoji{font-size:38px;line-height:1;}
 .sheet-head h2{font-size:19px;margin:0 0 4px;}
 .sheet-sec{margin-top:20px;}
-.sheet-sec h4{font-size:13px;margin:0 0 9px;color:var(--brand);font-weight:750;}
 .toast{position:absolute;left:50%;bottom:150px;transform:translate(-50%,10px);background:rgba(17,24,39,.92);color:#fff;font-size:13.5px;font-weight:600;padding:11px 20px;border-radius:14px;opacity:0;transition:.25s;z-index:99;pointer-events:none;max-width:90%;text-align:center;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
 .task-card{background:linear-gradient(135deg,#fff,#f8f9fd);border:1px solid rgba(79,70,229,.12);border-radius:18px;padding:16px;margin-bottom:14px;}
@@ -164,7 +160,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .deck-chip.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent;}
 .deck-chip .dc-name{font-size:13.5px;font-weight:750;}
 .deck-chip .dc-meta{font-size:11px;opacity:.7;}
-.deck-chip.on .dc-meta{opacity:.85;}
 .progress-bar{height:8px;background:#e5e7f5;border-radius:99px;overflow:hidden;margin-top:10px;}
 .progress-bar > div{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .4s;}
 .load-more{border:0;background:#f1f2f9;color:#4b5265;width:100%;padding:13px;border-radius:12px;font-family:inherit;font-size:13px;font-weight:650;cursor:pointer;margin-top:6px;}
@@ -181,7 +176,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .review-entry{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;border-radius:18px;padding:14px;margin-bottom:14px;}
 .review-entry .r-title{font-size:13.5px;font-weight:750;color:#92400e;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;}
 .review-entry .r-meta{font-size:12px;color:#a16207;line-height:1.7;margin-bottom:10px;}
-.src-tag{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 8px;border-radius:5px;margin-bottom:8px;background:#eef0ff;color:var(--brand);}
+.src-badge{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
+.src-badge.wiki{background:#eef0ff;color:var(--brand);}
+.src-badge.showapi{background:#fef3c7;color:#b45309;}
+.src-badge.oioweb{background:#ecfdf5;color:#047857;}
+.src-badge.hitokoto{background:#fef3c7;color:#b45309;}
+.src-badge.vvhan{background:#fee2e2;color:#dc2626;}
+.src-badge.itunes{background:#dbeafe;color:#1d4ed8;}
+.src-badge.tmdb{background:#dbeafe;color:#1d4ed8;}
+.src-badge.openlib{background:#fef3c7;color:#92400e;}
+.src-badge.gutendex{background:#ecfdf5;color:#047857;}
 .quote-card{background:linear-gradient(135deg,#fce7f3,#f3e8ff);border:1px solid #f0abfc;border-radius:14px;padding:14px;margin-top:10px;}
 .quote-card .q-text{font-size:14.5px;line-height:1.85;color:#3b0764;font-weight:600;font-style:italic;}
 .quote-card .q-cn{font-size:12.5px;line-height:1.7;color:#6b21a8;margin-top:8px;padding-top:8px;border-top:1px dashed #f0abfc;}
@@ -196,22 +200,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .joke-card{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;border-radius:14px;padding:14px;margin-top:10px;}
 .joke-card .j-text{font-size:13.5px;line-height:1.85;color:#78350f;white-space:pre-wrap;}
 .joke-card .j-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
-.src-badge{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
-.src-badge.wiki{background:#eef0ff;color:var(--brand);}
-.src-badge.showapi{background:#fef3c7;color:#b45309;}
-.src-badge.oioweb{background:#ecfdf5;color:#047857;}
-.src-badge.hitokoto{background:#fef3c7;color:#b45309;}
-.src-badge.builtin{background:#f3e8ff;color:#7c3aed;}
-.src-badge.vvhan{background:#fee2e2;color:#dc2626;}
-.src-badge.itunes{background:#dbeafe;color:#1d4ed8;}
-.src-badge.tmdb{background:#dbeafe;color:#1d4ed8;}
-.src-badge.openlib{background:#fef3c7;color:#92400e;}
-.src-badge.gutendex{background:#ecfdf5;color:#047857;}
-#ttsPlayer{display:none;}
 .err-inline{background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:11px 13px;font-size:12.5px;line-height:1.7;color:#92400e;margin-top:8px;}
 .ex-btn{border:0;background:#eef0ff;color:var(--brand);padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:650;cursor:pointer;font-family:inherit;}
-.ex-btn:disabled{opacity:.6;}
 .ex-cn{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65;}
+.src-tag{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 8px;border-radius:5px;margin-bottom:8px;background:#eef0ff;color:var(--brand);}
 </style>
 </head>
 <body>
@@ -227,7 +219,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <button class="fab" id="fab">🤖</button>
   <nav class="tabbar" id="tabbar"></nav>
   <div id="sheet"></div>
-  <audio id="ttsPlayer" preload="auto"></audio>
 </div>
 <script>
 /* ========== 全局错误捕获 ========== */
@@ -243,7 +234,7 @@ const PAGE_SIZE = 50;
 const API_TIMEOUT = 8000;
 
 const APP_DEFAULTS = {
-  showapi: { appid:'2174115', sign:'9325BaEB1C1140F5A55E9f35999615DF' },
+  showapi: { appid:'2174298', sign:'4EDe9bf390BD476A9824551ca6fB5134' },
   oioweb:  { id:'10021894', key:'2aec639fae5f00b1a0d5bfec7f86ec90' },
   tmdb:    { key:'bcb303635128786f353fa22934952f3d' }
 };
@@ -271,19 +262,38 @@ function shuffle(arr){
   for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
-async function fetchWithTimeout(url, options, timeout){
+
+/* ★★★ 关键修复：用 XMLHttpRequest 替代 fetch（Android WebView 兼容更好） ★★★ */
+function httpGet(url, timeout){
   timeout = timeout || API_TIMEOUT;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout);
-  try {
-    const r = await fetch(url, { ...(options||{}), signal: controller.signal });
-    clearTimeout(timer);
-    return r;
-  } catch(e){
-    clearTimeout(timer);
-    if (e.name === 'AbortError') throw new Error('请求超时');
-    throw e;
-  }
+  return new Promise((resolve, reject) => {
+    let done = false;
+    const xhr = new XMLHttpRequest();
+    try {
+      xhr.open('GET', url, true);
+      xhr.timeout = timeout;
+      xhr.setRequestHeader('Accept', 'application/json, text/plain, */*');
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && !done){
+          done = true;
+          if (xhr.status >= 200 && xhr.status < 300){
+            resolve(xhr.responseText);
+          } else {
+            reject(new Error('HTTP ' + xhr.status));
+          }
+        }
+      };
+      xhr.onerror = () => { if (!done){ done = true; reject(new Error('网络错误（可能 CORS 或网络不可达）')); } };
+      xhr.ontimeout = () => { if (!done){ done = true; reject(new Error('请求超时')); } };
+      xhr.send();
+    } catch(e){
+      if (!done){ done = true; reject(e); }
+    }
+  });
+}
+async function apiGet(url, timeout){
+  const text = await httpGet(url, timeout);
+  try { return JSON.parse(text); } catch(e){ return text; }
 }
 
 /* ========== 数据 ========== */
@@ -366,7 +376,6 @@ function loadDataFromGlobals(){
   window.__dataStatus = DATA_STATUS;
 }
 
-/* ========== 词库加载 ========== */
 const DeckLoader = {
   loaded:{}, loading:{},
   load(deckId){
@@ -423,17 +432,13 @@ const DeckLoader = {
   }
 };
 
-/* ========== Store ========== */
 const Store = {
   getLearned(){ const v = LS.get('learned:'+DAY, []); return Array.isArray(v) ? v : []; },
   setLearned(arr){ LS.set('learned:'+DAY, arr); },
   getAllLearnedEver(){
     const s = new Set();
     try{ Object.keys(localStorage).forEach(k => {
-      if (k.startsWith('learned:')){
-        const arr = LS.get(k, []);
-        if (Array.isArray(arr)) arr.forEach(w => s.add(w));
-      }
+      if (k.startsWith('learned:')){ const arr = LS.get(k, []); if (Array.isArray(arr)) arr.forEach(w => s.add(w)); }
     });}catch(e){}
     return [...s];
   },
@@ -469,10 +474,7 @@ const Store = {
   getAllKnowDoneEver(){
     const s = new Set();
     try{ Object.keys(localStorage).forEach(k => {
-      if (k.startsWith('know-done:')){
-        const arr = LS.get(k, []);
-        if (Array.isArray(arr)) arr.forEach(w => s.add(w));
-      }
+      if (k.startsWith('know-done:')){ const arr = LS.get(k, []); if (Array.isArray(arr)) arr.forEach(w => s.add(w)); }
     });}catch(e){}
     return [...s];
   },
@@ -569,10 +571,8 @@ const Store = {
       { key:'quote', label:'英文名言', current: quoteDone?1:0, total: 1, done: !!quoteDone },
       { key:'story', label:'英文短文', current: storyDone?1:0, total: 1, done: !!storyDone },
       { key:'joke', label:'今日笑话', current: jokeDone?1:0, total: 1, done: !!jokeDone },
-      { key:'passage', label:'朗读短文', current: passageDone?1:0, total: 1, done: !!passageDone },
       { key:'logic', label:'逻辑思考练习', current: thinkDone, total: 1, done: thinkDone >= 1 },
-      { key:'expr', label:'写表达练习', current: exprDone?1:0, total: 1, done: exprDone },
-      { key:'news', label:'看今日世界', current: newsThink?1:0, total: 1, done: !!newsThink }
+      { key:'expr', label:'写表达练习', current: exprDone?1:0, total: 1, done: exprDone }
     ];
   },
   getGrowth(){ const v = LS.get('growth', {}); return (v && typeof v === 'object') ? v : {}; },
@@ -607,7 +607,7 @@ const Store = {
     const notes = {};
     SEED.VALVE_ALL.forEach(v => { const n = LS.get('note:'+v.q, ''); if (n) notes[v.q] = n; });
     return {
-      app:'daily', version:29, exportedAt:new Date().toISOString(),
+      app:'daily', version:30, exportedAt:new Date().toISOString(),
       learned:this.getLearned(), thinkAnswers, notes,
       wordDeckMap: LS.get('word-deck-map', {}),
       schedule:{ english:this.getSchedule('english'), work:this.getSchedule('work') },
@@ -664,7 +664,6 @@ const Store = {
   }
 };
 
-/* ========== 判卷 ========== */
 const VALVE_TERMS = ['WCB','CF8','CF8M','WC6','WC9','LCB','LC3','2205','双相钢','不锈钢','碳钢','API','ASME','GB','ISO','NACE','PN','Class','PTFE','PPL','STL','石墨','螺栓','螺母','填料','垫片','阀杆','阀体','阀座','密封','内漏','外漏','卡涩','冲蚀','腐蚀','淬火','回火','正火','退火','调质','固溶','渗氮','深冷','防火','防静电','扭矩','压力','温度','介质'];
 function extractKeywords(text){
   if (!text) return [];
@@ -699,7 +698,6 @@ function localJudge(answer, reference){
   return { correct: ratio >= 0.5, score: Math.round(ratio*100), feedback: ratio >= 0.5 ? '大意接近' : '和参考答案差距较大' };
 }
 
-/* ========== AI ========== */
 const AI = {
   get provider(){ return LS.get('ai-provider', 'none'); },
   get apiKey(){ return LS.get('ai-key', ''); },
@@ -723,7 +721,7 @@ const AI = {
   async call(system, user, maxTokens, temp){
     const cfg = this.endpoints()[this.provider];
     if (!cfg) throw new Error('AI 未配置');
-    const r = await fetchWithTimeout(cfg.base, {
+    const text = await httpGet(cfg.base, 25000, {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + this.apiKey },
       body: JSON.stringify({
@@ -732,9 +730,8 @@ const AI = {
         temperature: temp == null ? 0.4 : temp,
         max_tokens: maxTokens || 1000
       })
-    }, 20000);
-    if (!r.ok) throw new Error('HTTP '+r.status);
-    const d = await r.json();
+    });
+    const d = JSON.parse(text);
     return (d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || null;
   },
   parseJSON(content){
@@ -772,7 +769,7 @@ const AI = {
   }
 };
 
-/* ========== 翻译服务（MyMemory 免费） ========== */
+/* ========== 翻译（MyMemory，免费） ========== */
 const TranslateService = {
   cache: LS.get('translate-cache', {}),
   save(){
@@ -784,14 +781,12 @@ const TranslateService = {
   },
   async translate(text, from='en', to='zh'){
     if (!text) return '';
-    const t = text.trim().slice(0, 500);
+    const t = text.trim().slice(0, 480);
     const key = from+':'+to+':'+t;
     if (this.cache[key]) return this.cache[key];
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(t)}&langpair=${from}|${to}`;
-      const r = await fetchWithTimeout(url, null, 6000);
-      if (!r.ok) throw new Error('HTTP '+r.status);
-      const d = await r.json();
+      const d = await apiGet(url, 7000);
       const result = (d.responseData && d.responseData.translatedText) || '';
       if (result && result !== t){
         this.cache[key] = result;
@@ -805,13 +800,13 @@ const TranslateService = {
 
 /* ========== 例句 ========== */
 const ExampleStore = {
-  cache: LS.get('example-cache-v2', {}),
+  cache: LS.get('example-cache-v3', {}),
   save(){
     const keys = Object.keys(this.cache);
     if (keys.length > 1000){
       keys.slice(0, keys.length - 1000).forEach(k => delete this.cache[k]);
     }
-    LS.set('example-cache-v2', this.cache);
+    LS.set('example-cache-v3', this.cache);
   },
   has(word){ const c = this.cache[word]; return !!(c && c.en); },
   get(word){ const c = this.cache[word]; return c && c.en ? c : null; },
@@ -821,9 +816,7 @@ const ExampleStore = {
     if (!word) return null;
     try {
       const url = `https://api.tatoeba.org/v1/sentences?lang=eng&q=${encodeURIComponent(word)}&limit=5&sort=relevance`;
-      const r = await fetchWithTimeout(url, null, 6000);
-      if (!r.ok) throw new Error('HTTP '+r.status);
-      const d = await r.json();
+      const d = await apiGet(url, 7000);
       const list = d.data || [];
       if (!list.length){ this.set(word, { en:null }); return null; }
       const pick = list.find(x => {
@@ -834,7 +827,6 @@ const ExampleStore = {
       if (!en) return null;
       const result = { en };
       this.set(word, result);
-      // 异步翻译
       TranslateService.translate(en, 'en', 'zh').then(cn => {
         if (cn){
           const c = this.cache[word];
@@ -865,9 +857,7 @@ const ExampleStore = {
 
 /* ========== 知识源 ========== */
 async function fetchWiki(){
-  const r = await fetchWithTimeout('https://zh.wikipedia.org/api/rest_v1/page/random/summary', null, 6000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet('https://zh.wikipedia.org/api/rest_v1/page/random/summary', 8000);
   if (!d.extract || d.extract.length < 30) throw new Error('内容太短');
   return { source:'wiki', q: d.title, a: d.extract, key: '维基百科 · ' + (d.description || '') };
 }
@@ -876,9 +866,7 @@ async function fetchShowAPI(){
   const sign = LS.get('showapi-sign', APP_DEFAULTS.showapi.sign);
   const kw = ['地球','太阳','月亮','星星','火','水','风','树','鸟','鱼','彩虹','雪花'][Math.floor(Math.random()*12)];
   const listUrl = `https://route.showapi.com/1706-1?showapi_appid=${appid}&showapi_sign=${sign}&keyword=${encodeURIComponent(kw)}`;
-  const r = await fetchWithTimeout(listUrl, null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet(listUrl, 8000);
   if (d.showapi_res_code !== 0) throw new Error('code='+d.showapi_res_code+' '+(d.showapi_res_error||''));
   const body = d.showapi_res_body || {};
   if (body.ret_code !== 0 && body.ret_code !== '0') throw new Error('ret='+body.ret_code+' '+(body.remark||''));
@@ -887,9 +875,7 @@ async function fetchShowAPI(){
   const p = list[Math.floor(Math.random()*list.length)];
   if (!p.id) return { source:'showapi', q: p.title || kw, a: p.content || p.intro || '', key:'ShowAPI' };
   const detailUrl = `https://route.showapi.com/1706-2?showapi_appid=${appid}&showapi_sign=${sign}&id=${encodeURIComponent(p.id)}`;
-  const r2 = await fetchWithTimeout(detailUrl, null, 7000);
-  if (!r2.ok) throw new Error('HTTP '+r2.status);
-  const d2 = await r2.json();
+  const d2 = await apiGet(detailUrl, 8000);
   const body2 = d2.showapi_res_body || {};
   return { source:'showapi', q: body2.title || p.title, a: body2.content || '', key: 'ShowAPI 十万个为什么' };
 }
@@ -897,58 +883,73 @@ async function fetchOioweb(){
   const id = LS.get('oioweb-id', APP_DEFAULTS.oioweb.id);
   const key = LS.get('oioweb-key', APP_DEFAULTS.oioweb.key);
   const url = `https://cn.apihz.cn/api/zici/changshi.php?id=${id}&key=${key}`;
-  const r = await fetchWithTimeout(url, null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet(url, 8000);
   if (d.code !== 200) throw new Error('code='+d.code+' '+(d.msg||''));
   return { source:'oioweb', q: d.p, a: d.a, key: '接口盒子 社会常识' };
 }
 
-/* ========== 一言 ========== */
+/* ========== 一言（多源兜底） ========== */
 async function fetchYiyan(){
-  const r = await fetchWithTimeout('https://v1.hitokoto.cn/', null, 6000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
-  if (!d.hitokoto) throw new Error('无数据');
-  return { text: d.hitokoto, from: d.from || d.from_who || '' };
+  // 主：一言官方
+  try {
+    const d = await apiGet('https://v1.hitokoto.cn/', 6000);
+    if (d.hitokoto) return { text: d.hitokoto, from: d.from || d.from_who || '' };
+  } catch(e){ console.warn('hitokoto.cn 失败：', e); }
+  // 备：一言国际版
+  try {
+    const d = await apiGet('https://international.v1.hitokoto.cn/', 6000);
+    if (d.hitokoto) return { text: d.hitokoto, from: d.from || d.from_who || '' };
+  } catch(e){ console.warn('international 失败：', e); }
+  throw new Error('一言 API 全部失败');
 }
 
-/* ========== Quotable 英文名言 ========== */
+/* ========== Quotable 英文名言（多源兜底） ========== */
 async function fetchQuote(){
-  const r = await fetchWithTimeout('https://api.quotable.io/random', null, 6000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
-  if (!d.content) throw new Error('无数据');
-  const q = { text: d.content, author: d.author || 'Unknown', genre: (d.tags && d.tags[0]) || '' };
-  // 异步翻译
-  TranslateService.translate(q.text, 'en', 'zh').then(cn => {
-    if (cn){
-      q.cn = cn;
-      if (state.tab==='study' && state.studySub==='express') render();
+  // 主：Quotable
+  try {
+    const d = await apiGet('https://api.quotable.io/random', 6000);
+    if (d.content){
+      const q = { text: d.content, author: d.author || 'Unknown', genre: (d.tags && d.tags[0]) || '' };
+      TranslateService.translate(q.text, 'en', 'zh').then(cn => {
+        if (cn){
+          q.cn = cn;
+          if (state.tab==='study' && state.studySub==='express') render();
+        }
+      });
+      return q;
     }
-  });
-  return q;
+  } catch(e){ console.warn('Quotable 失败：', e); }
+  // 备：API Ninjas 免费 key 或 fallback 到 Gutendex 的第一句话
+  try {
+    const d = await apiGet('https://zenquotes.io/api/random', 6000);
+    if (Array.isArray(d) && d[0]){
+      const q = { text: d[0].q, author: d[0].a || 'Unknown', genre: '' };
+      TranslateService.translate(q.text, 'en', 'zh').then(cn => {
+        if (cn){
+          q.cn = cn;
+          if (state.tab==='study' && state.studySub==='express') render();
+        }
+      });
+      return q;
+    }
+  } catch(e){ console.warn('ZenQuotes 失败：', e); }
+  throw new Error('名言 API 全部失败');
 }
 
 /* ========== Gutendex 英文短文 ========== */
 async function fetchStory(){
-  const r = await fetchWithTimeout('https://gutendex.com/books?languages=en&sort=popular&page=1', null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet('https://gutendex.com/books?languages=en&sort=popular&page=1', 8000);
   const list = d.results || [];
   if (!list.length) throw new Error('无数据');
   const book = list[Math.floor(Math.random()*Math.min(list.length, 10))];
   const formats = book.formats || {};
   const txtUrl = formats['text/plain; charset=utf-8'] || formats['text/plain; charset=us-ascii'] || formats['text/plain'];
   if (!txtUrl) throw new Error('无文本链接');
-  const r2 = await fetchWithTimeout(txtUrl, null, 6000);
-  if (!r2.ok) throw new Error('HTTP '+r2.status);
-  const fullText = await r2.text();
+  const fullText = await httpGet(txtUrl, 7000);
   let start = fullText.indexOf('*** START OF');
   if (start > 0) start = fullText.indexOf('\n', start)+1; else start = 0;
   const preview = fullText.slice(start, start+600).trim();
   const story = { title: book.title, author: (book.authors||[]).map(a=>a.name).join(', '), preview: preview.slice(0,500), url: txtUrl };
-  // 异步翻译
   TranslateService.translate(story.preview, 'en', 'zh').then(cn => {
     if (cn){
       story.cn = cn;
@@ -958,23 +959,41 @@ async function fetchStory(){
   return story;
 }
 
-/* ========== 笑话 vvhan ========== */
+/* ========== 笑话（多源兜底） ========== */
 async function fetchJoke(){
-  const r = await fetchWithTimeout('https://api.vvhan.com/api/joke', null, 6000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
-  if (!d.joke) throw new Error('无数据');
-  return { text: d.joke };
+  // 主：vvhan
+  try {
+    const d = await apiGet('https://api.vvhan.com/api/joke', 6000);
+    if (d && d.joke) return { text: d.joke };
+  } catch(e){ console.warn('vvhan 失败：', e); }
+  // 备：RollToolsApi 每日搞笑段子
+  try {
+    const d = await apiGet('https://www.mxnzp.com/api/jokes/list/random', 6000);
+    if (d && d.data && d.data.length){
+      return { text: d.data[0].content || d.data[0].joke };
+    }
+  } catch(e){ console.warn('mxnzp 失败：', e); }
+  // 备：ShowAPI 笑话大全（341-1）
+  try {
+    const appid = LS.get('showapi-appid', APP_DEFAULTS.showapi.appid);
+    const sign = LS.get('showapi-sign', APP_DEFAULTS.showapi.sign);
+    const d = await apiGet(`https://route.showapi.com/341-1?showapi_appid=${appid}&showapi_sign=${sign}&page=1&maxResult=20`, 7000);
+    const body = d.showapi_res_body || {};
+    const list = body.contentlist || [];
+    if (list.length){
+      const p = list[Math.floor(Math.random()*list.length)];
+      return { text: (p.title ? p.title + '\n\n' : '') + (p.content || '') };
+    }
+  } catch(e){ console.warn('ShowAPI 笑话失败：', e); }
+  throw new Error('笑话 API 全部失败');
 }
 
-/* ========== 播客 iTunes Search ========== */
+/* ========== 播客 iTunes ========== */
 async function fetchPodcast(){
   const terms = ['科技','历史','文化','商业','心理'];
   const term = terms[Math.floor(Math.random()*terms.length)];
   const url = `https://itunes.apple.com/search?media=podcast&term=${encodeURIComponent(term)}&limit=30&country=cn`;
-  const r = await fetchWithTimeout(url, null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet(url, 8000);
   const list = d.results || [];
   if (!list.length) throw new Error('无数据');
   const p = list[Math.floor(Math.random()*list.length)];
@@ -992,9 +1011,7 @@ async function fetchPodcast(){
 
 /* ========== 书 OpenLibrary ========== */
 async function fetchBook(){
-  const r = await fetchWithTimeout('https://openlibrary.org/trending/daily.json?limit=30', null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet('https://openlibrary.org/trending/daily.json?limit=30', 8000);
   const works = d.works || [];
   if (!works.length) throw new Error('无数据');
   const p = works[Math.floor(Math.random()*works.length)];
@@ -1012,9 +1029,7 @@ async function fetchBook(){
 /* ========== 电影/电视剧 TMDB ========== */
 async function fetchMovie(type){
   const url = `https://api.themoviedb.org/3/trending/${type}/day?api_key=${APP_DEFAULTS.tmdb.key}&language=zh-CN`;
-  const r = await fetchWithTimeout(url, null, 7000);
-  if (!r.ok) throw new Error('HTTP '+r.status);
-  const d = await r.json();
+  const d = await apiGet(url, 8000);
   const list = d.results || [];
   if (!list.length) throw new Error('无数据');
   const p = list[Math.floor(Math.random()*Math.min(list.length, 15))];
@@ -1031,7 +1046,6 @@ async function fetchMovie(type){
   };
 }
 
-/* ========== 工具 ========== */
 function fetchTool(){
   const tools = [
     {name:'Obsidian',author:'笔记工具',emoji:'📝',why:'Markdown 笔记，本地存储。',scene:'想建个人知识库',web:()=>`https://obsidian.md/`},
@@ -1044,9 +1058,10 @@ function fetchTool(){
   return tools[DAY % tools.length];
 }
 
-/* ========== 语音（同步调用，避免拦截） ========== */
-const ttsPlayer = document.getElementById('ttsPlayer');
+/* ★★★ 语音：用 new Audio() 每次创建，同步调用 play() ★★★ */
+let _currentAudio = null;
 let _currentBtn = null;
+let _playToken = 0;
 
 function _cleanupTTS(){
   if (_currentBtn){
@@ -1057,36 +1072,79 @@ function _cleanupTTS(){
 }
 
 function stopSpeak(){
+  _playToken++;
   try{ if (window.AndroidBridge && window.AndroidBridge.stopSpeak) window.AndroidBridge.stopSpeak(); }catch(e){}
   try{ if ('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){}
-  try{ if (ttsPlayer){ ttsPlayer.pause(); ttsPlayer.currentTime = 0; } }catch(e){}
+  try{ if (_currentAudio){ _currentAudio.pause(); _currentAudio.currentTime = 0; } }catch(e){}
+  _currentAudio = null;
   _cleanupTTS();
 }
 
-/* 核心：用户点击时同步调用 play()，不经过任何 await */
 function playOnlineTTS(text, lang, btn){
   if (!text) return false;
-  try{
-    try{ ttsPlayer.pause(); }catch(e){}
-    ttsPlayer.currentTime = 0;
+  try {
+    // 清理上一个
+    if (_currentAudio){
+      try{ _currentAudio.pause(); }catch(e){}
+      _currentAudio = null;
+    }
+    _cleanupTTS();
+
+    const token = ++_playToken;
+    const shortText = text.length > 200 ? text.slice(0, 200) : text;
     const isZh = lang && lang.startsWith('zh');
     const type = (lang === 'en-GB') ? 1 : 2;
     const url = isZh
-      ? `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=zh`
-      : `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=${type}`;
-    ttsPlayer.src = url;
+      ? `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(shortText)}&le=zh`
+      : `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(shortText)}&type=${type}`;
+
+    // 关键：每次 new Audio()，避免状态污染
+    const audio = new Audio();
+    audio.src = url;
+    audio.volume = 1;
+    _currentAudio = audio;
     _currentBtn = btn || null;
-    if (btn){ btn.classList.add('playing'); if (btn.dataset.busy) btn.textContent = btn.dataset.busy; }
-    ttsPlayer.onended = _cleanupTTS;
-    ttsPlayer.onerror = () => { _cleanupTTS(); };
-    // 关键：同步调用 play()
-    const p = ttsPlayer.play();
-    if (p && p.catch) p.catch(err => {
-      console.warn('play rejected:', err);
-      _cleanupTTS();
-    });
+
+    if (btn){
+      btn.classList.add('playing');
+      if (btn.dataset.busy) btn.textContent = btn.dataset.busy;
+    }
+
+    const cleanup = () => {
+      if (token !== _playToken) return;
+      if (btn){
+        btn.classList.remove('playing');
+        if (btn.dataset.idle) btn.textContent = btn.dataset.idle;
+      }
+      if (_currentAudio === audio) _currentAudio = null;
+      if (_currentBtn === btn) _currentBtn = null;
+    };
+
+    audio.onended = cleanup;
+    audio.onerror = () => { console.warn('audio error'); cleanup(); };
+
+    // 关键：同步调用 play()（在用户点击的同步上下文里）
+    const playPromise = audio.play();
+    if (playPromise && playPromise.catch){
+      playPromise.catch(err => {
+        console.warn('play() rejected:', err);
+        // 重试一次：等加载完成再播
+        setTimeout(() => {
+          if (token !== _playToken) return;
+          audio.load();
+          const retry = audio.play();
+          if (retry && retry.catch){
+            retry.catch(err2 => {
+              console.warn('retry failed:', err2);
+              cleanup();
+              toast('播放失败，请再点一次');
+            });
+          }
+        }, 100);
+      });
+    }
     return true;
-  }catch(e){
+  } catch(e){
     console.warn('TTS error:', e);
     _cleanupTTS();
     return false;
@@ -1098,7 +1156,8 @@ function toggleSpeak(text, lang, btn){
   const wasPlaying = btn && btn.classList.contains('playing');
   stopSpeak();
   if (wasPlaying) return;
-  // 1. Android 原生桥
+
+  // 优先 Android 原生桥
   if (window.AndroidBridge && typeof window.AndroidBridge.speak === 'function'){
     try{
       let ok = true;
@@ -1114,7 +1173,8 @@ function toggleSpeak(text, lang, btn){
       }
     }catch(e){ console.warn('Android TTS 失败：', e); }
   }
-  // 2. 在线 TTS（优先，同步）
+
+  // 在线 TTS
   playOnlineTTS(text, lang, btn);
 }
 
@@ -1155,7 +1215,6 @@ const state = {
   searchQuery:'', valveCat:'全部',
   review:null,
   aiLoading:false, aiAnsweringFor:null, aiInput:'',
-  passageHidden:false,
   aiRole: LS.get('ai-role', 'engineer'),
   currentSearch: [],
   generalData:null, generalLoading:false,
@@ -1180,7 +1239,7 @@ function updateTopbar(){
   el.innerHTML = `${fmtDate()}${s.count>0?`<span class="streak-badge">🔥 ${s.count}天</span>`:''}<span class="streak-badge" style="background:linear-gradient(135deg,#eef0ff,#f6f0ff);color:#4f46e5;">☑ ${done}/${tasks.length}</span>`;
 }
 
-/* ========== 学习视图 ========== */
+/* ========== 视图 ========== */
 async function studyView(){
   const sub = state.studySub;
   const subs = [
@@ -1232,7 +1291,7 @@ function todaySection(){
   ${(schedEn+schedWk>0)?`
   <div class="review-entry">
     <div class="r-title"><span>🔁 开始复习</span><span>共 ${schedEn+schedWk} 条已排程</span></div>
-    <div class="r-meta">每次从已学过的内容里随机抽 5 个</div>
+    <div class="r-meta">每次随机抽 5 个</div>
     <div style="display:flex;gap:8px;">
       ${schedEn?`<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="english">英语复习</button>`:''}
       ${schedWk?`<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="work">专业复习</button>`:''}
@@ -1260,9 +1319,7 @@ function weeklyTestSection(){
   const knowledges = Store.getWeekLearnedKnowledge();
   const total = words.length + knowledges.length;
   const result = Store.getWeeklyResult();
-  if (total === 0){
-    return `<div class="tip-card">本周还没有学过的内容。先去学习吧。</div>`;
-  }
+  if (total === 0) return `<div class="tip-card">本周还没有学过的内容。先去学习吧。</div>`;
   if (result){
     return `
     <div class="weekly-card">
@@ -1297,7 +1354,6 @@ function renderWeeklyReview(records){
   </div>`).join('')}`;
 }
 
-/* ========== 英语 ========== */
 function renderDeckLoading(msg){
   return `<div class="loading-card">
     <div style="font-size:42px;animation:pulse 1.4s ease-in-out infinite;">📚</div>
@@ -1391,7 +1447,7 @@ function englishTodayBlock(deckId, deckWords, learnedToday){
   <div class="sec-title">今日待学 <span class="muted">${doneCount}/${todayWords.length} 已完成</span></div>
   ${allDone?'<div style="margin-bottom:12px;padding:10px 14px;background:#ecfdf5;border-radius:12px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">🎉 今天的 5 个单词都学完了！明天会换新的</div>':''}
   ${todayWords.length ? todayWords.map((w,i) => wordCard(w, i, learnedToday.has(w.w), true)).join('') : '<div class="tip-card">这个词库已全部学完。</div>'}
-  <div class="tip-card">💡 点左侧圆圈标记已掌握。例句会自动从 Tatoeba 抓取并翻译。</div>`;
+  <div class="tip-card">💡 点左侧圆圈标记已掌握。例句自动从 Tatoeba 抓取并翻译。</div>`;
 }
 
 function englishAllBlock(deckWords, learnedAll){
@@ -1473,7 +1529,6 @@ function wordCard(w, i, isDone, isDoneToday){
   </div>`;
 }
 
-/* ========== 专业 ========== */
 function valveSection(){
   const q = state.searchQuery || '';
   const cat = state.valveCat || '全部';
@@ -1506,7 +1561,7 @@ function valveSection(){
   ${schedWk?`
   <div class="review-entry">
     <div class="r-title"><span>🔁 专业复习</span><span>共 ${schedWk} 条</span></div>
-    <div class="r-meta">从学过的知识里随机抽 5 个复习。</div>
+    <div class="r-meta">随机抽 5 个复习。</div>
     <button class="btn" style="background:#92400e;color:#fff;width:100%;" data-act="startReview" data-type="work">开始复习 →</button>
   </div>`:''}
   ${wrongBook.length?`
@@ -1517,7 +1572,7 @@ function valveSection(){
   <div class="search-box">
     <span style="font-size:15px;opacity:.5;">🔍</span>
     <input type="search" class="search-input" id="valveSearch" placeholder="搜索：WCB / API 600…" value="${esc(q)}">
-    ${q?'<button class="search-clear" data-act="searchClear" style="background:#f1f2f9;color:#6b7280;width:24px;height:24px;border-radius:50%;font-size:12px;cursor:pointer;display:grid;place-items:center;border:0;">✕</button>':''}
+    ${q?'<button class="search-clear" data-act="searchClear">✕</button>':''}
   </div>
   <div class="chips" data-scroll-id="valveCat">
     ${cats.map(c => `<button class="chip ${c===cat&&!q.trim()?'on':''}" data-act="valveCat" data-cat="${esc(c)}">${esc(c)}${c!=='全部'?` · ${(SEED.VALVE[c]||[]).length}`:''}</button>`).join('')}
@@ -1565,7 +1620,6 @@ function knowCard(v, i, isDone, isDoneToday){
   </div>`;
 }
 
-/* ========== 每日知识（3 源并列） ========== */
 async function generalSection(){
   if (!state.generalData && !state.generalLoading){
     state.generalLoading = true;
@@ -1580,17 +1634,16 @@ async function generalSection(){
     if (state.tab === 'study' && state.studySub === 'general') render();
   }
   const doneToday = LS.get('general-done:'+DAY, false);
-  const srcLabelMap = { wiki:'维基百科', showapi:'ShowAPI 十万个为什么', oioweb:'接口盒子 社会常识' };
+  const srcLabelMap = { wiki:'维基百科', showapi:'ShowAPI', oioweb:'接口盒子' };
   const srcIconMap = { wiki:'🌐', showapi:'📚', oioweb:'🔍' };
   let body = '';
   if (state.generalLoading || !state.generalData){
-    body = `
-    <div class="loading-card">
+    body = `<div class="loading-card">
       <div style="font-size:38px;animation:pulse 1.2s ease-in-out infinite;">🌐</div>
       <div style="font-size:13.5px;font-weight:750;margin-top:14px;">正在从 3 个源并发获取…</div>
     </div>`;
   } else {
-    body = state.generalData.map((item, idx) => {
+    body = state.generalData.map((item) => {
       if (item.error){
         return `<div class="card" style="border-left:3px solid #dc2626;">
           <span class="src-badge ${item.source}">${srcIconMap[item.source]||'🌐'} ${srcLabelMap[item.source]||item.source}</span>
@@ -1613,7 +1666,7 @@ async function generalSection(){
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">DAILY KNOWLEDGE</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每日知识 · 3 源并列</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">维基百科 / ShowAPI / 接口盒子 各取 1 条 · 当前成功 ${okCount}/3</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">维基百科 / ShowAPI / 接口盒子 · 成功 ${okCount}/3</div>
   </div>
   ${body}
   <div style="display:flex;gap:8px;margin-top:6px;">
@@ -1622,7 +1675,6 @@ async function generalSection(){
   </div>`;
 }
 
-/* ========== 逻辑 ========== */
 function logicSection(){
   const all = SEED.THINKING;
   const unlearned = all.filter(m => Store.getThinkDoneDays(m.name).length === 0);
@@ -1683,7 +1735,6 @@ function logicCard(m, todayDone){
   </div>`;
 }
 
-/* ========== 表达（全部 API） ========== */
 async function expressSection(){
   const sceneCats = Object.keys(SEED.SCENES);
   const allScenes = sceneCats.flatMap(c => SEED.SCENES[c].map(s => ({ ...s, cat:c })));
@@ -1696,7 +1747,6 @@ async function expressSection(){
   const yiyanDone = LS.get('yiyan-done:'+DAY, false);
   const jokeDone = LS.get('joke-done:'+DAY, false);
 
-  // 并发加载所有内容
   const loads = [];
   if (!state.yiyanData && !state.yiyanLoading){ state.yiyanLoading = true; loads.push(fetchYiyan().then(d => { state.yiyanData = d; }).catch(e => { state.yiyanData = { error: e.message }; }).finally(() => { state.yiyanLoading = false; })); }
   if (!state.quoteData && !state.quoteLoading){ state.quoteLoading = true; loads.push(fetchQuote().then(d => { state.quoteData = d; }).catch(e => { state.quoteData = { error: e.message }; }).finally(() => { state.quoteLoading = false; })); }
@@ -1708,7 +1758,7 @@ async function expressSection(){
     });
   }
 
-  const renderBlock = (title, subtitle, data, loading, renderFn) => {
+  const renderBlock = (title, data, loading, renderFn) => {
     if (loading || !data){
       return `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">💬</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">${esc(title)}加载中…</div></div>`;
     }
@@ -1718,7 +1768,7 @@ async function expressSection(){
     return renderFn(data);
   };
 
-  const yiyanBlock = renderBlock('中文金句', '一言', state.yiyanData, state.yiyanLoading, y => `
+  const yiyanBlock = renderBlock('中文金句', state.yiyanData, state.yiyanLoading, y => `
     <div class="quote-card">
       <div class="q-text" style="font-style:normal;color:#b45309;">${esc(y.text)}</div>
       ${y.from?`<div class="q-author" style="color:#92400e;">—— ${esc(y.from)}</div>`:''}
@@ -1729,7 +1779,7 @@ async function expressSection(){
       </div>
     </div>`);
 
-  const quoteBlock = renderBlock('英文名言', 'Quotable', state.quoteData, state.quoteLoading, q => `
+  const quoteBlock = renderBlock('英文名言', state.quoteData, state.quoteLoading, q => `
     <div class="quote-card">
       <div class="q-text">"${esc(q.text)}"</div>
       ${q.cn?`<div class="q-cn">${esc(q.cn)}</div>`:'<div class="q-cn" style="opacity:.5;">翻译中…</div>'}
@@ -1741,7 +1791,7 @@ async function expressSection(){
       </div>
     </div>`);
 
-  const storyBlock = renderBlock('英文短文', 'Gutendex', state.storyData, state.storyLoading, s => `
+  const storyBlock = renderBlock('英文短文', state.storyData, state.storyLoading, s => `
     <div class="story-card">
       <div class="s-title">${esc(s.title)}</div>
       <div class="s-author">${esc(s.author||'')}</div>
@@ -1755,7 +1805,7 @@ async function expressSection(){
       </div>
     </div>`);
 
-  const jokeBlock = renderBlock('今日笑话', 'vvhan', state.jokeData, state.jokeLoading, j => `
+  const jokeBlock = renderBlock('今日笑话', state.jokeData, state.jokeLoading, j => `
     <div class="joke-card">
       <div class="j-text">${esc(j.text)}</div>
       <div class="j-actions">
@@ -1768,16 +1818,12 @@ async function expressSection(){
   return `
   <div class="sec-title">中文金句 <span class="muted">一言</span></div>
   ${yiyanBlock}
-
   <div class="sec-title">英文名言 <span class="muted">Quotable + 翻译</span></div>
   ${quoteBlock}
-
   <div class="sec-title">英文短文 <span class="muted">Gutendex + 翻译</span></div>
   ${storyBlock}
-
   <div class="sec-title">今日笑话 <span class="muted">vvhan</span></div>
   ${jokeBlock}
-
   <div class="sec-title">今日场景练习 <span class="muted">每天随机一题</span></div>
   <div class="card">
     <div style="display:inline-block;font-size:11px;font-weight:750;color:#b45309;background:#fef3c7;padding:3px 9px;border-radius:6px;margin-bottom:10px;">${esc(todayScene.cat)}</div>
@@ -1809,7 +1855,6 @@ function renderGradeCard(g){
   </div>`;
 }
 
-/* ========== 工作 ========== */
 async function workView(){
   const subs = [
     { id:'office', label:'AI 办公' },
@@ -1875,7 +1920,6 @@ function recordSection(){
     </div>`).join('')}`:''}`;
 }
 
-/* ========== 发现 ========== */
 async function discoverView(){
   const sub = state.discoverSub;
   const subs = [
@@ -1960,7 +2004,7 @@ async function recommendSection(){
     } else {
       body = `<div class="card">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-          <span class="src-badge">${catEmoji[todayCat]} ${todayCat} · ${srcLabel[todayCat]||''}</span>
+          <span class="src-badge ${todayCat==='书'?'openlib':todayCat==='工具'?'':'tmdb'}">${catEmoji[todayCat]} ${todayCat} · ${srcLabel[todayCat]||''}</span>
           <span style="font-size:10.5px;color:var(--sub);">${todayStr()}</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:12px;">
@@ -1987,7 +2031,6 @@ async function recommendSection(){
   ${body}`;
 }
 
-/* ========== 我的 ========== */
 async function meView(){
   try{
     const stats = Store.stats();
@@ -2072,7 +2115,6 @@ async function meView(){
   }
 }
 
-/* ========== 渲染 ========== */
 const TABS = [
   { id:'study', icon:'📚', label:'学习' },
   { id:'work', icon:'💼', label:'工作' },
@@ -2111,7 +2153,6 @@ async function render(){
   });
 }
 
-/* ========== 弹层 + 复习 ========== */
 function sheetHTML(html){ return `<div class="sheet-mask" data-act="closeSheet"></div><div class="sheet-body">${html}</div>`; }
 function openSheet(html){ sheet.classList.remove('open'); sheet.innerHTML = sheetHTML(html); requestAnimationFrame(() => sheet.classList.add('open')); }
 function updateSheet(html){ const b = sheet.querySelector('.sheet-body'); if (b && sheet.classList.contains('open')) b.innerHTML = html; else openSheet(html); }
@@ -2248,7 +2289,6 @@ function startWeeklyTest(){
   renderReviewSheet();
 }
 
-/* ========== AI 助手 ========== */
 function openAIAssistant(){
   const msgs = Store.getAIHistory();
   const role = state.aiRole;
@@ -2298,7 +2338,6 @@ async function sendAIMessage(){
   openAIAssistant();
 }
 
-/* ========== 导入导出 ========== */
 function doExport(){
   const data = Store.buildExportData();
   const json = JSON.stringify(data, null, 2);
@@ -2320,7 +2359,6 @@ function doImport(){
   `);
 }
 
-/* ========== 事件 ========== */
 let searchTimer = null;
 view.addEventListener('input', e => {
   const el = e.target;
@@ -2346,14 +2384,12 @@ view.addEventListener('click', async e => {
   if (!t) return;
   const act = t.dataset.act;
 
-  // 朗读：同步调用
   if (act === 'speak'){ e.stopPropagation(); toggleSpeak(t.dataset.text, t.dataset.lang||'en-US', t); return; }
   if (act === 'speakYiyan'){ toggleSpeak(t.dataset.text, 'zh-CN', t); return; }
   if (act === 'speakQuote'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
   if (act === 'speakStory'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
   if (act === 'speakJoke'){ toggleSpeak(t.dataset.text, 'zh-CN', t); return; }
   if (act === 'speakGeneral'){ toggleSpeak(t.dataset.text, 'zh-CN', t); return; }
-
   if (act === 'copyText'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
 
   if (act === 'studySub'){ state.studySub = t.dataset.sub; render(); return; }
@@ -2466,10 +2502,7 @@ view.addEventListener('click', async e => {
   if (act === 'markJokeDone'){ LS.set('joke-done:'+DAY, true); toast('已记录'); render(); return; }
 
   if (act === 'openStory'){ openExternal(t.dataset.url); return; }
-  if (act === 'refreshJoke'){
-    state.jokeData = null; state.jokeLoading = false;
-    render(); return;
-  }
+  if (act === 'refreshJoke'){ state.jokeData = null; state.jokeLoading = false; render(); return; }
 
   if (act === 'askAbout'){
     e.stopPropagation();
@@ -2570,7 +2603,6 @@ view.addEventListener('click', async e => {
     e.stopPropagation();
     const scheme = t.dataset.scheme;
     const name = t.dataset.name;
-    const cat = t.dataset.cat;
     const item = (state.recData && state.recData.item) || {};
     if (!scheme){ toast('没有配置'); return; }
     const schemeName = scheme.replace(/:\/\/.*$/, '');
@@ -2595,7 +2627,6 @@ view.addEventListener('click', async e => {
   }
   if (act === 'openWeb'){
     e.stopPropagation();
-    const cat = t.dataset.cat;
     const item = (state.recData && state.recData.item) || null;
     if (item && item.web) openExternal(item.web(item.name));
     return;
@@ -2640,13 +2671,9 @@ view.addEventListener('click', async e => {
   if (act === 'aiSend'){ sendAIMessage(); return; }
   if (act === 'aiRole'){ state.aiRole = t.dataset.role; LS.set('ai-role', state.aiRole); openAIAssistant(); return; }
   if (act === 'clearAIHistory'){ if (confirm('清空？')){ Store.clearAIHistory(); openAIAssistant(); } return; }
-
   if (act === 'setAccent'){ LS.set('voice-accent', t.dataset.accent); render(); return; }
 
-  if (act === 'diagTTS'){
-    playOnlineTTS('Hello, this is an online TTS test. 测试朗读。', 'en-US');
-    return;
-  }
+  if (act === 'diagTTS'){ playOnlineTTS('Hello, this is an online TTS test. 测试朗读。', 'en-US'); return; }
 
   if (act === 'exportData'){ doExport(); return; }
   if (act === 'importData'){ doImport(); return; }
@@ -2755,7 +2782,6 @@ function toast(msg){
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 1900);
 }
 
-/* ========== 启动 ========== */
 (function init(){
   loadDataFromGlobals();
   Store.checkIn();
