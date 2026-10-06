@@ -28,6 +28,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .tab-icon{font-size:16px;line-height:1;}
 .tab.on .tab-icon{transform:translateY(-1px) scale(1.12);}
 .card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid rgba(16,24,40,.045);box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 22px -14px rgba(16,24,40,.28);}
+.card.done{background:#f8f9fd;border-style:dashed;opacity:.72;}
 .hero{padding:4px 4px 14px;}
 .hero-k{font-size:12px;color:var(--brand);font-weight:700;letter-spacing:.5px;margin-bottom:7px;}
 .hero h1{font-size:22px;margin:0;letter-spacing:-.5px;line-height:1.25;}
@@ -179,11 +180,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .progress-bar > div{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .4s;}
 .load-more{border:0;background:#f1f2f9;color:#4b5265;width:100%;padding:13px;border-radius:12px;font-family:inherit;font-size:13px;font-weight:650;cursor:pointer;margin-top:6px;}
 .word-mini{background:#fff;border:1px solid rgba(16,24,40,.06);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:8px;}
+.word-mini.done{background:#f8f9fd;opacity:.65;border-style:dashed;}
 .word-mini .wm-word{font-size:15px;font-weight:750;color:#2b3244;flex-shrink:0;}
+.word-mini.done .wm-word{text-decoration:line-through;color:#aab0c0;}
 .word-mini .wm-cn{font-size:12px;color:var(--sub);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.word-mini.done .wm-cn{text-decoration:line-through;}
 .word-mini .wm-check{width:22px;height:22px;border-radius:50%;border:2px solid #dfe2ee;background:#fff;display:grid;place-items:center;font-size:11px;flex-shrink:0;color:#fff;font-weight:700;}
 .word-mini .wm-check.on{background:var(--brand);border-color:var(--brand);}
 .loading-card{background:#fff;border-radius:18px;padding:32px 20px;text-align:center;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,.04);}
+.news-source-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.news-source{flex:1;min-width:100px;padding:10px 12px;border-radius:10px;font-size:12.5px;font-weight:650;font-family:inherit;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.news-source.cctv{background:#eef0ff;color:var(--brand);}
+.news-source.cctvnews{background:#fef3c7;color:#b45309;}
+.review-entry{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;border-radius:18px;padding:14px;margin-bottom:14px;}
+.review-entry .r-title{font-size:13.5px;font-weight:750;color:#92400e;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;}
+.review-entry .r-meta{font-size:12px;color:#a16207;line-height:1.7;margin-bottom:10px;}
+.review-entry .r-meta b{color:#92400e;}
+.src-tag{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 8px;border-radius:5px;margin-bottom:8px;background:#eef0ff;color:var(--brand);}
+.src-tag.wiki{background:#eef0ff;color:var(--brand);}
+.src-tag.showapi{background:#fef3c7;color:#b45309;}
+.src-tag.oioweb{background:#ecfdf5;color:#047857;}
+.src-tag.quote{background:#fce7f3;color:#be185d;}
+.src-tag.tatoeba{background:#f3e8ff;color:#7c3aed;}
+.src-tag.gutendex{background:#ecfdf5;color:#047857;}
+.src-tag.yiyan{background:#fef3c7;color:#b45309;}
+.en-passage{background:linear-gradient(135deg,#eef0ff,#f6f0ff);border:1px solid #e2e5ff;border-radius:14px;padding:14px;margin-top:10px;}
+.en-passage .en-text{font-size:14.5px;line-height:1.85;color:#2b3244;font-weight:600;letter-spacing:-.2px;}
+.en-passage .en-cn{font-size:12.5px;line-height:1.7;color:var(--sub);margin-top:10px;padding-top:10px;border-top:1px dashed #e2e5ff;}
+.en-passage .en-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.quote-card{background:linear-gradient(135deg,#fce7f3,#f3e8ff);border:1px solid #f0abfc;border-radius:14px;padding:14px;margin-top:10px;}
+.quote-card .q-text{font-size:14.5px;line-height:1.85;color:#3b0764;font-weight:600;font-style:italic;}
+.quote-card .q-author{font-size:12.5px;color:#6b21a8;margin-top:8px;text-align:right;}
+.quote-card .q-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.story-card{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #6ee7b7;border-radius:14px;padding:14px;margin-top:10px;}
+.story-card .s-title{font-size:14.5px;font-weight:750;color:#065f46;line-height:1.5;}
+.story-card .s-author{font-size:12px;color:#047857;margin-top:4px;}
+.story-card .s-preview{font-size:13px;line-height:1.75;color:#064e3b;margin-top:10px;}
+.story-card .s-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -212,6 +245,9 @@ window.addEventListener('unhandledrejection', (e) => { console.error('未处理�
    ============================================================ */
 const DAY = Math.floor((Date.now() + 8*3600*1000) / 86400000);
 const DAILY_WORD_COUNT = 5;
+const DAILY_VALVE_COUNT = 5;
+const DAILY_NEWS_COUNT = 5;
+const REVIEW_TARGET = 15;
 const PAGE_SIZE = 50;
 const LS = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
@@ -230,6 +266,11 @@ function dailyPick(arr,n,salt=0){
   for(let i=idx.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]];}
   return idx.slice(0,n).map(i=>arr[i]);
 }
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
 
 /* ============================================================
    数据
@@ -237,30 +278,41 @@ function dailyPick(arr,n,salt=0){
 const SEED = {
   DECKS: [],
   VALVE: {},
-  GENERAL: [
-    {q:'为什么飞机能飞起来？',a:'机翼上下压力差产生升力。',key:'伯努利原理 + 牛顿第三定律。'},
-    {q:'为什么通货膨胀影响生活？',a:'货币购买力下降。',key:'温和通胀（2% 左右）有利于经济。'},
-    {q:'为什么天空是蓝色的？',a:'蓝光被空气分子散射得更多。',key:'傍晚剩下红光——这就是晚霞。'}
-  ],
   THINKING: [
     {name:'演绎推理',emoji:'🔽',core:'从一般到个别：大前提 + 小前提 → 必然结论。',how:['确认大前提','确认小前提','推导结论'],exercise:'含硫工况碳钢螺栓硬度 ≤22HRC。这批螺栓 B7（35HRC）。结论？',hint:'结论：不能用在含硫天然气项目上。'},
-    {name:'归纳推理',emoji:'🔼',core:'从个别到一般。',how:['收集案例','找共同点','提结论'],exercise:'过去 3 年 8 次阀门内漏，6 次同一家供应商。结论？',hint:'归纳推理的结论是"可能"而不是"必然"。'},
+    {name:'归纳推理',emoji:'🔼',core:'从个别到一般，找规律。',how:['收集案例','找共同点','提结论'],exercise:'过去 3 年 8 次阀门内漏，6 次同一家供应商。结论？',hint:'归纳推理的结论是"可能"而不是"必然"。'},
     {name:'第一性原理',emoji:'🔬',core:'拆到基本事实，再往上重建。',how:['问底层事实','剔除假设','重新推导'],exercise:'把你工作里最头疼的问题拆到最基本事实。',hint:'真正的问题可能是介质里有颗粒。'},
     {name:'5 Why 追问',emoji:'❓',core:'连续问 5 次为什么，找到根因。',how:['从问题开始','问为什么','重复 5 次'],exercise:'某批阀门试压不合格率高。连续问 5 个为什么。',hint:'根因可能是"没有工序卡控"。'},
-    {name:'MECE',emoji:'📐',core:'相互独立、完全穷尽。',how:['拆成互不重叠类别','覆盖所有可能','每类再拆解'],exercise:'"阀门故障"怎么用 MECE 拆开？',hint:'① 内漏；② 外漏；③ 操作异常；④ 结构失效；⑤ 附件故障。'}
+    {name:'MECE',emoji:'📐',core:'相互独立、完全穷尽。',how:['拆成互不重叠类别','覆盖所有可能','每类再拆解'],exercise:'"阀门故障"怎么用 MECE 拆开？',hint:'① 内漏；② 外漏；③ 操作异常；④ 结构失效；⑤ 附件故障。'},
+    {name:'逆向思维',emoji:'🔄',core:'反过来想：如果想让事情变糟，我会怎么做？',how:['明确目标','假设失败','列出失败原因','反向规避'],exercise:'如果想让一个项目彻底失败，你会怎么做？',hint:'把失败原因反过来，就是成功清单。'},
+    {name:'类比思维',emoji:'🔗',core:'把陌生问题映射到熟悉领域。',how:['找相似结构','借用成熟方案','调整适配'],exercise:'把你的行业难题类比成一个日常场景。',hint:'供应链≈水管系统：流量、堵塞、回流。'},
+    {name:'系统思维',emoji:'🌐',core:'看整体、看关系、看反馈回路。',how:['画出元素','画关系','找回路','识别杠杆点'],exercise:'把你公司的主要业务画成一张关系图。',hint:'重点找"加强回路"和"抑制回路"。'},
+    {name:'六顶思考帽',emoji:'🎩',core:'从 6 个角度看同一个问题。',how:['白帽：事实','红帽：情绪','黑帽：风险','黄帽：好处','绿帽：创意','蓝帽：控制'],exercise:'用 6 顶帽子分析"要不要换供应商"。',hint:'一次只戴一顶帽子，别混着戴。'},
+    {name:'金字塔原理',emoji:'🔺',core:'结论先行，以上统下。',how:['先说结论','分层展开','互不重叠'],exercise:'把"如何提升客户满意度"写成金字塔。',hint:'结论必须能用一句话说完。'},
+    {name:'二八法则',emoji:'🎯',core:'20% 的投入带来 80% 的结果。',how:['列出所有事','标出影响','聚焦 20%'],exercise:'你工作里哪 20% 的事情贡献了 80% 的成果？',hint:'往往是"客户关系"和"关键技术"。'},
+    {name:'奥卡姆剃刀',emoji:'✂️',core:'如无必要，勿增实体。简单方案往往更好。',how:['列出所有假设','删掉不必要的','保留最简解释'],exercise:'你手上这个方案，能不能砍掉一半步骤？',hint:'多数复杂方案都是没想清楚。'},
+    {name:'SCQA 结构',emoji:'📰',core:'情境-冲突-问题-答案，讲故事式表达。',how:['Situation 情境','Complication 冲突','Question 问题','Answer 答案'],exercise:'用 SCQA 讲一个你最近解决的工作问题。',hint:'冲突越强，答案越有吸引力。'},
+    {name:'PDCA 循环',emoji:'🔄',core:'计划-执行-检查-改进，持续迭代。',how:['Plan 计划','Do 执行','Check 检查','Act 改进'],exercise:'用一个具体工作流程跑一遍 PDCA。',hint:'没有 Check 的 Do 就是瞎忙。'},
+    {name:'SWOT 分析',emoji:'🧭',core:'优势-劣势-机会-威胁，看内外部。',how:['S 优势','W 劣势','O 机会','T 威胁'],exercise:'对你自己做一次 SWOT。',hint:'优势劣势是内部的，机会威胁是外部的。'}
   ],
   SCENES: {
     '工作沟通': [
       {q:'客户催交期："这批阀门能不能提前一周交货？"',guide:'先说结论，再给原因，最后给替代方案。不要直接说"不行"。'},
       {q:'你要向领导申请增加项目预算。',guide:'先说需要多少，再说用来做什么，然后说能带来什么，最后说不给会怎样。'},
       {q:'你要拒绝客户的不合理要求。',guide:'先谢，再拒，最后给替代方案。'},
-      {q:'同事把你的功劳说成他的。',guide:'不要直接对抗。用"我们团队一起做的，我具体负责的是……"的方式。'}
+      {q:'同事把你的功劳说成他的。',guide:'不要直接对抗。用"我们团队一起做的，我具体负责的是……"的方式。'},
+      {q:'客户投诉产品有质量问题，但你没查清原因。',guide:'先共情，再承诺，不要立即定责。'},
+      {q:'你要向客户推荐一款新产品。',guide:'先问需求，再对比，最后给方案。'},
+      {q:'给团队布置一个紧急任务。',guide:'说清目标 + 时间 + 权限边界。'},
+      {q:'向上级汇报一个失败的项目。',guide:'先给结论，再给原因，最后给改进。'}
     ],
     '社交场景': [
       {q:'刚认识一个人，想开启话题。',guide:'不要问"你是做什么的"。问"你最近在忙什么"。'},
       {q:'朋友很难过，你不知道怎么安慰。',guide:'先不说"别难过"。说"我在，你说，我听着"。'},
       {q:'你不同意别人的观点。',guide:'先承接，再补充，不否定对方整个人。'},
-      {q:'你想约一个很久没见的朋友出来。',guide:'给具体时间、具体地点，不要问"什么时候有空"。'}
+      {q:'你想约一个很久没见的朋友出来。',guide:'给具体时间、具体地点，不要问"什么时候有空"。'},
+      {q:'别人夸你，你不知道怎么接。',guide:'说"谢谢"+ 具体一点的回应。不要一味否认。'},
+      {q:'你无意中说错了话，对方沉默了。',guide:'直接道歉，别找借口。'}
     ]
   },
   EXPRESS_PASSAGES: [
@@ -268,31 +320,73 @@ const SEED = {
     {title:'谈读书',text:'读书足以怡情，足以傅彩，足以长才。其怡情也，最见于独处幽居之时；其傅彩也，最见于高谈阔论之中；其长才也，最见于处世判事之际。',tips:'三个短句要连贯，语速稍快。'},
     {title:'相信未来',text:'当蜘蛛网无情地查封了我的炉台，当灰烬的余烟叹息着贫困的悲哀，我依然固执地铺平失望的灰烬，用美丽的雪花写下：相信未来。',tips:'力量在"依然固执"四个字。'},
     {title:'我与地坛',text:'它等待我出生，然后又等待我活到最狂妄的年龄上忽地残废了双腿。十五年前的一个下午，我摇着轮椅进入园中，它为一个失魂落魄的人把一切都准备好了。',tips:'史铁生的文字很平静，但底下有很深的情绪。'},
-    {title:'活着的意义',text:'人是为活着本身而活着，而不是为了活着之外的任何事物而活着。',tips:'余华的句子不长，但每句都很重。'}
+    {title:'活着的意义',text:'人是为活着本身而活着，而不是为了活着之外的任何事物而活着。',tips:'余华的句子不长，但每句都很重。'},
+    {title:'乡村四月',text:'绿遍山原白满川，子规声里雨如烟。乡村四月闲人少，才了蚕桑又插田。',tips:'最后一句节奏要快一点，体现农忙。'},
+    {title:'少年中国说（节选）',text:'故今日之责任，不在他人，而全在我少年。少年智则国智，少年富则国富，少年强则国强。',tips:'层层递进，气要提起来。'},
+    {title:'论语·学而',text:'学而时习之，不亦说乎？有朋自远方来，不亦乐乎？人不知而不愠，不亦君子乎？',tips:'三个反问句，语气要自然，不要用力过猛。'},
+    {title:'岳阳楼记（节选）',text:'不以物喜，不以己悲。居庙堂之高则忧其民，处江湖之远则忧其君。是进亦忧，退亦忧。然则何时而乐耶？',tips:'"不以物喜，不以己悲"是核心，要读得慢一点。'},
+    {title:'热爱生命',text:'我不去想是否能够成功，既然选择了远方，便只顾风雨兼程。我不去想能否赢得爱情，既然钟情于玫瑰，就勇敢地吐露真诚。',tips:'汪国真的诗，节奏感很强，注意断句。'},
+    {title:'面朝大海，春暖花开',text:'从明天起，做一个幸福的人。喂马，劈柴，周游世界。从明天起，关心粮食和蔬菜。我有一所房子，面朝大海，春暖花开。',tips:'每一句都是一个小画面，要有呼吸感。'},
+    {title:'再别康桥（节选）',text:'轻轻的我走了，正如我轻轻的来；我轻轻的招手，作别西天的云彩。那河畔的金柳，是夕阳中的新娘；波光里的艳影，在我的心头荡漾。',tips:'音乐感很强，注意押韵和节奏。'},
+    {title:'背影（节选）',text:'我看见他戴着黑布小帽，穿着黑布大马褂，深青布棉袍，蹒跚地走到铁道边，慢慢探身下去，尚不大难。可是他穿过铁道，要爬上那边月台，就不容易了。',tips:'朱自清的文字很朴素，但很动情，不要读得太快。'},
+    {title:'荷塘月色（节选）',text:'曲曲折折的荷塘上面，弥望的是田田的叶子。叶子出水很高，像亭亭的舞女的裙。层层的叶子中间，零星地点缀着些白花，有袅娜地开着的，有羞涩地打着朵儿的。',tips:'叠词很多，要读出轻柔的感觉。'},
+    {title:'故都的秋（节选）',text:'秋天，无论在什么地方的秋天，总是好的；可是啊，北国的秋，却特别地来得清，来得静，来得悲凉。',tips:'郁达夫的句子很慢，要读得慢、沉。'},
+    {title:'雅舍（节选）',text:'雅舍最宜月夜——地势较高，得月较先。看山头吐月，红盘乍涌，一霎间，清光四射，天空皎洁，四野无声。',tips:'梁实秋的文字很从容，节奏要稳。'},
+    {title:'生活是很好玩的',text:'如果你来访我，我不在，请和我门外的花坐一会儿。它们很温暖，我注视它们很多很多日子了。',tips:'汪曾祺的句子很短，但很有味道。'},
+    {title:'人生',text:'人生的道路虽然漫长，但紧要处常常只有几步，特别是当人年轻的时候。',tips:'柳青的这句话很重，要读得稳。'},
+    {title:'目送（节选）',text:'我慢慢地、慢慢地了解到，所谓父女母子一场，只不过意味着，你和他的缘分就是今生今世不断地在目送他的背影渐行渐远。',tips:'龙应台的文字感情很含蓄，注意"慢慢地"三个字。'},
+    {title:'我与地坛（二）',text:'一个人，出生了，这就不再是一个可以辩论的问题，而只是上帝交给他的一个事实；上帝在交给我们这件事实的时候，已经顺便保证了它的结果，所以死是一件不必急于求成的事，死是一个必然会会降临的节日。',tips:'史铁生对死亡的态度，是平静的，不是悲壮的。'}
   ],
   NEWS: [
     {cat:'AI 行业',t:'某头部公司发布新一代办公 AI 模型',why:'办公场景的 AI 能力直接影响日常文档、会议纪要、邮件处理的效率。',d:'新模型在长文本理解和多语言翻译上有明显提升。'},
     {cat:'阀门行业',t:'工业阀门国产替代加速，高端球阀订单饱满',why:'石化、LNG 项目集中交付，国产化率提升直接影响采购成本和交期。',d:'多家阀门企业排产已至下季度。'},
     {cat:'石油化工',t:'炼化一体化项目集中开工，带动高温高压阀门需求',why:'高温高压阀门的技术门槛高，是行业利润最集中的细分市场之一。',d:'项目对闸阀、截止阀、调节阀的需求同步上升。'},
     {cat:'标准更新',t:'新版阀门密封性能测试标准进入征求意见阶段',why:'标准变化会直接影响产品设计、试验方法和出口合规。',d:'新标准细化了低温、高压工况下的泄漏等级判定方法。'},
-    {cat:'技术动态',t:'智能阀门渗透率提升，带定位器的调节阀需求上升',why:'数字化工厂对阀门状态监测和远程诊断的要求越来越高。',d:'智能阀门可实现远程诊断、预测性维护。'}
+    {cat:'技术动态',t:'智能阀门渗透率提升，带定位器的调节阀需求上升',why:'数字化工厂对阀门状态监测和远程诊断的要求越来越高。',d:'智能阀门可实现远程诊断、预测性维护。'},
+    {cat:'国际市场',t:'欧洲工业阀门涨价，国内厂商迎替代窗口',why:'价格上涨会影响海外客户的采购决策，国产替代机会增加。',d:'能源成本上涨是主因。'},
+    {cat:'新材料',t:'超级双相钢在深海项目中的应用扩大',why:'深海油气项目对耐腐蚀材料的需求快速增长。',d:'2507 材质订单同比上升。'},
+    {cat:'新能源',t:'氢能项目带动超低温阀门需求',why:'液氢储运对阀门的低温性能和密封性要求极高。',d:'-253℃ 工况是主要挑战。'},
+    {cat:'数字化转型',t:'阀门企业开始部署 MES 系统',why:'生产数字化的核心是从"人管"变成"系统管"。',d:'MES 可实时追踪每台阀门的工序状态。'},
+    {cat:'行业标准',t:'ASME 更新 B16.34 阀门标准',why:'标准更新会影响出口产品的设计和认证。',d:'新增了部分材料的高温许用应力数据。'},
+    {cat:'地缘政治',t:'中东项目集中招标，中国供应商份额上升',why:'中东是全球油气投资最活跃的地区之一。',d:'大型 EPC 项目对长交期阀门需求大。'},
+    {cat:'企业管理',t:'制造业员工流失率上升，如何留住技术工人',why:'技术工人断层是阀门行业普遍面临的问题。',d:'薪酬+发展路径是关键。'}
   ],
   RECOMMEND: {
     '书': [
       {name:'人类简史',author:'尤瓦尔·赫拉利',emoji:'📖',why:'从认知革命到人工智能，用 500 页讲完人类 7 万年的故事。',scene:'想读点宏大的东西',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
-      {name:'被讨厌的勇气',author:'岸见一郎',emoji:'📖',why:'阿德勒心理学的入门书。',scene:'对人际关系感到累时',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`}
+      {name:'被讨厌的勇气',author:'岸见一郎',emoji:'📖',why:'阿德勒心理学的入门书。',scene:'对人际关系感到累时',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'思考，快与慢',author:'丹尼尔·卡尼曼',emoji:'📖',why:'系统 1 和系统 2：你以为是理性，其实大部分是直觉。',scene:'想了解自己的思维盲区',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'穷查理宝典',author:'查理·芒格',emoji:'📖',why:'多元思维模型：投资大师的思考方法。',scene:'想建立自己的思维框架',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'影响力',author:'罗伯特·西奥迪尼',emoji:'📖',why:'6 大心理学武器：互惠、承诺、社会认同……',scene:'销售、谈判、日常说服',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'深度工作',author:'卡尔·纽波特',emoji:'📖',why:'在分心的时代如何保持专注。',scene:'总被打断、效率低时',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'原则',author:'瑞·达利欧',emoji:'📖',why:'把人生和商业决策变成一套系统。',scene:'想系统化自己的决策',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`},
+      {name:'非暴力沟通',author:'马歇尔·卢森堡',emoji:'📖',why:'怎么说话，别人才愿意听。',scene:'总跟人吵架、沟通不畅',scheme:'weread://',packageName:'com.tencent.weread',web:(q)=>`https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(q)}`}
     ],
     '电影': [
       {name:'肖申克的救赎',author:'1994',emoji:'🎬',why:'关于希望的电影。',scene:'周末一个安静的下午',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
-      {name:'千与千寻',author:'2001',emoji:'🎬',why:'讲的是一个人在陌生环境里怎么活下去。',scene:'任何时候都值得重看',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`}
+      {name:'千与千寻',author:'2001',emoji:'🎬',why:'讲的是一个人在陌生环境里怎么活下去。',scene:'任何时候都值得重看',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'星际穿越',author:'2014',emoji:'🎬',why:'关于时间、空间和父女情的科幻史诗。',scene:'想被震撼一次',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'当幸福来敲门',author:'2006',emoji:'🎬',why:'真实故事改编，最低谷时看会有力量。',scene:'觉得撑不住的时候',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'海上钢琴师',author:'1998',emoji:'🎬',why:'一个人与一艘船的一生。',scene:'想思考"选择"的时候',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'隐入尘烟',author:'2022',emoji:'🎬',why:'两个被遗忘的人，一段沉默的爱情。',scene:'想看点真实的、慢的东西',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'楚门的世界',author:'1998',emoji:'🎬',why:'你的人生，是不是也被人安排好了？',scene:'想思考真实与虚假',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'寻梦环游记',author:'2017',emoji:'🎬',why:'关于家人、梦想和记忆。',scene:'想被治愈一次',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`}
     ],
     '播客': [
       {name:'忽左忽右',author:'程衍樑',emoji:'🎧',why:'聊国际政治、历史、文化。',scene:'通勤 / 做家务',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
-      {name:'日谈公园',author:'李叔 / 小伙子',emoji:'🎧',why:'两个中年男人聊天。',scene:'放松 / 睡前',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`}
+      {name:'日谈公园',author:'李叔 / 小伙子',emoji:'🎧',why:'两个中年男人聊天。',scene:'放松 / 睡前',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
+      {name:'文化有限',author:'大壹 / 星光',emoji:'🎧',why:'每周聊一本书。',scene:'想找书读的时候',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
+      {name:'声东击西',author:'徐涛',emoji:'🎧',why:'科技与人文的交叉话题。',scene:'想了解科技动态',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
+      {name:'井户端会议',author:'梵一如',emoji:'🎧',why:'聊中日文化、社会话题。',scene:'对东亚文化感兴趣时',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
+      {name:'无聊斋',author:'教主',emoji:'🎧',why:'单口喜剧演员的闲聊。',scene:'想笑一笑',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`}
     ],
     '工具': [
       {name:'Obsidian',author:'笔记工具',emoji:'📝',why:'把笔记存成 Markdown 文件。',scene:'想认真建个人知识库',scheme:null,packageName:'',web:()=>`https://obsidian.md/`},
-      {name:'Anki',author:'记忆工具',emoji:'🧠',why:'间隔重复记忆神器。',scene:'准备考证',scheme:null,packageName:'',web:()=>`https://apps.ankiweb.net/`}
+      {name:'Anki',author:'记忆工具',emoji:'🧠',why:'间隔重复记忆神器。',scene:'准备考证',scheme:null,packageName:'',web:()=>`https://apps.ankiweb.net/`},
+      {name:'flomo',author:'卡片笔记',emoji:'💡',why:'像发消息一样记想法。',scene:'随时记录灵感',scheme:null,packageName:'',web:()=>`https://flomoapp.com/`},
+      {name:'Notion',author:'全能笔记',emoji:'📚',why:'文档、数据库、看板。',scene:'团队协作 / 个人管理',scheme:null,packageName:'',web:()=>`https://www.notion.so/`},
+      {name:'Readwise',author:'阅读高亮',emoji:'🔖',why:'把 Kindle、网页高亮集中复习。',scene:'读了很多但记不住',scheme:null,packageName:'',web:()=>`https://readwise.io/`},
+      {name:'Excalidraw',author:'手绘风白板',emoji:'✏️',why:'画流程图、架构图，很好看。',scene:'要画图和示意图',scheme:null,packageName:'',web:()=>`https://excalidraw.com/`}
     ]
   }
 };
@@ -313,7 +407,9 @@ function loadDataFromGlobals(){
       '基础知识': [
         {q:'闸阀为什么不适合调节流量？',a:'闸板在开启过程中，流体阻力变化大。',key:'闸阀设计用于全开/全关。长期半开会造成闸板振动、密封面冲蚀。'},
         {q:'截止阀和闸阀的核心区别？',a:'截止阀的阀瓣沿阀座中心线升降；闸阀的闸板垂直于流道升降。',key:'截止阀：流阻大，但密封好、可调节。闸阀：流阻小，但只能全开全关。'},
-        {q:'什么是公称压力（PN）？',a:'阀门在基准温度下的最大允许工作压力。',key:'PN16 = 1.6 MPa。'}
+        {q:'什么是公称压力（PN）？',a:'阀门在基准温度下的最大允许工作压力。',key:'PN16 = 1.6 MPa。'},
+        {q:'什么是公称通径（DN）？',a:'阀门进出口的名义直径。',key:'DN 是一个圆整数，不是精确值。'},
+        {q:'阀门密封面材料有哪些？',a:'常见有 PTFE、PPL、STL（钴基硬质合金）、石墨。',key:'按介质、温度、压力选用。'}
       ]
     };
     SEED.VALVE_ALL = Object.keys(SEED.VALVE).flatMap(cat => SEED.VALVE[cat].map(v => ({ ...v, cat })));
@@ -350,23 +446,19 @@ const DeckLoader = {
   loaded: {},
   loading: {},
   allLoading: null,
-
   load(deckId){
     if (this.loaded[deckId]) return Promise.resolve(this.loaded[deckId]);
     if (this.loading[deckId]) return this.loading[deckId];
-
     if (window.__WORD_DECK_DATA && window.__WORD_DECK_DATA[deckId]){
       const words = window.__WORD_DECK_DATA[deckId].map(w => ({ ...w, deck: deckId }));
       this.loaded[deckId] = words;
       return Promise.resolve(words);
     }
-
     const meta = SEED.DECKS.find(d => d.id === deckId);
     if (!meta || !meta.file){
       this.loaded[deckId] = [];
       return Promise.resolve([]);
     }
-
     this.loading[deckId] = new Promise((resolve) => {
       const s = document.createElement('script');
       s.src = meta.file;
@@ -385,19 +477,16 @@ const DeckLoader = {
     });
     return this.loading[deckId];
   },
-
   loadAll(){
     if (this.allLoaded()) return Promise.resolve();
     if (this.allLoading) return this.allLoading;
     this.allLoading = Promise.all(SEED.DECKS.map(d => this.load(d.id).catch(() => [])));
     return this.allLoading;
   },
-
   allLoaded(){
     if (!SEED.DECKS.length) return true;
     return SEED.DECKS.every(d => this.loaded[d.id] !== undefined);
   },
-
   get(deckId){
     if (deckId === 'all'){
       const all = [];
@@ -409,7 +498,6 @@ const DeckLoader = {
     }
     return this.loaded[deckId] || [];
   },
-
   findWord(wordStr){
     const map = LS.get('word-deck-map', {});
     const deckId = map[wordStr];
@@ -423,7 +511,6 @@ const DeckLoader = {
     }
     return null;
   },
-
   async ensureForReview(){
     const map = LS.get('word-deck-map', {});
     const ids = new Set(Object.values(map));
@@ -461,12 +548,35 @@ const Store = {
   },
   getKnowDone(){ const v = LS.get('know-done:' + DAY, []); return Array.isArray(v) ? v : []; },
   setKnowDone(arr){ LS.set('know-done:' + DAY, arr); },
+  getAllKnowDoneEver(){
+    const s = new Set();
+    try{
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('know-done:')){
+          const arr = LS.get(k, []);
+          if (Array.isArray(arr)) arr.forEach(w => s.add(w));
+        }
+      });
+    }catch(e){}
+    return [...s];
+  },
   markTodayDone(key){ if (key === 'passage') LS.set('passage-done:' + DAY, true); },
+  getEnPassageDone(){ return LS.get('en-passage-done:' + DAY, false); },
+  markEnPassageDone(){ LS.set('en-passage-done:' + DAY, true); },
 
   getThinkAns(name){ return LS.get('think-ans:' + name, ''); },
   setThinkAns(name, text){
     if (text && text.trim()) LS.set('think-ans:' + name, text);
     else LS.del('think-ans:' + name);
+  },
+  getThinkDoneDays(name){
+    const v = LS.get('think-done-days:' + name, []);
+    return Array.isArray(v) ? v : [];
+  },
+  markThinkDone(name){
+    const v = this.getThinkDoneDays(name);
+    const today = todayStr();
+    if (!v.includes(today)){ v.push(today); LS.set('think-done-days:' + name, v); }
   },
 
   getNote(q){ const v = LS.get('note:' + q, ''); return typeof v === 'string' ? v : ''; },
@@ -502,9 +612,27 @@ const Store = {
     const s = this.getSchedule(type);
     if (!s[key]) { s[key] = { stage:0, nextDay: DAY, wrongCount:0, rightCount:0 }; this.setSchedule(type, s); }
   },
+  getAllScheduledKeys(type){
+    return Object.keys(this.getSchedule(type));
+  },
   getDueKeys(type){
     const s = this.getSchedule(type);
     return Object.keys(s).filter(k => (s[k].nextDay || 0) <= DAY);
+  },
+  getReviewList(type, limit){
+    limit = limit || REVIEW_TARGET;
+    const s = this.getSchedule(type);
+    const all = Object.keys(s);
+    if (!all.length) return [];
+    const due = all.filter(k => (s[k].nextDay || 0) <= DAY);
+    const notDue = all.filter(k => (s[k].nextDay || 0) > DAY);
+    const result = [...due];
+    if (result.length < limit && notDue.length){
+      const need = limit - result.length;
+      const picked = shuffle(notDue).slice(0, need);
+      result.push(...picked);
+    }
+    return result.slice(0, limit);
   },
   rateItem(type, key, rating){
     const s = this.getSchedule(type);
@@ -542,13 +670,22 @@ const Store = {
     const learned = this.getLearned();
     const knowDone = this.getKnowDone();
     const passageDone = LS.get('passage-done:' + DAY, false);
+    const enPassageDone = LS.get('en-passage-done:' + DAY, false);
     let exprDone = false;
     try { Object.keys(localStorage).forEach(k => { if (k.startsWith('expr-grade:' + todayStr())) exprDone = true; }); } catch(e){}
     const newsThink = LS.get('news-think-' + todayStr() + '-0', '');
-    const thinkDone = SEED.THINKING.filter(m => (LS.get('think-ans:' + m.name, '') || '').trim().length > 0).length;
+    const thinkDone = SEED.THINKING.filter(m => this.getThinkDoneDays(m.name).includes(todayStr())).length;
+    const generalDone = LS.get('general-done:' + DAY, false);
+    const quoteDone = LS.get('quote-done:' + DAY, false);
+    const storyDone = LS.get('story-done:' + DAY, false);
+    const yiyanDone = LS.get('yiyan-done:' + DAY, false);
     return [
       { key:'words', label:'学英语单词', current: learned.length, total: DAILY_WORD_COUNT, done: learned.length >= DAILY_WORD_COUNT },
-      { key:'valve', label:'学阀门知识', current: knowDone.length, total: 5, done: knowDone.length >= 5 },
+      { key:'valve', label:'学阀门知识', current: knowDone.length, total: DAILY_VALVE_COUNT, done: knowDone.length >= DAILY_VALVE_COUNT },
+      { key:'general', label:'每日知识', current: generalDone ? 1 : 0, total: 1, done: !!generalDone },
+      { key:'yiyan', label:'中文金句', current: yiyanDone ? 1 : 0, total: 1, done: !!yiyanDone },
+      { key:'quote', label:'英文名言', current: quoteDone ? 1 : 0, total: 1, done: !!quoteDone },
+      { key:'story', label:'英文短文', current: storyDone ? 1 : 0, total: 1, done: !!storyDone },
       { key:'passage', label:'朗读短文', current: passageDone ? 1 : 0, total: 1, done: !!passageDone },
       { key:'logic', label:'逻辑思考练习', current: thinkDone, total: 1, done: thinkDone >= 1 },
       { key:'expr', label:'写表达练习', current: exprDone ? 1 : 0, total: 1, done: exprDone },
@@ -619,7 +756,7 @@ const Store = {
     const notes = {};
     SEED.VALVE_ALL.forEach(v => { const n = LS.get('note:' + v.q, ''); if (n) notes[v.q] = n; });
     const data = {
-      app:'daily', version:22, exportedAt:new Date().toISOString(),
+      app:'daily', version:26, exportedAt:new Date().toISOString(),
       learned:this.getLearned(), thinkAnswers, notes,
       wordDeckMap: LS.get('word-deck-map', {}),
       schedule:{ english:this.getSchedule('english'), work:this.getSchedule('work') },
@@ -632,6 +769,7 @@ const Store = {
         if (k.startsWith('expr-ans:')) data[k] = LS.get(k,'');
         if (k.startsWith('expr-grade:')) data[k] = LS.get(k,null);
         if (k.startsWith('news-think-')) data[k] = LS.get(k,'');
+        if (k.startsWith('think-done-days:')) data[k] = LS.get(k,[]);
       });
     } catch(e){}
     return data;
@@ -653,7 +791,7 @@ const Store = {
     if (d.aiHistory) LS.set('ai-history', d.aiHistory);
     if (d.studyPlan) LS.set('study-plan', d.studyPlan);
     if (d.workRecords) LS.set('work-records', d.workRecords);
-    Object.keys(d).forEach(k => { if (k.startsWith('expr-') || k.startsWith('news-think-')) LS.set(k, d[k]); });
+    Object.keys(d).forEach(k => { if (k.startsWith('expr-') || k.startsWith('news-think-') || k.startsWith('think-done-days:')) LS.set(k, d[k]); });
   },
   clearAll(){
     try{
@@ -662,6 +800,9 @@ const Store = {
             k.startsWith('note:') || k.startsWith('schedule:') || k.startsWith('expr-') ||
             k.startsWith('know-done:') || k.startsWith('passage-done:') ||
             k.startsWith('news-think-') || k.startsWith('english-deck') ||
+            k.startsWith('think-done-days:') || k.startsWith('general-done:') ||
+            k.startsWith('en-passage-done:') || k.startsWith('quote-done:') ||
+            k.startsWith('story-done:') || k.startsWith('yiyan-done:') ||
             ['wrong-book','growth','growth-log','streak','ai-history','study-plan','work-records','word-deck-map'].includes(k)) {
           localStorage.removeItem(k);
         }
@@ -677,10 +818,13 @@ const Store = {
       learnedCount: this.getLearned().length,
       learnedEver: this.getAllLearnedEver().length,
       knowDoneCount: this.getKnowDone().length,
+      knowDoneEver: this.getAllKnowDoneEver().length,
       thinkCount, noteCount, exprCount,
       wrongCount: this.getWrongBook().length,
       dueEnglish: this.getDueKeys('english').length,
       dueWork: this.getDueKeys('work').length,
+      scheduledEnglish: this.getAllScheduledKeys('english').length,
+      scheduledWork: this.getAllScheduledKeys('work').length,
       totalValve: SEED.VALVE_ALL.length,
       totalWords: SEED.DECKS.reduce((s,d) => s + (d.count || 0), 0),
       totalDecks: SEED.DECKS.length,
@@ -818,6 +962,200 @@ const AI = {
 };
 
 /* ============================================================
+   多知识源 API 封装
+   ============================================================ */
+const KnowledgeSource = {
+  get current(){ return LS.get('knowledge-source', 'auto'); },
+  set current(v){ LS.set('knowledge-source', v); },
+  get showapiAppId(){ return LS.get('showapi-appid', ''); },
+  get showapiSign(){ return LS.get('showapi-sign', ''); },
+  set showapi(cfg){ LS.set('showapi-appid', cfg.appid||''); LS.set('showapi-sign', cfg.sign||''); },
+  get oiowebId(){ return LS.get('oioweb-id', ''); },
+  get oiowebKey(){ return LS.get('oioweb-key', ''); },
+  set oioweb(cfg){ LS.set('oioweb-id', cfg.id||''); LS.set('oioweb-key', cfg.key||''); },
+
+  canShowApi(){ return !!(this.showapiAppId && this.showapiSign); },
+  canOioweb(){ return !!(this.oiowebId && this.oiowebKey); },
+
+  pickAuto(){
+    if (this.canShowApi()) return 'showapi';
+    if (this.canOioweb()) return 'oioweb';
+    return 'wiki';
+  },
+
+  async fetch(){
+    const src = this.current === 'auto' ? this.pickAuto() : this.current;
+    if (src === 'showapi' && this.canShowApi()) return await this.fetchShowAPI();
+    if (src === 'oioweb' && this.canOioweb()) return await this.fetchOioweb();
+    return await this.fetchWiki();
+  },
+
+  async fetchWiki(){
+    const url = 'https://zh.wikipedia.org/api/rest_v1/page/random/summary';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Wikipedia HTTP ' + r.status);
+    const d = await r.json();
+    if (!d.extract || d.extract.length < 40) throw new Error('Wikipedia 内容太短');
+    return { source:'wiki', q: d.title, a: d.extract, key: '来源：维基百科 · ' + (d.description || '') };
+  },
+
+  async fetchShowAPI(){
+    const listUrl = `https://route.showapi.com/1706-1?showapi_appid=${encodeURIComponent(this.showapiAppId)}&showapi_sign=${encodeURIComponent(this.showapiSign)}&keyword=${encodeURIComponent(['地球','月亮','太阳','水','空气','火','动物','植物','人体','宇宙'][Math.floor(Math.random()*10)])}`;
+    const r = await fetch(listUrl);
+    if (!r.ok) throw new Error('ShowAPI 列表 HTTP ' + r.status);
+    const d = await r.json();
+    const body = d.showapi_res_body || {};
+    if (body.ret_code !== '0' && body.ret_code !== 0) throw new Error('ShowAPI 列表错误：' + (body.remark || ''));
+    const list = body.contentlist || [];
+    if (!list.length) throw new Error('ShowAPI 无数据');
+    const item = list[Math.floor(Math.random() * list.length)];
+    // 拿详情
+    const detailUrl = `https://route.showapi.com/1706-2?showapi_appid=${encodeURIComponent(this.showapiAppId)}&showapi_sign=${encodeURIComponent(this.showapiSign)}&id=${encodeURIComponent(item.id)}`;
+    const r2 = await fetch(detailUrl);
+    if (!r2.ok) throw new Error('ShowAPI 详情 HTTP ' + r2.status);
+    const d2 = await r2.json();
+    const body2 = d2.showapi_res_body || {};
+    if (body2.ret_code !== '0' && body2.ret_code !== 0) throw new Error('ShowAPI 详情错误：' + (body2.remark || ''));
+    return { source:'showapi', q: body2.title || item.title, a: body2.content || '', key: '来源：ShowAPI 十万个为什么' };
+  },
+
+  async fetchOioweb(){
+    const url = `https://cn.apihz.cn/api/zici/changshi.php?id=${encodeURIComponent(this.oiowebId)}&key=${encodeURIComponent(this.oiowebKey)}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('接口盒子 HTTP ' + r.status);
+    const d = await r.json();
+    if (d.code !== 200) throw new Error('接口盒子错误：' + (d.msg || '未知'));
+    return { source:'oioweb', q: d.p, a: d.a, key: '来源：接口盒子 社会常识题' };
+  },
+
+  async fetchWithRetry(maxRetry){
+    maxRetry = maxRetry || 3;
+    let lastErr = null;
+    for (let i = 0; i < maxRetry; i++){
+      try { return await this.fetch(); }
+      catch(e){
+        lastErr = e;
+        console.warn('知识获取失败，第 ' + (i+1) + ' 次：', e);
+        if (i < maxRetry - 1) await new Promise(res => setTimeout(res, 700));
+      }
+    }
+    throw lastErr;
+  }
+};
+
+/* ============================================================
+   Quote Garden（英文名言）
+   ============================================================ */
+const QuoteGarden = {
+  async fetch(){
+    const url = 'https://quote-garden.onrender.com/api/v3/quotes/random';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Quote Garden HTTP ' + r.status);
+    const d = await r.json();
+    const list = d.data || [];
+    if (!list.length) throw new Error('Quote Garden 无数据');
+    const q = list[0];
+    return { text: q.quoteText, author: q.quoteAuthor, genre: q.quoteGenre };
+  },
+  async fetchWithRetry(n){
+    n = n || 2;
+    for (let i = 0; i < n; i++){
+      try { return await this.fetch(); }
+      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
+    }
+  }
+};
+
+/* ============================================================
+   Tatoeba（英文例句）
+   ============================================================ */
+const Tatoeba = {
+  async fetch(){
+    const url = 'https://api.tatoeba.org/v1/sentences?lang=eng&word_count=5-15&limit=1&sort=random';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Tatoeba HTTP ' + r.status);
+    const d = await r.json();
+    const list = d.data || d.results || [];
+    if (!list.length) throw new Error('Tatoeba 无数据');
+    const s = list[0];
+    return { text: s.text || s.sentence, lang: 'eng' };
+  },
+  async fetchWithRetry(n){
+    n = n || 2;
+    for (let i = 0; i < n; i++){
+      try { return await this.fetch(); }
+      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
+    }
+  }
+};
+
+/* ============================================================
+   Gutendex（英文短文）
+   ============================================================ */
+const Gutendex = {
+  async fetch(){
+    // 随机选一个热门英文书
+    const url = 'https://gutendex.com/books?languages=en&sort=popular&page=1';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Gutendex HTTP ' + r.status);
+    const d = await r.json();
+    const list = d.results || [];
+    if (!list.length) throw new Error('Gutendex 无数据');
+    const book = list[Math.floor(Math.random() * Math.min(list.length, 10))];
+    // 取纯文本链接
+    const formats = book.formats || {};
+    const txtUrl = formats['text/plain; charset=utf-8'] || formats['text/plain; charset=us-ascii'] || formats['text/plain'];
+    if (!txtUrl) throw new Error('Gutendex 无纯文本链接');
+    // 取前 500 字符
+    const r2 = await fetch(txtUrl);
+    if (!r2.ok) throw new Error('Gutendex 文本 HTTP ' + r2.status);
+    const fullText = await r2.text();
+    // 找正文开始位置（跳过 Gutenberg 头部）
+    let start = fullText.indexOf('*** START OF');
+    if (start < 0) start = fullText.indexOf('***START OF');
+    if (start > 0) start = fullText.indexOf('\n', start) + 1;
+    else start = 0;
+    const preview = fullText.slice(start, start + 600).trim();
+    return {
+      title: book.title,
+      author: (book.authors || []).map(a => a.name).join(', '),
+      preview: preview.slice(0, 500),
+      url: txtUrl
+    };
+  },
+  async fetchWithRetry(n){
+    n = n || 2;
+    for (let i = 0; i < n; i++){
+      try { return await this.fetch(); }
+      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
+    }
+  }
+};
+
+/* ============================================================
+   770a.cn 随机一言（中文短句）
+   ============================================================ */
+const Yiyan = {
+  async fetch(){
+    const url = 'https://www.770a.cn/yiyan/';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('一言 HTTP ' + r.status);
+    const d = await r.json();
+    const text = d.hitokoto || d.text || d.content || '';
+    const from = d.from || d.author || '';
+    if (!text) throw new Error('一言无数据');
+    return { text, from };
+  },
+  async fetchWithRetry(n){
+    n = n || 2;
+    for (let i = 0; i < n; i++){
+      try { return await this.fetch(); }
+      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
+    }
+  }
+};
+
+/* ============================================================
    语音
    ============================================================ */
 let _ttsAudio = null;
@@ -923,6 +1261,7 @@ const state = {
   englishSub:'today',
   englishDeck: LS.get('english-deck', '') || (SEED.DECKS[0] && SEED.DECKS[0].id) || '',
   englishPage: 1,
+  valvePage: 1,
   workSub:'office',
   discoverSub:'news',
   recommendCat:'书',
@@ -938,7 +1277,23 @@ const state = {
   passageHidden:false,
   currentWords:[],
   aiRole: LS.get('ai-role', 'engineer'),
-  currentSearch: []
+  currentSearch: [],
+  // 各源缓存
+  generalKnowledge: null,
+  generalLoading: false,
+  generalError: null,
+  quoteData: null,
+  quoteLoading: false,
+  quoteError: null,
+  tatoebaData: null,
+  tatoebaLoading: false,
+  tatoebaError: null,
+  storyData: null,
+  storyLoading: false,
+  storyError: null,
+  yiyanData: null,
+  yiyanLoading: false,
+  yiyanError: null
 };
 
 const view = document.getElementById('view');
@@ -964,7 +1319,7 @@ async function studyView(){
     { id:'today', label:'今日' },
     { id:'english', label:'英语' },
     { id:'valve', label:'专业' },
-    { id:'general', label:'通识' },
+    { id:'general', label:'每日知识' },
     { id:'logic', label:'逻辑' },
     { id:'express', label:'表达' },
     { id:'weekly', label:'周测' }
@@ -973,9 +1328,9 @@ async function studyView(){
   if (sub === 'today') content = todaySection();
   else if (sub === 'english') content = await englishSection();
   else if (sub === 'valve') content = valveSection();
-  else if (sub === 'general') content = generalSection();
+  else if (sub === 'general') content = await generalSection();
   else if (sub === 'logic') content = logicSection();
-  else if (sub === 'express') content = expressSection();
+  else if (sub === 'express') content = await expressSection();
   else if (sub === 'weekly') content = weeklyTestSection();
   return `
   <div class="hero"><div class="hero-k">学习 · ${todayStr()}</div><h1>每天进步一点</h1></div>
@@ -989,6 +1344,10 @@ function todaySection(){
   const streak = Store.getStreak();
   const plan = Store.getStudyPlan();
   const totalWords = SEED.DECKS.reduce((s,d) => s + (d.count || 0), 0);
+  const dueEn = Store.getDueKeys('english').length;
+  const dueWk = Store.getDueKeys('work').length;
+  const schedEn = Store.getAllScheduledKeys('english').length;
+  const schedWk = Store.getAllScheduledKeys('work').length;
   return `
   <div class="task-card">
     <div class="task-head">
@@ -1004,6 +1363,21 @@ function todaySection(){
     `).join('')}
     ${done === tasks.length ? `<div style="margin-top:12px;padding:10px 12px;background:#ecfdf5;border-radius:10px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">🎉 今日任务全部完成</div>` : ''}
   </div>
+
+  ${(schedEn + schedWk > 0) ? `
+  <div class="review-entry">
+    <div class="r-title"><span>🔁 开始复习</span><span>共 ${schedEn + schedWk} 条已排程</span></div>
+    <div class="r-meta">
+      英语 <b>${dueEn}</b> 条到期 · 共 <b>${schedEn}</b> 条<br>
+      专业 <b>${dueWk}</b> 条到期 · 共 <b>${schedWk}</b> 条
+    </div>
+    <div style="display:flex;gap:8px;">
+      ${schedEn ? `<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="english">英语复习</button>` : ''}
+      ${schedWk ? `<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="work">专业复习</button>` : ''}
+    </div>
+    <div style="font-size:11.5px;color:#a16207;margin-top:10px;line-height:1.6;">💡 复习优先安排到期的，不够时从以前学过的词里穿插，让老词不断回来。</div>
+  </div>` : ''}
+
   ${plan.length ? `
     <div class="card" style="background:linear-gradient(135deg,#eef0ff,#f6f0ff);border:1px solid #e2e5ff;">
       <div style="font-size:13px;font-weight:750;color:var(--brand);margin-bottom:8px;">🔗 工作带来的学习计划</div>
@@ -1017,8 +1391,8 @@ function todaySection(){
   <div class="hobby-grid">
     <button class="hobby-card" data-act="studySub" data-sub="english"><span class="emoji">🔤</span><span class="h-name">英语</span><span class="h-cost">${totalWords} 词 · ${SEED.DECKS.length} 词库</span></button>
     <button class="hobby-card" data-act="studySub" data-sub="valve"><span class="emoji">⚙️</span><span class="h-name">专业知识</span><span class="h-cost">${SEED.VALVE_ALL.length} 条</span></button>
-    <button class="hobby-card" data-act="studySub" data-sub="logic"><span class="emoji">🧠</span><span class="h-name">逻辑思考</span><span class="h-cost">5 种思维模型</span></button>
-    <button class="hobby-card" data-act="studySub" data-sub="express"><span class="emoji">💬</span><span class="h-name">表达训练</span><span class="h-cost">每天一题</span></button>
+    <button class="hobby-card" data-act="studySub" data-sub="general"><span class="emoji">🌐</span><span class="h-name">每日知识</span><span class="h-cost">联网实时抓取</span></button>
+    <button class="hobby-card" data-act="studySub" data-sub="express"><span class="emoji">💬</span><span class="h-name">表达训练</span><span class="h-cost">中英双语</span></button>
   </div>`;
 }
 
@@ -1048,7 +1422,7 @@ function weeklyTestSection(){
 }
 
 /* ============================================================
-   英语（多词库 + 懒加载）
+   英语
    ============================================================ */
 function renderDeckLoading(msg){
   return `<div class="loading-card">
@@ -1094,19 +1468,20 @@ async function englishSection(){
     : deckWords.length;
   const learnedCount = deckWords.filter(w => learnedAll.has(w.w)).length;
   const pct = totalCount ? Math.round(learnedCount / totalCount * 100) : 0;
-  const due = Store.getDueKeys('english');
+  const schedEn = Store.getAllScheduledKeys('english').length;
+  const dueEn = Store.getDueKeys('english').length;
 
   const head = `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">ENGLISH DECK</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${SEED.DECKS.reduce((s,d)=>s+(d.count||0),0)} 词 · ${SEED.DECKS.length} 个词库</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">每天 ${DAILY_WORD_COUNT} 个新词。已学 ${Store.getAllLearnedEver().length} 词。</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已学 ${Store.getAllLearnedEver().length} 词 · 已排程 ${schedEn} 词 · 待复习 ${dueEn}</div>
   </div>
 
-  ${due.length ? `
-  <div class="card" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;">
-    <div style="font-size:13px;font-weight:750;color:#92400e;margin-bottom:8px;">🔁 今日复习（${due.length} 个）</div>
-    <div style="font-size:12.5px;color:#92400e;line-height:1.7;margin-bottom:12px;">间隔复习比学新词更重要。</div>
+  ${schedEn ? `
+  <div class="review-entry">
+    <div class="r-title"><span>🔁 英语复习</span><span>到期 ${dueEn} / 共 ${schedEn}</span></div>
+    <div class="r-meta">复习优先安排到期的，不够时从以前学过的词里随机穿插。</div>
     <button class="btn" style="background:#92400e;color:#fff;width:100%;" data-act="startReview" data-type="english">开始复习 →</button>
   </div>` : ''}
 
@@ -1137,7 +1512,7 @@ async function englishSection(){
   </div>
 
   <div class="subtabs" style="margin-bottom:12px;">
-    <button class="subtab ${sub==='today'?'on':''}" data-act="englishSub" data-sub="today">今日新词</button>
+    <button class="subtab ${sub==='today'?'on':''}" data-act="englishSub" data-sub="today">今日待学</button>
     <button class="subtab ${sub==='all'?'on':''}" data-act="englishSub" data-sub="all">全部</button>
     <button class="subtab ${sub==='learned'?'on':''}" data-act="englishSub" data-sub="learned">已学</button>
   </div>`;
@@ -1161,9 +1536,9 @@ function englishTodayBlock(deckWords, learnedToday, learnedAll){
     </div>`;
   }
   return `
-  <div class="sec-title">今日新词 <span class="muted">${newWords.length} 个 · 点卡片标记</span></div>
-  ${newWords.map((w,i) => wordCard(w, i, learnedToday.has(w.w), learnedToday.has(w.w))).join('')}
-  <div class="tip-card">💡 这里显示的是「当前词库中还没学过」的前 ${DAILY_WORD_COUNT} 个词，按词表顺序排。</div>`;
+  <div class="sec-title">今日待学 <span class="muted">${newWords.length} 个 · 学完自动划掉</span></div>
+  ${newWords.map((w,i) => wordCard(w, i, false, learnedToday.has(w.w))).join('')}
+  <div class="tip-card">💡 点卡片左侧圆圈 = 标记已掌握。标记后卡片会被划掉，进入复习队列。</div>`;
 }
 
 function englishAllBlock(deckWords, learnedAll, learnedToday){
@@ -1180,7 +1555,7 @@ function englishAllBlock(deckWords, learnedAll, learnedToday){
   <div class="sec-title">全部单词 <span class="muted">显示 ${visible.length}/${deckWords.length}</span></div>
   ${visible.map((w) => {
     const done = learnedAll.has(w.w);
-    return `<div class="word-mini" data-word="${esc(w.w)}" data-deck="${esc(w.deck||'')}" data-act="learnWord">
+    return `<div class="word-mini ${done?'done':''}" data-word="${esc(w.w)}" data-deck="${esc(w.deck||'')}" data-act="learnWord">
       <div class="wm-check ${done?'on':''}">${done?'✓':''}</div>
       <div class="wm-word">${esc(w.w)}</div>
       <div class="wm-cn">${esc(w.cn||'')}</div>
@@ -1188,13 +1563,13 @@ function englishAllBlock(deckWords, learnedAll, learnedToday){
     </div>`;
   }).join('')}
   ${hasMore ? `<button class="load-more" data-act="englishLoadMore">加载更多（还有 ${deckWords.length - pageSize} 个）</button>` : ''}
-  <div class="tip-card">💡 点单词左侧圆圈标记已学。点 🔊 听发音。全部学完后，复习队列会自动加入。</div>`;
+  <div class="tip-card">💡 点左侧圆圈标记已掌握。已掌握的词会有删除线。</div>`;
 }
 
 function englishLearnedBlock(deckWords, learnedAll){
   const list = deckWords.filter(w => learnedAll.has(w.w));
   if (!list.length){
-    return `<div class="tip-card">这个范围还没有学过任何单词。去「今日新词」或「全部」开始学习吧。</div>`;
+    return `<div class="tip-card">这个范围还没有学过任何单词。去「今日待学」或「全部」开始学习吧。</div>`;
   }
   const pageSize = state.englishPage * PAGE_SIZE;
   const visible = list.slice(0, pageSize);
@@ -1206,20 +1581,20 @@ function englishLearnedBlock(deckWords, learnedAll){
 }
 
 function wordCard(w, i, isDone, isDoneToday){
-  return `<div class="card" data-word="${esc(w.w)}" data-deck="${esc(w.deck||'')}" style="position:relative;${isDone?'opacity:.7':''}">
+  return `<div class="card ${isDone?'done':''}" data-word="${esc(w.w)}" data-deck="${esc(w.deck||'')}" style="position:relative;">
     <div style="display:flex;align-items:flex-start;gap:12px;cursor:pointer" data-act="learnWord">
       <div style="width:26px;height:26px;border-radius:50%;background:${isDone?'var(--brand)':'#f0f1f8'};color:${isDone?'#fff':'#8a90a6'};display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">${isDone?'✓':i+1}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
-          <span class="word-big">${esc(w.w)}</span>
+          <span class="word-big" style="${isDone?'text-decoration:line-through;color:#aab0c0;':''}">${esc(w.w)}</span>
           ${w.pos ? `<span style="font-size:11px;color:var(--brand);background:#eef0ff;padding:2px 7px;border-radius:6px;font-weight:700;">${esc(w.pos)}</span>` : ''}
-          ${isDoneToday ? '<span style="font-size:10.5px;color:#047857;background:#ecfdf5;padding:1px 6px;border-radius:5px;font-weight:650;">今日</span>' : ''}
+          ${isDoneToday && !isDone ? '<span style="font-size:10.5px;color:#047857;background:#ecfdf5;padding:1px 6px;border-radius:5px;font-weight:650;">今日</span>' : ''}
         </div>
-        <div class="word-ph">${esc(w.ph||'')}</div>
+        <div class="word-ph" style="${isDone?'text-decoration:line-through;':''}">${esc(w.ph||'')}</div>
       </div>
     </div>
-    <div style="font-size:14px;color:#333a4d;margin-top:10px;font-weight:600;line-height:1.55;">${esc(w.cn||'')}</div>
-    ${w.scene ? `<div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;">
+    <div style="font-size:14px;color:#333a4d;margin-top:10px;font-weight:600;line-height:1.55;${isDone?'text-decoration:line-through;color:#aab0c0;':''}">${esc(w.cn||'')}</div>
+    ${w.scene ? `<div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;${isDone?'text-decoration:line-through;':''}">
       <div style="display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:#2b3244;line-height:1.55;">
         <span style="flex:1">${esc(w.scene)}</span>
         <button style="border:0;background:#f3f4fa;width:26px;height:26px;border-radius:9px;font-size:12px;cursor:pointer;flex-shrink:0;" data-act="speak" data-text="${esc(w.scene)}" data-lang="en-US">🔊</button>
@@ -1231,12 +1606,16 @@ function wordCard(w, i, isDone, isDoneToday){
 }
 
 /* ============================================================
-   专业 / 通识 / 逻辑 / 表达
+   专业
    ============================================================ */
 function valveSection(){
   const q = state.searchQuery || '';
   const cat = state.valveCat || '全部';
+  const knowDoneEver = new Set(Store.getAllKnowDoneEver());
+  const knowDoneToday = new Set(Store.getKnowDone());
+
   let list = [];
+  let titleSuffix = '';
   if (q.trim()){
     list = SEED.VALVE_ALL.filter(v =>
       v.q.toLowerCase().includes(q.toLowerCase()) ||
@@ -1244,32 +1623,44 @@ function valveSection(){
       (v.key||'').toLowerCase().includes(q.toLowerCase()) ||
       v.cat.toLowerCase().includes(q.toLowerCase())
     );
+    titleSuffix = `搜索结果 (${list.length})`;
   } else if (cat === '全部'){
-    list = dailyPick(SEED.VALVE_ALL, 5, 91);
+    const unlearned = SEED.VALVE_ALL.filter(v => !knowDoneEver.has(v.q));
+    const pageSize = state.valvePage * PAGE_SIZE;
+    list = unlearned.slice(0, Math.max(DAILY_VALVE_COUNT, pageSize));
+    titleSuffix = `待掌握 · 显示 ${list.length}/${unlearned.length}`;
   } else {
     list = SEED.VALVE[cat] || [];
+    titleSuffix = cat + ' · ' + list.length + ' 条';
   }
-  const due = Store.getDueKeys('work');
+
+  const schedWk = Store.getAllScheduledKeys('work').length;
+  const dueWk = Store.getDueKeys('work').length;
   const wrongBook = Store.getWrongBook().filter(x => x.type === 'work');
   const cats = ['全部', ...Object.keys(SEED.VALVE)];
   const loaded = DATA_STATUS.valveOk;
+
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">VALVE KNOWLEDGE</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${SEED.VALVE_ALL.length} 条专业知识</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">${cats.length - 1} 大类 ${loaded ? '· 数据已加载' : '· 使用内置数据'}</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已掌握 ${Store.getAllKnowDoneEver().length} 条 · 待复习 ${dueWk}</div>
   </div>
   ${!loaded ? `<div class="tip-card" style="background:#fef3c7;border-color:#fde68a;color:#92400e;">⚠️ valve.js 未加载成功，当前使用内置的 ${SEED.VALVE_ALL.length} 条数据。</div>` : ''}
-  ${due.length ? `
-  <div class="card" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;">
-    <div style="font-size:13px;font-weight:750;color:#92400e;margin-bottom:8px;">🔁 巩固旧知识（${due.length} 条待复习）</div>
+
+  ${schedWk ? `
+  <div class="review-entry">
+    <div class="r-title"><span>🔁 专业复习</span><span>到期 ${dueWk} / 共 ${schedWk}</span></div>
+    <div class="r-meta">复习优先安排到期的，不够时从以前学过的知识里随机穿插。</div>
     <button class="btn" style="background:#92400e;color:#fff;width:100%;" data-act="startReview" data-type="work">开始复习 →</button>
   </div>` : ''}
+
   ${wrongBook.length ? `
   <div class="card" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fca5a5;">
     <div style="font-size:13px;font-weight:750;color:#b91c1c;margin-bottom:8px;">📕 错题本（${wrongBook.length} 条）</div>
     <button class="btn" style="background:#b91c1c;color:#fff;width:100%;" data-act="reviewWrong">复习错题 →</button>
   </div>` : ''}
+
   <div class="search-box">
     <span style="font-size:15px;opacity:.5;">🔍</span>
     <input type="search" class="search-input" id="valveSearch" placeholder="搜索：WCB / API 600 / 填料外漏…" value="${esc(q)}">
@@ -1278,24 +1669,24 @@ function valveSection(){
   <div class="chips" data-scroll-id="valveCat">
     ${cats.map(c => `<button class="chip ${c===cat&&!q.trim()?'on':''}" data-act="valveCat" data-cat="${esc(c)}">${esc(c)}${c!=='全部'?` · ${(SEED.VALVE[c]||[]).length}`:''}</button>`).join('')}
   </div>
-  <div class="sec-title">${q.trim() ? `搜索结果 (${list.length})` : (cat==='全部' ? '今天推荐' : cat + ' · ' + list.length + ' 条')} <span class="muted">点卡片展开</span></div>
-  ${list.length ? list.map((v,i) => knowCard(v, i)).join('') : '<div class="tip-card">没有找到。试试别的关键词。</div>'}`;
+  <div class="sec-title">${titleSuffix} <span class="muted">点卡片展开</span></div>
+  ${list.length ? list.map((v,i) => knowCard(v, i, knowDoneEver.has(v.q), knowDoneToday.has(v.q))).join('') : '<div class="tip-card">没有找到。试试别的关键词。</div>'}
+  ${(cat === '全部' && !q.trim() && list.length < SEED.VALVE_ALL.filter(v => !knowDoneEver.has(v.q)).length) ? `<button class="load-more" data-act="valveLoadMore">加载更多</button>` : ''}`;
 }
 
-/* knowCard —— 注意：卡片、按钮都有 data-q，所以按钮的事件处理要用 .know 定位外层 */
-function knowCard(v, i){
+function knowCard(v, i, isDone, isDoneToday){
   const open = state.openKnow === v.q;
   const note = Store.getNote(v.q);
   const askCache = LS.get('ask-cache:' + v.q, null);
   const askText = LS.get('ask-text:' + v.q, '');
   const isLoading = state.aiLoading && state.aiAnsweringFor === v.q;
   const hasAsk = askCache && askCache.answer;
-  return `<div class="card know ${open?'open':''}" data-q="${esc(v.q)}">
+  return `<div class="card know ${open?'open':''} ${isDone?'done':''}" data-q="${esc(v.q)}">
     <div style="cursor:pointer" data-act="knowToggle">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
         <div style="flex:1;min-width:0;">
-          <div class="know-cat">${esc(v.cat)}${note?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:var(--brand);font-weight:600;background:#eef0ff;padding:1px 6px;border-radius:5px;">📝</span>':''}${hasAsk?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#b45309;font-weight:600;background:#fef3c7;padding:1px 6px;border-radius:5px;">💬</span>':''}</div>
-          <div class="know-q">${esc(v.q)}</div>
+          <div class="know-cat">${esc(v.cat)}${isDone?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#047857;font-weight:600;background:#ecfdf5;padding:1px 6px;border-radius:5px;">✓ 已掌握</span>':''}${note?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:var(--brand);font-weight:600;background:#eef0ff;padding:1px 6px;border-radius:5px;">📝</span>':''}${hasAsk?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#b45309;font-weight:600;background:#fef3c7;padding:1px 6px;border-radius:5px;">💬</span>':''}</div>
+          <div class="know-q" style="${isDone?'text-decoration:line-through;color:#aab0c0;':''}">${esc(v.q)}</div>
         </div>
         <span style="font-size:12px;color:var(--sub);flex-shrink:0;">${open?'▴':'▾'}</span>
       </div>
@@ -1317,53 +1708,139 @@ function knowCard(v, i){
         <div class="note-label">📝 我的笔记</div>
         <textarea class="note-input" data-note-q="${esc(v.q)}" placeholder="记录你的理解、经验、疑问…">${esc(note)}</textarea>
       </div>
-      <button class="btn ghost wide" style="margin-top:14px;" data-act="knowDone" data-q="${esc(v.q)}">标记为已掌握</button>
+      <button class="btn ${isDone?'ghost':'primary'} wide" style="margin-top:14px;" data-act="knowDone" data-q="${esc(v.q)}">${isDone?'取消已掌握':'✓ 标记为已掌握'}</button>
     </div>
   </div>`;
 }
 
-function generalSection(){
-  const list = dailyPick(SEED.GENERAL, 3, 77);
+/* ============================================================
+   每日知识（多源）
+   ============================================================ */
+async function generalSection(){
+  const doneToday = LS.get('general-done:' + DAY, false);
+  const cached = state.generalKnowledge;
+
+  if (!cached && !state.generalLoading && !state.generalError){
+    state.generalLoading = true;
+    try {
+      const item = await KnowledgeSource.fetchWithRetry(3);
+      state.generalKnowledge = item;
+      state.generalLoading = false;
+      if (state.tab === 'study' && state.studySub === 'general') render();
+    } catch(e){
+      state.generalLoading = false;
+      state.generalError = e.message || '获取失败';
+      if (state.tab === 'study' && state.studySub === 'general') render();
+    }
+  }
+
+  let body = '';
+  if (state.generalLoading || (!state.generalKnowledge && !state.generalError)){
+    body = `<div class="loading-card">
+      <div style="font-size:38px;line-height:1;animation:pulse 1.2s ease-in-out infinite;">🌐</div>
+      <div style="font-size:13.5px;font-weight:750;margin-top:14px;margin-bottom:6px;">正在获取今日知识…</div>
+      <div style="font-size:12px;color:var(--sub);">实时抓取，内容每次都不一样</div>
+    </div>`;
+  } else if (state.generalError && !state.generalKnowledge){
+    body = `<div class="card" style="text-align:center;padding:24px 16px;">
+      <div style="font-size:38px;margin-bottom:10px;">⚠️</div>
+      <div style="font-size:14px;font-weight:750;margin-bottom:6px;">获取失败</div>
+      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">${esc(state.generalError)}<br>可能是网络问题，或知识源配置有误。点下面重试。</div>
+      <button class="btn primary" data-act="retryGeneral">🔄 重新获取</button>
+      <button class="btn ghost" style="margin-top:8px;" data-act="studySub" data-sub="today">返回今日</button>
+    </div>`;
+  } else if (state.generalKnowledge){
+    const g = state.generalKnowledge;
+    const srcLabel = g.source === 'wiki' ? '维基百科'
+      : g.source === 'showapi' ? 'ShowAPI 十万个为什么'
+      : g.source === 'oioweb' ? '接口盒子' : '知识源';
+    const srcClass = g.source === 'wiki' ? 'wiki'
+      : g.source === 'showapi' ? 'showapi'
+      : g.source === 'oioweb' ? 'oioweb' : 'wiki';
+    body = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+        <span class="src-tag ${srcClass}">来源：${esc(srcLabel)}</span>
+        <span style="font-size:10.5px;color:var(--sub);">${todayStr()}</span>
+      </div>
+      <div class="know-q" style="font-size:18px;font-weight:800;line-height:1.4;">${esc(g.q)}</div>
+      <div class="know-a" style="margin-top:14px;font-size:13.5px;">${esc(g.a)}</div>
+      ${g.key ? `<div class="know-key" style="margin-top:12px;font-size:12px;">${esc(g.key)}</div>` : ''}
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn primary" data-act="markGeneralDone" ${doneToday?'disabled style="opacity:.6;"':''}>${doneToday?'✓ 今日已读':'✓ 已读'}</button>
+        <button class="btn ghost" data-act="speakGeneral" data-title="${esc(g.q)}" data-body="${esc(g.a)}">🔊 朗读</button>
+        <button class="btn ghost" data-act="refreshGeneral">🔄 换一条</button>
+      </div>
+    </div>
+    <div class="tip-card">💡 内容实时抓取，每次刷新都不一样。看到有趣的可以朗读或复制保存。</div>`;
+  }
+
+  const srcName = KnowledgeSource.current === 'auto' ? '自动' : KnowledgeSource.current;
+  const canShow = KnowledgeSource.canShowApi();
+  const canOio = KnowledgeSource.canOioweb();
+
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">DAILY KNOWLEDGE</div>
-    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每天一个为什么</div>
+    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每日知识 · 联网抓取</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">内容源：${esc(srcName)} ${canShow?'· ShowAPI 已配':''} ${canOio?'· 接口盒子已配':''}</div>
   </div>
-  ${list.map((g,i) => `
-    <div class="card">
-      <div style="font-size:11px;font-weight:750;color:var(--brand);margin-bottom:8px;">今日知识 · ${i+1}</div>
-      <div class="know-q">${esc(g.q)}</div>
-      <div class="know-a">${esc(g.a)}</div>
-      <div class="know-key">${esc(g.key)}</div>
-    </div>
-  `).join('')}`;
+  ${body}
+  <div class="tip-card" style="margin-top:12px;">⚙️ 想换知识源？去「我的」页 → 知识源配置，可以配置 ShowAPI 的 appid/sign 或接口盒子的 id/key。默认用维基百科，无需配置。</div>`;
 }
 
+/* ============================================================
+   逻辑
+   ============================================================ */
 function logicSection(){
-  const list = SEED.THINKING;
-  const doneCount = list.filter(m => (Store.getThinkAns(m.name) || '').trim()).length;
+  const all = SEED.THINKING;
+  const learned = all.filter(m => Store.getThinkDoneDays(m.name).length > 0);
+  const unlearned = all.filter(m => Store.getThinkDoneDays(m.name).length === 0);
+
+  let today = null;
+  if (unlearned.length > 0){
+    today = dailyPick(unlearned, 1, 201)[0];
+  } else {
+    const sorted = all.slice().sort((a, b) => Store.getThinkDoneDays(a.name).length - Store.getThinkDoneDays(b.name).length);
+    today = sorted[0];
+  }
+
+  const totalLearned = all.filter(m => Store.getThinkDoneDays(m.name).length > 0).length;
+  const todayDone = today && Store.getThinkDoneDays(today.name).includes(todayStr());
+
+  let body = '';
+  if (!today){
+    body = `<div class="tip-card">没有可用的思维模型。</div>`;
+  } else {
+    body = `
+    ${todayDone ? `<div style="margin-bottom:12px;padding:10px 14px;background:#ecfdf5;border-radius:12px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">✓ 今天的思维模型已练习完成</div>` : ''}
+    ${logicCard(today, todayDone)}
+    <div class="tip-card">💡 每天推荐 1 个思维模型，直到所有 ${all.length} 个都学过一遍，之后按最少练习次数轮换。</div>`;
+  }
+
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
-    <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">THINKING MODELS</div>
-    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">5 个思维模型</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">今日已练 ${doneCount}/${list.length} 个。点卡片展开练习。</div>
+    <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">THINKING MODEL</div>
+    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每天一个思维模型</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">共 ${all.length} 个 · 已学 ${totalLearned} 个 · 每天 1 个不重复</div>
   </div>
-  ${list.map(m => logicCard(m)).join('')}
-  <div class="tip-card">💡 思维模型不是知识，是工具。光看不练等于没学。</div>`;
+  ${body}`;
 }
 
-function logicCard(m){
+function logicCard(m, todayDone){
   const ans = Store.getThinkAns(m.name);
   const open = state.openThink === m.name;
   const hasAns = !!(ans || '').trim();
+  const practicedDays = Store.getThinkDoneDays(m.name).length;
   return `<div class="card know ${open?'open':''}" data-think="${esc(m.name)}">
     <div style="cursor:pointer" data-act="thinkToggle">
       <div style="display:flex;gap:12px;align-items:flex-start;">
         <div style="font-size:26px;line-height:1;flex-shrink:0;">${m.emoji}</div>
         <div style="flex:1;min-width:0;">
-          <div class="know-q" style="display:flex;align-items:center;gap:8px;">
+          <div class="know-q" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             ${esc(m.name)}
             ${hasAns?'<span style="font-size:11px;color:#047857;font-weight:600;background:#ecfdf5;padding:1px 7px;border-radius:5px;">✓ 已练</span>':''}
+            ${practicedDays > 0 ? `<span style="font-size:10.5px;color:var(--sub);font-weight:600;">练过 ${practicedDays} 天</span>` : ''}
           </div>
           <div style="font-size:12.5px;color:var(--sub);margin-top:6px;line-height:1.6;">${esc(m.core)}</div>
         </div>
@@ -1381,6 +1858,7 @@ function logicCard(m){
         <textarea class="qa-input" data-think-ans="${esc(m.name)}" placeholder="写下你的思考过程…">${esc(ans)}</textarea>
         <div class="qa-row">
           <button class="qa-btn ghost" data-act="thinkHint" data-name="${esc(m.name)}">${state.thinkHint === m.name ? '🙈 收起提示' : '💡 看提示'}</button>
+          <button class="qa-btn" data-act="thinkDone" data-name="${esc(m.name)}" ${todayDone?'disabled style="opacity:.5;"':''}>${todayDone?'✓ 今日已练':'✓ 标记今日已练'}</button>
         </div>
         ${state.thinkHint === m.name ? `<div class="qa-answer"><div class="qa-answer-head">💡 参考思路</div><div class="qa-answer-body">${esc(m.hint)}</div></div>` : ''}
       </div>
@@ -1388,7 +1866,10 @@ function logicCard(m){
   </div>`;
 }
 
-function expressSection(){
+/* ============================================================
+   表达（多源）
+   ============================================================ */
+async function expressSection(){
   const passage = dailyPick(SEED.EXPRESS_PASSAGES, 1, 41)[0];
   const sceneCats = Object.keys(SEED.SCENES).filter(c => c !== '英语表达');
   const allScenes = sceneCats.flatMap(c => SEED.SCENES[c].map(s => ({ ...s, cat:c })));
@@ -1397,6 +1878,90 @@ function expressSection(){
   const savedAnswer = LS.get('expr-ans:' + key, '');
   const savedGrade = LS.get('expr-grade:' + key, null);
   const passageDone = LS.get('passage-done:' + DAY, false);
+
+  // 触发各源加载
+  const quoteDone = LS.get('quote-done:' + DAY, false);
+  const storyDone = LS.get('story-done:' + DAY, false);
+  const yiyanDone = LS.get('yiyan-done:' + DAY, false);
+
+  if (!state.quoteData && !state.quoteLoading && !state.quoteError){
+    state.quoteLoading = true;
+    QuoteGarden.fetchWithRetry(3).then(d => { state.quoteData = d; state.quoteLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
+      .catch(e => { state.quoteLoading = false; state.quoteError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+  }
+  if (!state.storyData && !state.storyLoading && !state.storyError){
+    state.storyLoading = true;
+    Gutendex.fetchWithRetry(3).then(d => { state.storyData = d; state.storyLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
+      .catch(e => { state.storyLoading = false; state.storyError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+  }
+  if (!state.yiyanData && !state.yiyanLoading && !state.yiyanError){
+    state.yiyanLoading = true;
+    Yiyan.fetchWithRetry(3).then(d => { state.yiyanData = d; state.yiyanLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
+      .catch(e => { state.yiyanLoading = false; state.yiyanError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+  }
+
+  // 中文金句
+  let yiyanBlock = '';
+  if (state.yiyanLoading || (!state.yiyanData && !state.yiyanError)){
+    yiyanBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">💬</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载中文金句…</div></div>`;
+  } else if (state.yiyanError && !state.yiyanData){
+    yiyanBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">中文金句加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryYiyan">🔄 重试</button></div>`;
+  } else if (state.yiyanData){
+    const y = state.yiyanData;
+    yiyanBlock = `
+    <div class="quote-card">
+      <div class="q-text" style="font-style:normal;color:#b45309;">${esc(y.text)}</div>
+      ${y.from ? `<div class="q-author" style="color:#92400e;">—— ${esc(y.from)}</div>` : ''}
+      <div class="q-actions">
+        <button class="btn primary" data-act="speakYiyan" data-text="${esc(y.text)}" style="background:#b45309;">🔊 朗读</button>
+        <button class="btn ghost" data-act="copyYiyan" data-text="${esc(y.text + (y.from ? ' —— ' + y.from : ''))}">📋 复制</button>
+        ${!yiyanDone ? `<button class="btn ghost" data-act="markYiyanDone">✓ 已读</button>` : `<span style="align-self:center;font-size:11.5px;color:#92400e;font-weight:650;">✓ 今日已读</span>`}
+      </div>
+    </div>`;
+  }
+
+  // 英文名言
+  let quoteBlock = '';
+  if (state.quoteLoading || (!state.quoteData && !state.quoteError)){
+    quoteBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">💬</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载英文名言…</div></div>`;
+  } else if (state.quoteError && !state.quoteData){
+    quoteBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">英文名言加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryQuote">🔄 重试</button></div>`;
+  } else if (state.quoteData){
+    const q = state.quoteData;
+    quoteBlock = `
+    <div class="quote-card">
+      <div class="q-text">"${esc(q.text)}"</div>
+      <div class="q-author">—— ${esc(q.author || 'Unknown')}${q.genre ? ' · ' + esc(q.genre) : ''}</div>
+      <div class="q-actions">
+        <button class="btn primary" data-act="speakQuote" data-text="${esc(q.text)}">🔊 朗读</button>
+        <button class="btn ghost" data-act="copyQuote" data-text="${esc(q.text + ' —— ' + (q.author||''))}">📋 复制</button>
+        ${!quoteDone ? `<button class="btn ghost" data-act="markQuoteDone">✓ 已读</button>` : `<span style="align-self:center;font-size:11.5px;color:#6b21a8;font-weight:650;">✓ 今日已读</span>`}
+      </div>
+    </div>`;
+  }
+
+  // 英文短文
+  let storyBlock = '';
+  if (state.storyLoading || (!state.storyData && !state.storyError)){
+    storyBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">📖</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载英文短文…</div></div>`;
+  } else if (state.storyError && !state.storyData){
+    storyBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">英文短文加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryStory">🔄 重试</button></div>`;
+  } else if (state.storyData){
+    const s = state.storyData;
+    storyBlock = `
+    <div class="story-card">
+      <div class="s-title">${esc(s.title)}</div>
+      <div class="s-author">${esc(s.author || '')}</div>
+      <div class="s-preview">${esc(s.preview)}...</div>
+      <div class="s-actions">
+        <button class="btn primary" data-act="speakStory" data-text="${esc(s.preview)}" style="background:#059669;">🔊 朗读</button>
+        <button class="btn ghost" data-act="copyStory" data-text="${esc(s.title + '\n' + s.author + '\n\n' + s.preview)}">📋 复制</button>
+        <button class="btn ghost" data-act="openStory" data-url="${esc(s.url)}">🌐 全文</button>
+        ${!storyDone ? `<button class="btn ghost" data-act="markStoryDone">✓ 已读</button>` : `<span style="align-self:center;font-size:11.5px;color:#065f46;font-weight:650;">✓ 今日已读</span>`}
+      </div>
+    </div>`;
+  }
+
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">📖 今日短文 · 朗读 + 复述</div>
@@ -1409,6 +1974,16 @@ function expressSection(){
     </div>
     <div style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.25);font-size:12.5px;line-height:1.7;opacity:.85;"><b>朗读要点：</b>${esc(passage.tips)}</div>
   </div>
+
+  <div class="sec-title">中文金句 <span class="muted">770a.cn 一言</span></div>
+  ${yiyanBlock}
+
+  <div class="sec-title">英文名言 <span class="muted">Quote Garden</span></div>
+  ${quoteBlock}
+
+  <div class="sec-title">英文短文 <span class="muted">Gutendex · Project Gutenberg</span></div>
+  ${storyBlock}
+
   <div class="sec-title">今日场景练习 <span class="muted">每天随机一题</span></div>
   <div class="card">
     <div style="display:inline-block;font-size:11px;font-weight:750;color:#b45309;background:#fef3c7;padding:3px 9px;border-radius:6px;margin-bottom:10px;">${esc(todayScene.cat)}</div>
@@ -1537,12 +2112,16 @@ async function discoverView(){
 }
 
 function newsSection(){
-  const list = dailyPick(SEED.NEWS, 5, 33);
+  const list = dailyPick(SEED.NEWS, DAILY_NEWS_COUNT, 33);
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">🌍 今日世界</div>
-    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">5 条值得关注的动态</div>
+    <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${DAILY_NEWS_COUNT} 条值得关注的动态</div>
     <div style="font-size:13.5px;opacity:.92;line-height:1.7;">不只看新闻，还要想：这和我有什么关系？</div>
+    <div class="news-source-row" style="margin-top:14px;">
+      <button class="news-source cctv" data-act="openNews" data-url="https://news.cctv.com/">📺 央视新闻</button>
+      <button class="news-source cctvnews" data-act="openNews" data-url="https://news.cctv.com/tech/">🔬 央视科技</button>
+    </div>
   </div>
   ${list.map((n,i) => {
     const thinkKey = 'news-think-' + todayStr() + '-' + i;
@@ -1557,19 +2136,25 @@ function newsSection(){
         <textarea data-news-think="${esc(thinkKey)}" placeholder="这条新闻对我意味着什么？">${esc(think)}</textarea>
       </div>
     </div>`;
-  }).join('')}`;
+  }).join('')}
+  <div class="tip-card">💡 卡片里的新闻是内置的行业观察（每天轮换）。想看实时新闻，点上面的「央视新闻 / 央视科技」按钮。</div>`;
 }
 
 function recommendSection(){
   const cats = Object.keys(SEED.RECOMMEND);
   const cat = state.recommendCat || cats[0];
-  const list = SEED.RECOMMEND[cat] || [];
+  const all = SEED.RECOMMEND[cat] || [];
+  const salt = 200 + cats.indexOf(cat) * 17;
+  const list = dailyPick(all, 1, salt);
   const catEmoji = { '书':'📚', '电影':'🎬', '播客':'🎧', '工具':'🛠️' };
   return `
   <div class="chips" data-scroll-id="recCat">
-    ${cats.map(c => `<button class="chip ${c===cat?'on':''}" data-act="recCat" data-cat="${esc(c)}">${catEmoji[c]||'✨'} ${esc(c)}</button>`).join('')}
+    ${cats.map(c => `<button class="chip ${c===cat?'on':''}" data-act="recCat" data-cat="${esc(c)}">${catEmoji[c]||'✨'} ${esc(c)} · ${(SEED.RECOMMEND[c]||[]).length}</button>`).join('')}
   </div>
-  ${list.map((r, idx) => `<div class="card">
+  <div class="tip-card" style="margin-bottom:12px;">📅 每天从 ${all.length} 条里抽 1 条，天天不同。</div>
+  ${list.map((r) => {
+    const realIdx = all.indexOf(r);
+    return `<div class="card">
     <div style="display:flex;align-items:flex-start;gap:12px;">
       <div style="font-size:30px;line-height:1;flex-shrink:0;">${r.emoji}</div>
       <div style="flex:1;min-width:0;">
@@ -1580,10 +2165,11 @@ function recommendSection(){
     <div style="font-size:13.5px;line-height:1.78;color:#3f4658;margin-top:13px;padding-top:13px;border-top:1px dashed #eceef4;">${esc(r.why)}</div>
     <div style="margin-top:11px;padding:9px 12px;background:#f8f9fd;border-left:3px solid var(--brand);border-radius:0 10px 10px 0;font-size:12.5px;color:#4b5265;"><b style="color:var(--brand)">适合场景：</b>${esc(r.scene)}</div>
     <div class="recommend-open">
-      ${r.scheme ? `<button class="rec-btn app" data-act="openApp" data-scheme="${esc(r.scheme)}" data-name="${esc(r.name)}" data-cat="${esc(cat)}" data-idx="${idx}">📱 打开 App</button>` : ''}
-      <button class="rec-btn web" data-act="openWeb" data-cat="${esc(cat)}" data-idx="${idx}">🌐 网页打开</button>
+      ${r.scheme ? `<button class="rec-btn app" data-act="openApp" data-scheme="${esc(r.scheme)}" data-name="${esc(r.name)}" data-cat="${esc(cat)}" data-idx="${realIdx}">📱 打开 App</button>` : ''}
+      <button class="rec-btn web" data-act="openWeb" data-cat="${esc(cat)}" data-idx="${realIdx}">🌐 网页打开</button>
     </div>
-  </div>`).join('')}`;
+  </div>`;
+  }).join('')}`;
 }
 
 /* ============================================================
@@ -1600,6 +2186,12 @@ async function meView(){
     const bridgeSpeak = !!(window.AndroidBridge && window.AndroidBridge.speak);
     const bridgeOpen = !!(window.AndroidBridge && window.AndroidBridge.openUrl);
     const webSpeech = ('speechSynthesis' in window);
+
+    const ks = KnowledgeSource;
+    const srcCurrent = ks.current;
+    const canShow = ks.canShowApi();
+    const canOio = ks.canOioweb();
+
     return `
     <div class="hero">
       <div class="hero-k">我的</div>
@@ -1619,29 +2211,50 @@ async function meView(){
         <span style="flex:1;color:#4b5265;">英语词库</span>
         <span style="font-weight:700;color:${dataStatus.wordsOk?'#047857':'#b45309'};">${dataStatus.words} 词 · ${dataStatus.decks} 词库</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px;">
-        <span class="status-badge ok">✓</span>
-        <span style="flex:1;color:#4b5265;">已加载词库</span>
-        <span style="font-weight:700;color:#047857;">${Object.keys(DeckLoader.loaded).length} / ${SEED.DECKS.length}</span>
-      </div>
-      ${!dataStatus.wordsOk ? `<div style="font-size:12px;color:#b45309;line-height:1.7;margin-top:8px;padding:10px 12px;background:#fef3c7;border-radius:10px;">⚠️ 词库未加载。请检查 data/decks.js 和 data/words/*.js 是否存在。</div>` : ''}
     </div>
 
     <div class="card">
-      <div style="font-size:14px;font-weight:750;margin-bottom:12px;">📚 词库管理</div>
-      ${SEED.DECKS.length ? SEED.DECKS.map(d => {
-        const isLoaded = DeckLoader.loaded[d.id] !== undefined;
-        const words = DeckLoader.get(d.id);
-        const learned = words.filter(w => Store.getAllLearnedEver().includes(w.w)).length;
-        return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed #eceef4;font-size:13px;">
-          <span style="font-size:20px;flex-shrink:0;">${d.icon||'📗'}</span>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:650;color:#2b3244;">${esc(d.name)}</div>
-            <div style="font-size:11.5px;color:var(--sub);margin-top:2px;">${isLoaded ? `${learned}/${words.length} 已学` : `${d.count} 词 · 未加载`}</div>
-          </div>
-          ${isLoaded ? `<span style="font-size:11px;color:#047857;background:#ecfdf5;padding:2px 8px;border-radius:6px;font-weight:650;">已加载</span>` : `<button class="link-btn" data-act="loadDeck" data-deck="${esc(d.id)}">加载</button>`}
-        </div>`;
-      }).join('') : '<div style="font-size:12.5px;color:var(--sub);">未配置词库。请在 data/decks.js 里添加。</div>'}
+      <div style="font-size:14px;font-weight:750;margin-bottom:6px;">🌐 知识源配置</div>
+      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">
+        每日知识支持 3 个数据源。默认用维基百科（免配置，无限额度）。你也可以配置 ShowAPI 或接口盒子，配置后会优先使用。
+      </div>
+
+      <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">使用的源</label>
+      <select id="knowledgeSource" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
+        <option value="auto" ${srcCurrent==='auto'?'selected':''}>自动（ShowAPI → 接口盒子 → 维基百科）</option>
+        <option value="wiki" ${srcCurrent==='wiki'?'selected':''}>维基百科（免配置，无限额度）</option>
+        <option value="showapi" ${srcCurrent==='showapi'?'selected':''}>ShowAPI 十万个为什么</option>
+        <option value="oioweb" ${srcCurrent==='oioweb'?'selected':''}>接口盒子 社会常识题</option>
+      </select>
+
+      <div style="margin-top:18px;padding:12px 14px;background:#f8f9fd;border-radius:12px;">
+        <div style="font-size:12.5px;font-weight:750;margin-bottom:8px;color:#3b4256;">
+          ShowAPI ${canShow?'<span style="color:#047857;font-weight:650;">✓ 已配</span>':'<span style="color:#b45309;font-weight:650;">未配</span>'}
+        </div>
+        <div style="font-size:11.5px;color:var(--sub);line-height:1.65;margin-bottom:8px;">
+          去 showapi.com 注册免费账号，创建应用后能拿到 appid 和 sign。免费版每天 500 次左右。
+        </div>
+        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">appid</label>
+        <input type="text" id="showapiAppId" placeholder="例如：123456" value="${esc(ks.showapiAppId)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
+        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">sign</label>
+        <input type="password" id="showapiSign" placeholder="你的密钥" value="${esc(ks.showapiSign)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
+      </div>
+
+      <div style="margin-top:12px;padding:12px 14px;background:#f8f9fd;border-radius:12px;">
+        <div style="font-size:12.5px;font-weight:750;margin-bottom:8px;color:#3b4256;">
+          接口盒子 ${canOio?'<span style="color:#047857;font-weight:650;">✓ 已配</span>':'<span style="color:#b45309;font-weight:650;">未配</span>'}
+        </div>
+        <div style="font-size:11.5px;color:var(--sub);line-height:1.65;margin-bottom:8px;">
+          去 apihz.cn 注册免费账号，在用户中心获取数字 ID 和通讯密钥。
+        </div>
+        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">用户 ID</label>
+        <input type="text" id="oiowebId" placeholder="例如：10000000" value="${esc(ks.oiowebId)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
+        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">通讯密钥</label>
+        <input type="password" id="oiowebKey" placeholder="你的通讯密钥" value="${esc(ks.oiowebKey)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
+      </div>
+
+      <button class="btn primary wide" style="margin-top:14px" data-act="saveKnowledgeSource">保存知识源配置</button>
+      <button class="btn ghost wide" style="margin-top:8px" data-act="testKnowledgeSource">🧪 测试当前知识源</button>
     </div>
 
     <div class="card">
@@ -1651,12 +2264,10 @@ async function meView(){
         <div>桥.speak：<b style="color:${bridgeSpeak?'#047857':'#b45309'};">${bridgeSpeak?'✓ 有':'✗ 无'}</b></div>
         <div>桥.openUrl：<b style="color:${bridgeOpen?'#047857':'#b45309'};">${bridgeOpen?'✓ 有':'✗ 无'}</b></div>
         <div>Web Speech：<b style="color:${webSpeech?'#047857':'#b45309'};">${webSpeech?'✓ 支持':'✗ 不支持'}</b></div>
-        <div>在线 TTS：<b style="color:#047857;">✓ 可用（有道）</b></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
         <button class="btn ghost" data-act="diagTTS">🔊 测试朗读</button>
         <button class="btn ghost" data-act="diagOnline">🌐 测试在线TTS</button>
-        <button class="btn ghost" data-act="diagScheme">🔗 测试 weread://</button>
       </div>
     </div>
 
@@ -1664,15 +2275,15 @@ async function meView(){
       <div style="font-size:14px;font-weight:750;margin-bottom:12px;">📅 累计数据</div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
         <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.learnedEver}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已学过（共 ${stats.totalWords} 词 · ${stats.totalDecks} 词库）</span>
+        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已学过（共 ${stats.totalWords} 词）</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
-        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.dueEnglish}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词待复习</span>
+        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.scheduledEnglish}</span>
+        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已排入复习</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
-        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.dueWork}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">条待复习阀门知识</span>
+        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.knowDoneEver}</span>
+        <span style="font-size:13px;color:#4b5265;font-weight:600;">条阀门知识已掌握</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
         <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.wrongCount}</span>
@@ -1694,34 +2305,15 @@ async function meView(){
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:6px;">🔊 语音设置</div>
-      <div style="font-size:12px;color:var(--sub);margin-bottom:10px;">设置英语单词和句子的朗读口音、语速。</div>
       <div style="font-size:12.5px;font-weight:650;color:#4b5265;margin-bottom:6px;">口音</div>
       <div class="accent-row">
         <button class="accent-btn ${LS.get('voice-accent','en-US')==='en-US'?'on':''}" data-act="setAccent" data-accent="en-US">🇺🇸 美音</button>
         <button class="accent-btn ${LS.get('voice-accent','en-US')==='en-GB'?'on':''}" data-act="setAccent" data-accent="en-GB">🇬🇧 英音</button>
       </div>
-      <div style="font-size:12.5px;font-weight:650;color:#4b5265;margin:14px 0 6px;">语速（Web Speech 生效）</div>
-      <div class="speed-row">
-        <button class="speed-btn ${LS.get('voice-speed',0.85)===0.65?'on':''}" data-act="setSpeed" data-speed="0.65">慢</button>
-        <button class="speed-btn ${LS.get('voice-speed',0.85)===0.85?'on':''}" data-act="setSpeed" data-speed="0.85">正常</button>
-        <button class="speed-btn ${LS.get('voice-speed',0.85)===1.1?'on':''}" data-act="setSpeed" data-speed="1.1">快</button>
-      </div>
     </div>
-
-    ${notes.length ? `
-    <div class="card">
-      <div style="font-size:14px;font-weight:750;margin-bottom:8px;">📝 我的笔记（${notes.length} 条）</div>
-      ${notes.slice(0, 5).map(n => `<div style="padding:12px 0;border-bottom:1px dashed #eceef4;">
-        <div style="font-size:11px;font-weight:750;color:var(--brand);margin-bottom:4px;">${esc(n.cat)}</div>
-        <div style="font-size:13.5px;font-weight:650;line-height:1.5;color:#2b3244;margin-bottom:8px;">${esc(n.q)}</div>
-        <div style="font-size:12.5px;line-height:1.7;color:#4b5265;background:#fafbfe;padding:10px 12px;border-radius:10px;white-space:pre-wrap;">${esc(n.note)}</div>
-      </div>`).join('')}
-      ${notes.length > 5 ? `<div style="font-size:12px;color:var(--sub);text-align:center;padding-top:10px;">还有 ${notes.length - 5} 条…</div>` : ''}
-    </div>` : ''}
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:12px;">🤖 AI 助手配置</div>
-      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:12px;">配置后可用：专业知识问答、复习评分、表达评分、AI 办公。推荐 DeepSeek。</div>
       <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">服务商</label>
       <select id="aiProvider" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
         <option value="none" ${AI.provider==='none'?'selected':''}>不启用</option>
@@ -1734,29 +2326,25 @@ async function meView(){
       <input type="password" id="aiKey" placeholder="sk-..." value="${esc(AI.apiKey)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
       <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">模型名（留空用默认）</label>
       <input type="text" id="aiModel" placeholder="deepseek-chat" value="${esc(AI.model)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
-      <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">自定义 Base URL（仅「自定义」时填）</label>
-      <input type="text" id="aiCustomBase" placeholder="https://.../v1/chat/completions" value="${esc(AI.customBase)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
       <button class="btn primary wide" style="margin-top:14px" data-act="saveAI">保存配置</button>
       <div style="margin-top:10px;font-size:12px;padding:8px 12px;border-radius:9px;${AI.enabled()?'background:#ecfdf5;color:#047857;':'background:#f1f2f9;color:#6b7280;'}">${AI.enabled() ? `✅ 已启用 · ${AI.provider}` : '⚪ 未启用 · 使用本地关键词判卷'}</div>
     </div>
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:6px;">数据备份</div>
-      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">导出时会显示备份文本，你可以复制到其他地方保存。导入时把备份文本粘贴回来。</div>
-      <button class="btn primary wide" data-act="exportData">📤 导出备份（复制文本）</button>
-      <button class="btn wide" style="background:#f1f2f9;color:#4b5265;margin-top:8px;" data-act="importData">📥 导入备份（粘贴文本）</button>
+      <button class="btn primary wide" data-act="exportData">📤 导出备份</button>
+      <button class="btn wide" style="background:#f1f2f9;color:#4b5265;margin-top:8px;" data-act="importData">📥 导入备份</button>
     </div>
 
     <div class="card" style="border:1px solid #fee2e2;">
       <div style="font-size:14px;font-weight:750;margin-bottom:6px;color:#dc2626;">危险操作</div>
-      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">清空本设备所有学习进度。建议先导出备份。</div>
       <button class="btn danger wide" data-act="clearData">🗑 清空本设备数据</button>
     </div>
 
     <div class="foot-note">数据保存在本设备 · 词库打包在 App 内</div>`;
   }catch(e){
     console.error('meView 渲染失败：', e);
-    return `<div class="tip-card">我的页面加载失败：${esc(e.message)}<br><br>请把这条错误信息发给开发者。</div>`;
+    return `<div class="tip-card">我的页面加载失败：${esc(e.message)}</div>`;
   }
 }
 
@@ -2002,31 +2590,25 @@ async function runGlobalSearch(q){
   q = (q || '').trim();
   if (!q){ el.innerHTML = ''; return; }
   const lq = q.toLowerCase();
-
   const results = [];
   SEED.VALVE_ALL.forEach(v => {
     if (v.q.toLowerCase().includes(lq) || v.a.toLowerCase().includes(lq) || (v.key||'').toLowerCase().includes(lq)){
       results.push({ type:'valve', typeLabel:'知识', q:v.q, snippet:v.a.slice(0, 80) });
     }
   });
-
   if (!DeckLoader.allLoaded()){
     el.innerHTML = `<div style="text-align:center;padding:20px 0;font-size:12.5px;color:var(--sub);">正在加载全部词库以搜索…</div>`;
     renderResults(results);
     await ensureAllDecksLoaded();
-    if (document.getElementById('globalSearchInput')){
-      return runGlobalSearch(q);
-    }
+    if (document.getElementById('globalSearchInput')) return runGlobalSearch(q);
     return;
   }
-
   const allWords = DeckLoader.get('all');
   allWords.forEach(w => {
     if (w.w.toLowerCase().includes(lq) || (w.cn||'').includes(q)){
       results.push({ type:'word', typeLabel:'单词', q:w.w, snippet: (w.cn||'') + (w.deck ? ' · ' + w.deck : '') });
     }
   });
-
   renderResults(results);
 }
 function renderResults(results){
@@ -2136,9 +2718,6 @@ function doExport(){
     <div class="sheet-sec">
       <textarea id="exportText" readonly style="width:100%;height:300px;font-family:ui-monospace,monospace;font-size:11px;padding:10px;border:1px solid #e6e8f0;border-radius:10px;background:#fafbfe;color:var(--ink);-webkit-user-select:text;user-select:text;">${esc(json)}</textarea>
       <button class="btn primary wide" style="margin-top:14px;" data-act="copyExport">📋 复制全部到剪贴板</button>
-      <div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.7;text-align:center;">
-        备份文件大小约 ${(json.length/1024).toFixed(1)} KB
-      </div>
     </div>
   `);
 }
@@ -2199,12 +2778,7 @@ view.addEventListener('click', async (e) => {
     return;
   }
   if (act === 'englishLoadMore'){ state.englishPage += 1; render(); return; }
-  if (act === 'loadDeck'){
-    const id = t.dataset.deck;
-    toast('加载中…');
-    DeckLoader.load(id).then(() => { toast('已加载'); render(); });
-    return;
-  }
+  if (act === 'valveLoadMore'){ state.valvePage += 1; render(); return; }
   if (act === 'workSub'){ state.workSub = t.dataset.sub; render(); return; }
   if (act === 'discoverSub'){ state.discoverSub = t.dataset.sub; render(); return; }
 
@@ -2214,6 +2788,8 @@ view.addEventListener('click', async (e) => {
     else if (key === 'valve') state.studySub = 'valve';
     else if (key === 'passage' || key === 'expr') state.studySub = 'express';
     else if (key === 'logic') state.studySub = 'logic';
+    else if (key === 'general') state.studySub = 'general';
+    else if (key === 'yiyan' || key === 'quote' || key === 'story') state.studySub = 'express';
     else if (key === 'news'){ state.tab = 'discover'; state.discoverSub = 'news'; }
     render();
     return;
@@ -2278,8 +2854,16 @@ view.addEventListener('click', async (e) => {
     render();
     return;
   }
+  if (act === 'thinkDone'){
+    e.stopPropagation();
+    const name = t.dataset.name;
+    Store.markThinkDone(name);
+    toast('已记录今日练习');
+    render();
+    return;
+  }
 
-  if (act === 'valveCat'){ state.valveCat = t.dataset.cat; state.searchQuery = ''; state.openKnow = null; render(); return; }
+  if (act === 'valveCat'){ state.valveCat = t.dataset.cat; state.searchQuery = ''; state.openKnow = null; state.valvePage = 1; render(); return; }
   if (act === 'searchClear'){ state.searchQuery = ''; render(); return; }
   if (act === 'markPassageDone'){ Store.markTodayDone('passage'); render(); toast('已记录'); return; }
   if (act === 'removeStudyPlan'){ Store.removeStudyPlan(+t.dataset.idx); render(); return; }
@@ -2292,12 +2876,70 @@ view.addEventListener('click', async (e) => {
     return;
   }
 
-  /* ============================================================
-     askAbout —— 关键修复：
-     原来用 t.closest('[data-q]')，但按钮自己也有 data-q，
-     所以 closest 返回按钮本身，找不到 textarea。
-     改用 t.closest('.know') 定位外层卡片。
-     ============================================================ */
+  if (act === 'openNews'){ e.stopPropagation(); openExternal(t.dataset.url); return; }
+
+  /* ---------- 每日知识 ---------- */
+  if (act === 'retryGeneral'){ state.generalError = null; state.generalKnowledge = null; render(); return; }
+  if (act === 'refreshGeneral'){ state.generalKnowledge = null; state.generalError = null; render(); return; }
+  if (act === 'markGeneralDone'){ LS.set('general-done:' + DAY, true); toast('已记录'); render(); return; }
+  if (act === 'speakGeneral'){
+    const title = t.dataset.title;
+    const body = t.dataset.body;
+    toggleSpeak(title + '。' + body, 'zh-CN', t);
+    return;
+  }
+
+  /* ---------- 表达区各源 ---------- */
+  if (act === 'retryYiyan'){ state.yiyanError = null; state.yiyanData = null; render(); return; }
+  if (act === 'speakYiyan'){ toggleSpeak(t.dataset.text, 'zh-CN', t); return; }
+  if (act === 'copyYiyan'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
+  if (act === 'markYiyanDone'){ LS.set('yiyan-done:' + DAY, true); toast('已记录'); render(); return; }
+
+  if (act === 'retryQuote'){ state.quoteError = null; state.quoteData = null; render(); return; }
+  if (act === 'speakQuote'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
+  if (act === 'copyQuote'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
+  if (act === 'markQuoteDone'){ LS.set('quote-done:' + DAY, true); toast('已记录'); render(); return; }
+
+  if (act === 'retryStory'){ state.storyError = null; state.storyData = null; render(); return; }
+  if (act === 'speakStory'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
+  if (act === 'copyStory'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
+  if (act === 'openStory'){ openExternal(t.dataset.url); return; }
+  if (act === 'markStoryDone'){ LS.set('story-done:' + DAY, true); toast('已记录'); render(); return; }
+
+  if (act === 'retryTatoeba'){ state.tatoebaError = null; state.tatoebaData = null; render(); return; }
+
+  /* ---------- 知识源配置 ---------- */
+  if (act === 'saveKnowledgeSource'){
+    const src = document.getElementById('knowledgeSource').value;
+    const appid = document.getElementById('showapiAppId').value.trim();
+    const sign = document.getElementById('showapiSign').value.trim();
+    const oioId = document.getElementById('oiowebId').value.trim();
+    const oioKey = document.getElementById('oiowebKey').value.trim();
+    KnowledgeSource.current = src;
+    KnowledgeSource.showapi = { appid, sign };
+    KnowledgeSource.oioweb = { id: oioId, key: oioKey };
+    state.generalKnowledge = null;
+    state.generalError = null;
+    toast('已保存');
+    render();
+    return;
+  }
+  if (act === 'testKnowledgeSource'){
+    toast('测试中…');
+    state.generalKnowledge = null;
+    state.generalError = null;
+    try {
+      const item = await KnowledgeSource.fetchWithRetry(1);
+      state.generalKnowledge = item;
+      toast('✓ 成功：' + (item.source || '') + ' — ' + item.q.slice(0, 20));
+    } catch(err){
+      state.generalError = err.message || '测试失败';
+      toast('✗ ' + (err.message || '失败'));
+    }
+    render();
+    return;
+  }
+
   if (act === 'askAbout'){
     e.stopPropagation();
     const q = t.dataset.q;
@@ -2346,15 +2988,13 @@ view.addEventListener('click', async (e) => {
     const type = t.dataset.type;
     if (type === 'english'){
       toast('加载复习数据…');
-      try {
-        await DeckLoader.ensureForReview();
-      } catch(err){ console.warn(err); }
-      const keys = Store.getDueKeys('english');
+      try { await DeckLoader.ensureForReview(); } catch(err){ console.warn(err); }
+      const keys = Store.getReviewList('english', REVIEW_TARGET);
       const list = keys.map(k => DeckLoader.findWord(k)).filter(Boolean);
       if (!list.length){ toast('暂时没有需要复习的'); return; }
       startReview(type, list);
     } else {
-      const keys = Store.getDueKeys('work');
+      const keys = Store.getReviewList('work', REVIEW_TARGET);
       const list = keys.map(k => SEED.VALVE_ALL.find(v => v.q === k)).filter(Boolean);
       if (!list.length){ toast('暂时没有需要复习的'); return; }
       startReview(type, list);
@@ -2526,26 +3166,13 @@ view.addEventListener('click', async (e) => {
 
   if (act === 'aiSend'){ sendAIMessage(); return; }
   if (act === 'aiRole'){ state.aiRole = t.dataset.role; LS.set('ai-role', state.aiRole); openAIAssistant(); return; }
-  if (act === 'clearAIHistory'){
-    if (confirm('清空所有 AI 对话历史？')){ Store.clearAIHistory(); openAIAssistant(); }
-    return;
-  }
+  if (act === 'clearAIHistory'){ if (confirm('清空所有 AI 对话历史？')){ Store.clearAIHistory(); openAIAssistant(); } return; }
 
   if (act === 'setAccent'){ LS.set('voice-accent', t.dataset.accent); render(); return; }
   if (act === 'setSpeed'){ LS.set('voice-speed', +t.dataset.speed); render(); return; }
 
   if (act === 'diagTTS'){ toggleSpeak('Hello, this is a test. 测试朗读。', 'en-US'); return; }
   if (act === 'diagOnline'){ playOnlineTTS('Hello, this is an online TTS test.', 'en-US'); return; }
-  if (act === 'diagScheme'){
-    const a = document.createElement('a');
-    a.href = 'weread://';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => a.remove(), 200);
-    toast('已尝试打开微信读书。无反应=WebView 拦截了 scheme');
-    return;
-  }
 
   if (act === 'exportData'){ doExport(); return; }
   if (act === 'importData'){ doImport(); return; }
@@ -2554,9 +3181,8 @@ view.addEventListener('click', async (e) => {
     const provider = document.getElementById('aiProvider').value;
     const key = document.getElementById('aiKey').value.trim();
     const model = document.getElementById('aiModel').value.trim();
-    const customBase = document.getElementById('aiCustomBase').value.trim();
     if (provider !== 'none' && !key){ toast('请填入 API Key'); return; }
-    AI.set(provider, key, model, customBase);
+    AI.set(provider, key, model, '');
     toast(provider === 'none' ? '已关闭 AI' : '已保存');
     render();
     return;
