@@ -148,15 +148,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .search-result{padding:12px 4px;border-bottom:1px solid #f0f1f6;cursor:pointer;}
 .search-result-type{display:inline-block;font-size:10.5px;font-weight:750;padding:2px 7px;border-radius:5px;margin-bottom:6px;}
 .type-valve{background:#eef0ff;color:var(--brand);}
-.type-note{background:#fef3c7;color:#b45309;}
 .type-word{background:#ecfdf5;color:#047857;}
-.type-news{background:#fce7f3;color:#be185d;}
-.type-ai{background:#f3e8ff;color:#7c3aed;}
 .search-result-q{font-size:14px;font-weight:650;line-height:1.5;margin-bottom:4px;}
 .search-result-snippet{font-size:12.5px;color:var(--sub);line-height:1.6;}
-.accent-row,.speed-row{display:flex;gap:6px;margin-top:8px;}
-.accent-btn,.speed-btn{flex:1;border:1px solid #e6e8f0;background:#fff;border-radius:10px;padding:8px;font-family:inherit;font-size:12.5px;font-weight:650;cursor:pointer;color:#5b6276;}
-.accent-btn.on,.speed-btn.on{background:var(--brand);color:#fff;border-color:var(--brand);}
+.accent-row{display:flex;gap:6px;margin-top:8px;}
+.accent-btn{flex:1;border:1px solid #e6e8f0;background:#fff;border-radius:10px;padding:8px;font-family:inherit;font-size:12.5px;font-weight:650;cursor:pointer;color:#5b6276;}
+.accent-btn.on{background:var(--brand);color:#fff;border-color:var(--brand);}
 .link-btn{background:none;border:0;color:var(--brand);font-size:12px;font-weight:650;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px;}
 .ai-role-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 .ai-role-btn{border:1px solid #e6e8f0;background:#fff;border-radius:99px;padding:5px 11px;font-family:inherit;font-size:11.5px;font-weight:650;cursor:pointer;color:#5b6276;}
@@ -200,14 +197,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .src-tag.wiki{background:#eef0ff;color:var(--brand);}
 .src-tag.showapi{background:#fef3c7;color:#b45309;}
 .src-tag.oioweb{background:#ecfdf5;color:#047857;}
-.src-tag.quote{background:#fce7f3;color:#be185d;}
-.src-tag.tatoeba{background:#f3e8ff;color:#7c3aed;}
-.src-tag.gutendex{background:#ecfdf5;color:#047857;}
-.src-tag.yiyan{background:#fef3c7;color:#b45309;}
-.en-passage{background:linear-gradient(135deg,#eef0ff,#f6f0ff);border:1px solid #e2e5ff;border-radius:14px;padding:14px;margin-top:10px;}
-.en-passage .en-text{font-size:14.5px;line-height:1.85;color:#2b3244;font-weight:600;letter-spacing:-.2px;}
-.en-passage .en-cn{font-size:12.5px;line-height:1.7;color:var(--sub);margin-top:10px;padding-top:10px;border-top:1px dashed #e2e5ff;}
-.en-passage .en-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.src-tag.builtin{background:#f3e8ff;color:#7c3aed;}
 .quote-card{background:linear-gradient(135deg,#fce7f3,#f3e8ff);border:1px solid #f0abfc;border-radius:14px;padding:14px;margin-top:10px;}
 .quote-card .q-text{font-size:14.5px;line-height:1.85;color:#3b0764;font-weight:600;font-style:italic;}
 .quote-card .q-author{font-size:12.5px;color:#6b21a8;margin-top:8px;text-align:right;}
@@ -217,6 +207,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .story-card .s-author{font-size:12px;color:#047857;margin-top:4px;}
 .story-card .s-preview{font-size:13px;line-height:1.75;color:#064e3b;margin-top:10px;}
 .story-card .s-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+#ttsPlayer{display:none;}
 </style>
 </head>
 <body>
@@ -232,6 +223,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <button class="fab" id="fab" title="AI 助手">🤖</button>
   <nav class="tabbar" id="tabbar"></nav>
   <div id="sheet"></div>
+  <audio id="ttsPlayer" preload="auto"></audio>
 </div>
 <script>
 /* ============================================================
@@ -247,8 +239,16 @@ const DAY = Math.floor((Date.now() + 8*3600*1000) / 86400000);
 const DAILY_WORD_COUNT = 5;
 const DAILY_VALVE_COUNT = 5;
 const DAILY_NEWS_COUNT = 5;
-const REVIEW_TARGET = 15;
+const REVIEW_TARGET = 5;
 const PAGE_SIZE = 50;
+const API_TIMEOUT = 8000;
+
+const APP_DEFAULTS = {
+  showapi: { appid: '2174115', sign: '9325BaEB1C1140F5A55E9f35999615DF' },
+  oioweb:  { id: '10021894', key: '2aec639fae5f00b1a0d5bfec7f86ec90' },
+  tmdb:    { key: 'bcb303635128786f353fa22934952f3d' }
+};
+
 const LS = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
@@ -271,6 +271,82 @@ function shuffle(arr){
   for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
+async function fetchWithTimeout(url, options, timeout){
+  timeout = timeout || API_TIMEOUT;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const r = await fetch(url, { ...(options||{}), signal: controller.signal });
+    clearTimeout(timer);
+    return r;
+  } catch(e){
+    clearTimeout(timer);
+    if (e.name === 'AbortError') throw new Error('请求超时');
+    throw e;
+  }
+}
+
+/* ============================================================
+   内置兜底数据
+   ============================================================ */
+const FALLBACK_QUOTES = [
+  {text:'The best time to plant a tree was 20 years ago. The second best time is now.', author:'Chinese Proverb'},
+  {text:'Life is what happens when you are busy making other plans.', author:'John Lennon'},
+  {text:'It always seems impossible until it is done.', author:'Nelson Mandela'},
+  {text:'Whether you think you can or you think you can not, you are right.', author:'Henry Ford'},
+  {text:'The only way to do great work is to love what you do.', author:'Steve Jobs'},
+  {text:'We are what we repeatedly do. Excellence is not an act, but a habit.', author:'Aristotle'},
+  {text:'In the middle of difficulty lies opportunity.', author:'Albert Einstein'},
+  {text:'A journey of a thousand miles begins with a single step.', author:'Lao Tzu'},
+  {text:'It is not the strongest of the species that survives, but the one most responsive to change.', author:'Charles Darwin'},
+  {text:'The only person you should try to be better than is the person you were yesterday.', author:'Unknown'},
+  {text:'Simplicity is the ultimate sophistication.', author:'Leonardo da Vinci'},
+  {text:'Success is not final, failure is not fatal: it is the courage to continue that counts.', author:'Winston Churchill'},
+  {text:'The future belongs to those who believe in the beauty of their dreams.', author:'Eleanor Roosevelt'},
+  {text:'Tell me and I forget. Teach me and I remember. Involve me and I learn.', author:'Benjamin Franklin'},
+  {text:'Hard work beats talent when talent does not work hard.', author:'Tim Notke'},
+  {text:'The best way to predict the future is to create it.', author:'Peter Drucker'},
+  {text:'If you want to go fast, go alone. If you want to go far, go together.', author:'African Proverb'},
+  {text:'Talk is cheap. Show me the code.', author:'Linus Torvalds'},
+  {text:'You miss 100 percent of the shots you do not take.', author:'Wayne Gretzky'},
+  {text:'The unexamined life is not worth living.', author:'Socrates'},
+  {text:'Imagination is more important than knowledge.', author:'Albert Einstein'},
+  {text:'Stay hungry, stay foolish.', author:'Steve Jobs'},
+  {text:'The obstacle is the way.', author:'Marcus Aurelius'},
+  {text:'Everything should be made as simple as possible, but not simpler.', author:'Albert Einstein'},
+  {text:'Do not go where the path may lead. Go where there is no path and leave a trail.', author:'Ralph Waldo Emerson'},
+  {text:'What we think, we become.', author:'Buddha'},
+  {text:'Discipline equals freedom.', author:'Jocko Willink'},
+  {text:'Done is better than perfect.', author:'Sheryl Sandberg'}
+];
+const FALLBACK_YIYAN = [
+  {text:'生活不止眼前的苟且，还有诗和远方的田野。', from:'高晓松'},
+  {text:'世界上只有一种真正的英雄主义，那就是认清生活的真相后依然热爱生活。', from:'罗曼·罗兰'},
+  {text:'每一个不曾起舞的日子，都是对生命的辜负。', from:'尼采'},
+  {text:'生活不能等待别人来安排，要自己去争取和奋斗。', from:'路遥'},
+  {text:'生命的意义在于付出，在于给予，而不是在于接受，也不是在于争取。', from:'巴金'},
+  {text:'我们都在阴沟里，但仍有人仰望星空。', from:'王尔德'},
+  {text:'满地都是六便士，他却抬头看见了月亮。', from:'毛姆'},
+  {text:'愿你出走半生，归来仍是少年。', from:'网络'},
+  {text:'世界上最美的东西，看不见也摸不着，要靠心灵去感受。', from:'海伦·凯勒'},
+  {text:'哪有什么胜利可言，挺住意味着一切。', from:'里尔克'},
+  {text:'人生如逆旅，我亦是行人。', from:'苏轼'},
+  {text:'命运所赠送的礼物，早已在暗中标好了价格。', from:'茨威格'},
+  {text:'人生最曼妙的风景，是内心的淡定与从容。', from:'杨绛'},
+  {text:'我们最终都要远行，最终都要跟稚嫩的自己告别。', from:'海子'},
+  {text:'山海自有归期，风雨自有相逢。', from:'网络'},
+  {text:'心之所向，素履以往；生如逆旅，一苇以航。', from:'七堇年'},
+  {text:'只有用水将心上的雾气淘洗干净，荣光才会照亮最初的梦想。', from:'马尔克斯'},
+  {text:'岁月极美，在于它必然的流逝。', from:'三毛'},
+  {text:'所谓无底深渊，下去，也是前程万里。', from:'木心'}
+];
+const FALLBACK_STORIES = [
+  { title:'Pride and Prejudice', author:'Jane Austen', preview:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other of their daughters.', url:'https://www.gutenberg.org/files/1342/1342-0.txt' },
+  { title:'A Tale of Two Cities', author:'Charles Dickens', preview:'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.', url:'https://www.gutenberg.org/files/98/98-0.txt' },
+  { title:'The Old Man and the Sea', author:'Ernest Hemingway', preview:'He was an old man who fished alone in a skiff in the Gulf Stream and he had gone eighty-four days now without taking a fish. In the first forty days a boy had been with him. But after forty days without a fish the boy\u2019s parents had told him that the old man was now definitely and finally salao, which is the worst form of unlucky.', url:'https://www.gutenberg.org/files/38763/38763-0.txt' },
+  { title:'Moby Dick', author:'Herman Melville', preview:'Call me Ishmael. Some years ago never mind how long precisely having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.', url:'https://www.gutenberg.org/files/2701/2701-0.txt' },
+  { title:'Alice in Wonderland', author:'Lewis Carroll', preview:'Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, and what is the use of a book, thought Alice, without pictures or conversations?', url:'https://www.gutenberg.org/files/11/11-0.txt' }
+];
 
 /* ============================================================
    数据
@@ -335,7 +411,8 @@ const SEED = {
     {title:'生活是很好玩的',text:'如果你来访我，我不在，请和我门外的花坐一会儿。它们很温暖，我注视它们很多很多日子了。',tips:'汪曾祺的句子很短，但很有味道。'},
     {title:'人生',text:'人生的道路虽然漫长，但紧要处常常只有几步，特别是当人年轻的时候。',tips:'柳青的这句话很重，要读得稳。'},
     {title:'目送（节选）',text:'我慢慢地、慢慢地了解到，所谓父女母子一场，只不过意味着，你和他的缘分就是今生今世不断地在目送他的背影渐行渐远。',tips:'龙应台的文字感情很含蓄，注意"慢慢地"三个字。'},
-    {title:'我与地坛（二）',text:'一个人，出生了，这就不再是一个可以辩论的问题，而只是上帝交给他的一个事实；上帝在交给我们这件事实的时候，已经顺便保证了它的结果，所以死是一件不必急于求成的事，死是一个必然会会降临的节日。',tips:'史铁生对死亡的态度，是平静的，不是悲壮的。'}
+    {title:'我与地坛（二）',text:'一个人，出生了，这就不再是一个可以辩论的问题，而只是上帝交给他的一个事实；上帝在交给我们这件事实的时候，已经顺便保证了它的结果，所以死是一件不必急于求成的事，死是一个必然会降临的节日。',tips:'史铁生对死亡的态度，是平静的，不是悲壮的。'},
+    {title:'赤壁赋（节选）',text:'寄蜉蝣于天地，渺沧海之一粟。哀吾生之须臾，羡长江之无穷。挟飞仙以遨游，抱明月而长终。',tips:'苏轼的排比，节奏要层层推进。'}
   ],
   NEWS: [
     {cat:'AI 行业',t:'某头部公司发布新一代办公 AI 模型',why:'办公场景的 AI 能力直接影响日常文档、会议纪要、邮件处理的效率。',d:'新模型在长文本理解和多语言翻译上有明显提升。'},
@@ -368,9 +445,9 @@ const SEED = {
       {name:'星际穿越',author:'2014',emoji:'🎬',why:'关于时间、空间和父女情的科幻史诗。',scene:'想被震撼一次',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
       {name:'当幸福来敲门',author:'2006',emoji:'🎬',why:'真实故事改编，最低谷时看会有力量。',scene:'觉得撑不住的时候',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
       {name:'海上钢琴师',author:'1998',emoji:'🎬',why:'一个人与一艘船的一生。',scene:'想思考"选择"的时候',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
-      {name:'隐入尘烟',author:'2022',emoji:'🎬',why:'两个被遗忘的人，一段沉默的爱情。',scene:'想看点真实的、慢的东西',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
       {name:'楚门的世界',author:'1998',emoji:'🎬',why:'你的人生，是不是也被人安排好了？',scene:'想思考真实与虚假',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
-      {name:'寻梦环游记',author:'2017',emoji:'🎬',why:'关于家人、梦想和记忆。',scene:'想被治愈一次',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`}
+      {name:'寻梦环游记',author:'2017',emoji:'🎬',why:'关于家人、梦想和记忆。',scene:'想被治愈一次',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`},
+      {name:'隐入尘烟',author:'2022',emoji:'🎬',why:'两个被遗忘的人，一段沉默的爱情。',scene:'想看点真实的、慢的东西',scheme:'douban://',packageName:'com.douban.frodo',web:(q)=>`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`}
     ],
     '播客': [
       {name:'忽左忽右',author:'程衍樑',emoji:'🎧',why:'聊国际政治、历史、文化。',scene:'通勤 / 做家务',scheme:'xiaoyuzhou://',packageName:'app.podcast.cosmos',web:(q)=>`https://www.xiaoyuzhoufm.com/search?q=${encodeURIComponent(q)}`},
@@ -405,11 +482,11 @@ function loadDataFromGlobals(){
   } else {
     SEED.VALVE = {
       '基础知识': [
-        {q:'闸阀为什么不适合调节流量？',a:'闸板在开启过程中，流体阻力变化大。',key:'闸阀设计用于全开/全关。长期半开会造成闸板振动、密封面冲蚀。'},
-        {q:'截止阀和闸阀的核心区别？',a:'截止阀的阀瓣沿阀座中心线升降；闸阀的闸板垂直于流道升降。',key:'截止阀：流阻大，但密封好、可调节。闸阀：流阻小，但只能全开全关。'},
+        {q:'闸阀为什么不适合调节流量？',a:'闸板在开启过程中，流体阻力变化大。',key:'闸阀设计用于全开/全关。'},
+        {q:'截止阀和闸阀的核心区别？',a:'截止阀的阀瓣沿阀座中心线升降。',key:'截止阀流阻大但密封好；闸阀流阻小但只能全开全关。'},
         {q:'什么是公称压力（PN）？',a:'阀门在基准温度下的最大允许工作压力。',key:'PN16 = 1.6 MPa。'},
         {q:'什么是公称通径（DN）？',a:'阀门进出口的名义直径。',key:'DN 是一个圆整数，不是精确值。'},
-        {q:'阀门密封面材料有哪些？',a:'常见有 PTFE、PPL、STL（钴基硬质合金）、石墨。',key:'按介质、温度、压力选用。'}
+        {q:'阀门密封面材料有哪些？',a:'常见有 PTFE、PPL、STL、石墨。',key:'按介质、温度、压力选用。'}
       ]
     };
     SEED.VALVE_ALL = Object.keys(SEED.VALVE).flatMap(cat => SEED.VALVE[cat].map(v => ({ ...v, cat })));
@@ -419,8 +496,6 @@ function loadDataFromGlobals(){
 
   if (Array.isArray(window.__WORD_DECKS) && window.__WORD_DECKS.length > 0){
     SEED.DECKS = window.__WORD_DECKS;
-  } else {
-    SEED.DECKS = [];
   }
 
   if (Array.isArray(window.__WORDS_DATA) && window.__WORDS_DATA.length > 0){
@@ -434,9 +509,7 @@ function loadDataFromGlobals(){
   DATA_STATUS.decks = SEED.DECKS.length;
   DATA_STATUS.words = SEED.DECKS.reduce((s,d) => s + (d.count || 0), 0);
   DATA_STATUS.wordsOk = DATA_STATUS.words > 0;
-
   window.__dataStatus = DATA_STATUS;
-  console.log('数据加载状态：', DATA_STATUS);
 }
 
 /* ============================================================
@@ -445,7 +518,6 @@ function loadDataFromGlobals(){
 const DeckLoader = {
   loaded: {},
   loading: {},
-  allLoading: null,
   load(deckId){
     if (this.loaded[deckId]) return Promise.resolve(this.loaded[deckId]);
     if (this.loading[deckId]) return this.loading[deckId];
@@ -468,20 +540,10 @@ const DeckLoader = {
         this.loaded[deckId] = words;
         resolve(words);
       };
-      s.onerror = () => {
-        console.warn('词库加载失败：', deckId, meta.file);
-        this.loaded[deckId] = [];
-        resolve([]);
-      };
+      s.onerror = () => { this.loaded[deckId] = []; resolve([]); };
       document.head.appendChild(s);
     });
     return this.loading[deckId];
-  },
-  loadAll(){
-    if (this.allLoaded()) return Promise.resolve();
-    if (this.allLoading) return this.allLoading;
-    this.allLoading = Promise.all(SEED.DECKS.map(d => this.load(d.id).catch(() => [])));
-    return this.allLoading;
   },
   allLoaded(){
     if (!SEED.DECKS.length) return true;
@@ -490,10 +552,7 @@ const DeckLoader = {
   get(deckId){
     if (deckId === 'all'){
       const all = [];
-      SEED.DECKS.forEach(d => {
-        const words = this.loaded[d.id];
-        if (Array.isArray(words)) all.push(...words);
-      });
+      SEED.DECKS.forEach(d => { const w = this.loaded[d.id]; if (Array.isArray(w)) all.push(...w); });
       return all;
     }
     return this.loaded[deckId] || [];
@@ -514,10 +573,7 @@ const DeckLoader = {
   async ensureForReview(){
     const map = LS.get('word-deck-map', {});
     const ids = new Set(Object.values(map));
-    if (!ids.size){
-      await this.loadAll();
-      return;
-    }
+    if (!ids.size){ for (const d of SEED.DECKS) await this.load(d.id).catch(()=>[]); return; }
     await Promise.all([...ids].map(id => this.load(id).catch(() => [])));
   }
 };
@@ -540,11 +596,38 @@ const Store = {
     }catch(e){}
     return [...s];
   },
+  getWeekLearnedWords(){
+    const s = new Set();
+    for (let i = 0; i < 7; i++){
+      const arr = LS.get('learned:' + (DAY - i), []);
+      if (Array.isArray(arr)) arr.forEach(w => s.add(w));
+    }
+    return [...s];
+  },
+  getWeekLearnedKnowledge(){
+    const s = new Set();
+    for (let i = 0; i < 7; i++){
+      const arr = LS.get('know-done:' + (DAY - i), []);
+      if (Array.isArray(arr)) arr.forEach(w => s.add(w));
+    }
+    return [...s];
+  },
   setWordDeck(word, deckId){
     if (!word || !deckId) return;
     const map = LS.get('word-deck-map', {});
     map[word] = deckId;
     LS.set('word-deck-map', map);
+  },
+  getTodayWordNames(deckId){
+    const key = 'today-words:' + DAY + ':' + deckId;
+    const saved = LS.get(key, null);
+    if (Array.isArray(saved) && saved.length) return saved;
+    const learnedAll = new Set(this.getAllLearnedEver());
+    const deckWords = DeckLoader.get(deckId);
+    const unlearned = deckWords.filter(w => !learnedAll.has(w.w));
+    const today = unlearned.slice(0, DAILY_WORD_COUNT).map(w => w.w);
+    LS.set(key, today);
+    return today;
   },
   getKnowDone(){ const v = LS.get('know-done:' + DAY, []); return Array.isArray(v) ? v : []; },
   setKnowDone(arr){ LS.set('know-done:' + DAY, arr); },
@@ -561,9 +644,6 @@ const Store = {
     return [...s];
   },
   markTodayDone(key){ if (key === 'passage') LS.set('passage-done:' + DAY, true); },
-  getEnPassageDone(){ return LS.get('en-passage-done:' + DAY, false); },
-  markEnPassageDone(){ LS.set('en-passage-done:' + DAY, true); },
-
   getThinkAns(name){ return LS.get('think-ans:' + name, ''); },
   setThinkAns(name, text){
     if (text && text.trim()) LS.set('think-ans:' + name, text);
@@ -578,16 +658,13 @@ const Store = {
     const today = todayStr();
     if (!v.includes(today)){ v.push(today); LS.set('think-done-days:' + name, v); }
   },
-
   getNote(q){ const v = LS.get('note:' + q, ''); return typeof v === 'string' ? v : ''; },
   setNote(q, text){ if (text && text.trim()) LS.set('note:' + q, text); else LS.del('note:' + q); },
-  appendNote(q, text){ const cur = this.getNote(q); this.setNote(q, cur ? (cur + '\n\n' + text) : text); },
   getAllNotes(){
     const list = [];
     SEED.VALVE_ALL.forEach(v => { const n = LS.get('note:' + v.q, ''); if (n && n.trim()) list.push({ q:v.q, cat:v.cat, note:n }); });
     return list;
   },
-
   getStreak(){
     const d = LS.get('streak', null);
     if (!d || typeof d !== 'object') return { count:0, last:null, best:0 };
@@ -605,16 +682,13 @@ const Store = {
     LS.set('streak', next);
     return next;
   },
-
   getSchedule(type){ const v = LS.get('schedule:' + type, {}); return (v && typeof v === 'object') ? v : {}; },
   setSchedule(type, obj){ LS.set('schedule:' + type, obj); },
   ensureSchedule(type, key){
     const s = this.getSchedule(type);
     if (!s[key]) { s[key] = { stage:0, nextDay: DAY, wrongCount:0, rightCount:0 }; this.setSchedule(type, s); }
   },
-  getAllScheduledKeys(type){
-    return Object.keys(this.getSchedule(type));
-  },
+  getAllScheduledKeys(type){ return Object.keys(this.getSchedule(type)); },
   getDueKeys(type){
     const s = this.getSchedule(type);
     return Object.keys(s).filter(k => (s[k].nextDay || 0) <= DAY);
@@ -624,15 +698,7 @@ const Store = {
     const s = this.getSchedule(type);
     const all = Object.keys(s);
     if (!all.length) return [];
-    const due = all.filter(k => (s[k].nextDay || 0) <= DAY);
-    const notDue = all.filter(k => (s[k].nextDay || 0) > DAY);
-    const result = [...due];
-    if (result.length < limit && notDue.length){
-      const need = limit - result.length;
-      const picked = shuffle(notDue).slice(0, need);
-      result.push(...picked);
-    }
-    return result.slice(0, limit);
+    return shuffle(all).slice(0, limit);
   },
   rateItem(type, key, rating){
     const s = this.getSchedule(type);
@@ -646,31 +712,21 @@ const Store = {
     s[key] = cur;
     this.setSchedule(type, s);
   },
-
   getWrongBook(){ return LS.get('wrong-book', []); },
   addWrong(type, key, q, userAnswer, feedback){
     const list = this.getWrongBook();
     const exist = list.find(x => x.type === type && x.key === key);
-    if (exist){
-      exist.count = (exist.count||1) + 1;
-      exist.last = Date.now();
-      exist.userAnswer = userAnswer;
-      exist.feedback = feedback;
-    } else {
-      list.unshift({ type, key, q, userAnswer, feedback, count:1, last:Date.now() });
-    }
+    if (exist){ exist.count = (exist.count||1)+1; exist.last = Date.now(); exist.userAnswer = userAnswer; exist.feedback = feedback; }
+    else { list.unshift({ type, key, q, userAnswer, feedback, count:1, last:Date.now() }); }
     LS.set('wrong-book', list.slice(0, 200));
   },
   removeWrong(type, key){
-    const list = this.getWrongBook().filter(x => !(x.type === type && x.key === key));
-    LS.set('wrong-book', list);
+    LS.set('wrong-book', this.getWrongBook().filter(x => !(x.type === type && x.key === key)));
   },
-
   getTodayTasks(){
     const learned = this.getLearned();
     const knowDone = this.getKnowDone();
     const passageDone = LS.get('passage-done:' + DAY, false);
-    const enPassageDone = LS.get('en-passage-done:' + DAY, false);
     let exprDone = false;
     try { Object.keys(localStorage).forEach(k => { if (k.startsWith('expr-grade:' + todayStr())) exprDone = true; }); } catch(e){}
     const newsThink = LS.get('news-think-' + todayStr() + '-0', '');
@@ -682,45 +738,16 @@ const Store = {
     return [
       { key:'words', label:'学英语单词', current: learned.length, total: DAILY_WORD_COUNT, done: learned.length >= DAILY_WORD_COUNT },
       { key:'valve', label:'学阀门知识', current: knowDone.length, total: DAILY_VALVE_COUNT, done: knowDone.length >= DAILY_VALVE_COUNT },
-      { key:'general', label:'每日知识', current: generalDone ? 1 : 0, total: 1, done: !!generalDone },
-      { key:'yiyan', label:'中文金句', current: yiyanDone ? 1 : 0, total: 1, done: !!yiyanDone },
-      { key:'quote', label:'英文名言', current: quoteDone ? 1 : 0, total: 1, done: !!quoteDone },
-      { key:'story', label:'英文短文', current: storyDone ? 1 : 0, total: 1, done: !!storyDone },
-      { key:'passage', label:'朗读短文', current: passageDone ? 1 : 0, total: 1, done: !!passageDone },
+      { key:'general', label:'每日知识', current: generalDone?1:0, total: 1, done: !!generalDone },
+      { key:'yiyan', label:'中文金句', current: yiyanDone?1:0, total: 1, done: !!yiyanDone },
+      { key:'quote', label:'英文名言', current: quoteDone?1:0, total: 1, done: !!quoteDone },
+      { key:'story', label:'英文短文', current: storyDone?1:0, total: 1, done: !!storyDone },
+      { key:'passage', label:'朗读短文', current: passageDone?1:0, total: 1, done: !!passageDone },
       { key:'logic', label:'逻辑思考练习', current: thinkDone, total: 1, done: thinkDone >= 1 },
-      { key:'expr', label:'写表达练习', current: exprDone ? 1 : 0, total: 1, done: exprDone },
-      { key:'news', label:'看今日世界', current: newsThink ? 1 : 0, total: 1, done: !!newsThink }
+      { key:'expr', label:'写表达练习', current: exprDone?1:0, total: 1, done: exprDone },
+      { key:'news', label:'看今日世界', current: newsThink?1:0, total: 1, done: !!newsThink }
     ];
   },
-
-  getWeeklyTest(){
-    const weekKey = new Date().getFullYear() + '-w' + Math.floor(DAY/7);
-    const cached = LS.get('weekly-test:' + weekKey, null);
-    if (cached) return cached;
-    const learnedSet = new Set();
-    for (let i = 0; i < 7; i++){
-      const l = LS.get('learned:' + (DAY - i), []);
-      if (Array.isArray(l)) l.forEach(w => learnedSet.add(w));
-    }
-    const words = [...learnedSet].slice(0, 5).map(w => DeckLoader.findWord(w)).filter(Boolean);
-    const valveKeys = new Set();
-    for (let i = 0; i < 7; i++){
-      const k = LS.get('know-done:' + (DAY - i), []);
-      if (Array.isArray(k)) k.forEach(x => valveKeys.add(x));
-    }
-    const valves = [...valveKeys].slice(0, 5).map(q => SEED.VALVE_ALL.find(x => x.q === q)).filter(Boolean);
-    const test = { weekKey, words, valves, taken: false, score: null, takenAt: null };
-    LS.set('weekly-test:' + weekKey, test);
-    return test;
-  },
-  saveWeeklyResult(result){
-    const t = this.getWeeklyTest();
-    t.taken = true;
-    t.score = result.score;
-    t.takenAt = Date.now();
-    LS.set('weekly-test:' + t.weekKey, t);
-  },
-
   getGrowth(){ const v = LS.get('growth', {}); return (v && typeof v === 'object') ? v : {}; },
   setGrowth(obj){ LS.set('growth', obj && typeof obj === 'object' ? obj : {}); },
   getGrowthLog(){ const v = LS.get('growth-log', []); return Array.isArray(v) ? v : []; },
@@ -729,7 +756,6 @@ const Store = {
     log.unshift(entry);
     LS.set('growth-log', log.slice(0, 120));
   },
-
   getAIHistory(){ const v = LS.get('ai-history', []); return Array.isArray(v) ? v : []; },
   addAIHistory(role, content){
     const h = this.getAIHistory();
@@ -737,42 +763,36 @@ const Store = {
     LS.set('ai-history', h.slice(-100));
   },
   clearAIHistory(){ LS.del('ai-history'); },
-
   linkWorkToStudy(record){
     const plan = LS.get('study-plan', []);
     plan.unshift({ source:'work', problem: record.problem, solution: record.solution, keywords: record.keywords, date: record.date, t: Date.now() });
     LS.set('study-plan', plan.slice(0, 100));
   },
   getStudyPlan(){ const v = LS.get('study-plan', []); return Array.isArray(v) ? v : []; },
-  removeStudyPlan(idx){
-    const plan = this.getStudyPlan();
-    plan.splice(idx, 1);
-    LS.set('study-plan', plan);
+  removeStudyPlan(idx){ const p = this.getStudyPlan(); p.splice(idx, 1); LS.set('study-plan', p); },
+  getWeeklyResult(){
+    const weekKey = new Date().getFullYear() + '-w' + Math.floor(DAY/7);
+    return LS.get('weekly-result:' + weekKey, null);
   },
-
+  saveWeeklyResult(result){
+    const weekKey = new Date().getFullYear() + '-w' + Math.floor(DAY/7);
+    if (result === null){ LS.del('weekly-result:' + weekKey); }
+    else LS.set('weekly-result:' + weekKey, result);
+  },
   buildExportData(){
     const thinkAnswers = {};
     SEED.THINKING.forEach(m => { const a = LS.get('think-ans:' + m.name, ''); if (a) thinkAnswers[m.name] = a; });
     const notes = {};
     SEED.VALVE_ALL.forEach(v => { const n = LS.get('note:' + v.q, ''); if (n) notes[v.q] = n; });
-    const data = {
-      app:'daily', version:26, exportedAt:new Date().toISOString(),
+    return {
+      app:'daily', version:29, exportedAt:new Date().toISOString(),
       learned:this.getLearned(), thinkAnswers, notes,
       wordDeckMap: LS.get('word-deck-map', {}),
       schedule:{ english:this.getSchedule('english'), work:this.getSchedule('work') },
-      wrongBook:this.getWrongBook(), growth:this.getGrowth(), growthLog:this.getGrowthLog(),
+      wrongBook:this.getWrongBook(), growth:this.getGrowth(),
       streak:this.getStreak(), aiHistory: this.getAIHistory(), studyPlan: this.getStudyPlan(),
       workRecords: LS.get('work-records', [])
     };
-    try {
-      Object.keys(localStorage).forEach(k => {
-        if (k.startsWith('expr-ans:')) data[k] = LS.get(k,'');
-        if (k.startsWith('expr-grade:')) data[k] = LS.get(k,null);
-        if (k.startsWith('news-think-')) data[k] = LS.get(k,'');
-        if (k.startsWith('think-done-days:')) data[k] = LS.get(k,[]);
-      });
-    } catch(e){}
-    return data;
   },
   importDataFromText(text){
     const d = JSON.parse(text);
@@ -786,23 +806,17 @@ const Store = {
     }
     if (d.wrongBook) LS.set('wrong-book', d.wrongBook);
     if (d.growth) LS.set('growth', d.growth);
-    if (d.growthLog) LS.set('growth-log', d.growthLog);
     if (d.streak) LS.set('streak', d.streak);
-    if (d.aiHistory) LS.set('ai-history', d.aiHistory);
-    if (d.studyPlan) LS.set('study-plan', d.studyPlan);
-    if (d.workRecords) LS.set('work-records', d.workRecords);
-    Object.keys(d).forEach(k => { if (k.startsWith('expr-') || k.startsWith('news-think-') || k.startsWith('think-done-days:')) LS.set(k, d[k]); });
   },
   clearAll(){
     try{
       Object.keys(localStorage).forEach(k => {
-        if (k.startsWith('learned:') || k.startsWith('think-ans:') ||
-            k.startsWith('note:') || k.startsWith('schedule:') || k.startsWith('expr-') ||
-            k.startsWith('know-done:') || k.startsWith('passage-done:') ||
-            k.startsWith('news-think-') || k.startsWith('english-deck') ||
-            k.startsWith('think-done-days:') || k.startsWith('general-done:') ||
-            k.startsWith('en-passage-done:') || k.startsWith('quote-done:') ||
-            k.startsWith('story-done:') || k.startsWith('yiyan-done:') ||
+        if (k.startsWith('learned:') || k.startsWith('think-ans:') || k.startsWith('note:') ||
+            k.startsWith('schedule:') || k.startsWith('expr-') || k.startsWith('know-done:') ||
+            k.startsWith('passage-done:') || k.startsWith('news-think-') || k.startsWith('english-deck') ||
+            k.startsWith('think-done-days:') || k.startsWith('general-done:') || k.startsWith('today-words:') ||
+            k.startsWith('quote-done:') || k.startsWith('story-done:') || k.startsWith('yiyan-done:') ||
+            k.startsWith('weekly-result:') || k.startsWith('example-cache') ||
             ['wrong-book','growth','growth-log','streak','ai-history','study-plan','work-records','word-deck-map'].includes(k)) {
           localStorage.removeItem(k);
         }
@@ -817,7 +831,6 @@ const Store = {
     return {
       learnedCount: this.getLearned().length,
       learnedEver: this.getAllLearnedEver().length,
-      knowDoneCount: this.getKnowDone().length,
       knowDoneEver: this.getAllKnowDoneEver().length,
       thinkCount, noteCount, exprCount,
       wrongCount: this.getWrongBook().length,
@@ -827,8 +840,7 @@ const Store = {
       scheduledWork: this.getAllScheduledKeys('work').length,
       totalValve: SEED.VALVE_ALL.length,
       totalWords: SEED.DECKS.reduce((s,d) => s + (d.count || 0), 0),
-      totalDecks: SEED.DECKS.length,
-      loadedDecks: Object.keys(DeckLoader.loaded).length
+      totalDecks: SEED.DECKS.length
     };
   }
 };
@@ -852,13 +864,9 @@ function localJudge(answer, reference){
   const parts = ref.split(/[；;，,、\/\n]+/).map(x => x.trim()).filter(Boolean);
   for (const p of parts){
     const pl = p.toLowerCase();
-    if (p.length >= 2 && (al.includes(pl) || pl.includes(al)) && al.length >= 2){
-      return { correct:true, score:92, feedback:'命中：' + p };
-    }
+    if (p.length >= 2 && (al.includes(pl) || pl.includes(al))) return { correct:true, score:92, feedback:'命中：' + p };
   }
-  if (al.length >= 2 && (rl.includes(al) || al.includes(rl))){
-    return { correct:true, score:88, feedback:'意思对了' };
-  }
+  if (al.length >= 2 && (rl.includes(al) || al.includes(rl))) return { correct:true, score:88, feedback:'意思对了' };
   const keys = extractKeywords(reference);
   if (keys.length){
     const hit = keys.filter(k => al.includes(k.toLowerCase()));
@@ -881,8 +889,7 @@ const AI = {
   get provider(){ return LS.get('ai-provider', 'none'); },
   get apiKey(){ return LS.get('ai-key', ''); },
   get model(){ return LS.get('ai-model', ''); },
-  get customBase(){ return LS.get('ai-custom-base', ''); },
-  set(p, k, m, b){ LS.set('ai-provider', p||'none'); LS.set('ai-key', k||''); LS.set('ai-model', m||''); LS.set('ai-custom-base', b||''); },
+  set(p, k, m){ LS.set('ai-provider', p||'none'); LS.set('ai-key', k||''); LS.set('ai-model', m||''); },
   enabled(){ return this.provider !== 'none' && !!this.apiKey; },
   roles: {
     engineer:{ name:'👷 工程师', prompt:'你是阀门行业资深工程师，20 年一线经验。回答专业、准确、实用。' },
@@ -895,13 +902,12 @@ const AI = {
     return {
       deepseek:{ base:'https://api.deepseek.com/v1/chat/completions', model:'deepseek-chat' },
       qwen:{ base:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model:'qwen-turbo' },
-      zhipu:{ base:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash' },
-      custom:{ base:this.customBase, model:this.model }
+      zhipu:{ base:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash' }
     };
   },
   async call(system, user, maxTokens, temp){
     const cfg = this.endpoints()[this.provider];
-    if (!cfg || !cfg.base) throw new Error('AI 未配置');
+    if (!cfg) throw new Error('AI 未配置');
     const r = await fetch(cfg.base, {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + this.apiKey },
@@ -924,267 +930,324 @@ const AI = {
     if (i >= 0 && j > i) json = json.slice(i, j + 1);
     return JSON.parse(json);
   },
-  async scoreAnswer(question, answer, reference){
+  async scoreAnswer(q, a, ref){
     if (!this.enabled()) return null;
-    const system = `你是严格的行业导师。只输出 JSON：
-{"accuracy":0-100,"correct":["答对的点"],"missing":["遗漏的点"],"supplement":"工程师补充50-150字","keywords":["关键词1","关键词2","关键词3"]}`;
-    const user = `【问题】\n${question}\n\n【参考答案】\n${reference}\n\n【学员回答】\n${answer}\n\n请评分。`;
-    return this.parseJSON(await this.call(system, user, 1000, 0.2));
+    const system = `严格导师。只输出 JSON：\n{"accuracy":0-100,"correct":[],"missing":[],"supplement":"","keywords":[]}`;
+    return this.parseJSON(await this.call(system, `【问题】\n${q}\n\n【参考】\n${ref}\n\n【学员】\n${a}\n\n请评分。`, 1000, 0.2));
   },
-  async judgeWord(word, userAnswer, correctCn){
+  async judgeWord(w, a, cn){
     if (!this.enabled()) return null;
-    const system = `你是英语单词判卷老师。只输出 JSON：
-{"correct":true/false,"score":0-100,"feedback":"一句话点评（20字以内）"}`;
-    const user = `单词：${word}\n参考答案：${correctCn}\n学员回答：${userAnswer}`;
-    return this.parseJSON(await this.call(system, user, 200, 0.1));
+    const system = `英语单词判卷。只输出 JSON：\n{"correct":true/false,"score":0-100,"feedback":"20字以内"}`;
+    return this.parseJSON(await this.call(system, `单词：${w}\n参考：${cn}\n学员：${a}`, 200, 0.1));
   },
-  async answerQuestion(question, context){
+  async answerQuestion(q, ctx){
     if (!this.enabled()) return null;
-    const system = `你是阀门行业资深工程师。用户在学习阀门知识时遇到了一个问题，请给出专业、准确、实用的回答。
-要求：1. 直接回答 2. 涉及具体工况时给出适用条件和边界 3. 分点作答，总共 400 字以内 4. 不确定的地方说"建议核实"。`;
-    const user = context ? `背景：${context}\n\n问题：${question}` : question;
-    return await this.call(system, user, 1000, 0.4);
+    const system = `阀门行业资深工程师。回答专业准确。1.直接回答 2.给适用边界 3.分点，400字内 4.不确定说"建议核实"。`;
+    return await this.call(system, ctx ? `背景：${ctx}\n\n问题：${q}` : q, 1000, 0.4);
   },
-  async assistant(question, role){
+  async assistant(q, role){
     if (!this.enabled()) throw new Error('AI 未配置');
-    const roleCfg = this.roles[role] || this.roles.engineer;
-    return await this.call(roleCfg.prompt + '\n分点作答，每点短句，总共 400 字以内。不确定的地方说"建议核实"。', question, 1000, 0.4);
+    const cfg = this.roles[role] || this.roles.engineer;
+    return await this.call(cfg.prompt + '\n分点作答，每点短句，400字内。', q, 1000, 0.4);
   },
-  async gradeExpression(scene, question, guide, answer){
+  async gradeExpression(scene, q, guide, answer){
     if (!this.enabled()) return null;
-    const system = `你是表达训练教练。用户在练习场景：「${scene}」
-题目：${question}
-要求：${guide}
-只输出 JSON：
-{"score":0-100,"level":"优秀/良好/合格/待提升","strengths":["优点1","优点2"],"issues":["问题1","问题2"],"improved":"修改后的完整回答","advice":"一句话核心建议（20字以内）"}`;
+    const system = `表达训练教练。场景「${scene}」\n题目：${q}\n要求：${guide}\n只输出 JSON：\n{"score":0-100,"level":"","strengths":[],"issues":[],"improved":"","advice":""}`;
     return this.parseJSON(await this.call(system, '用户的回答：\n' + answer, 1200, 0.3));
   }
 };
 
 /* ============================================================
-   多知识源 API 封装
+   知识源
    ============================================================ */
 const KnowledgeSource = {
   get current(){ return LS.get('knowledge-source', 'auto'); },
   set current(v){ LS.set('knowledge-source', v); },
-  get showapiAppId(){ return LS.get('showapi-appid', ''); },
-  get showapiSign(){ return LS.get('showapi-sign', ''); },
+  get showapiAppId(){ return LS.get('showapi-appid', APP_DEFAULTS.showapi.appid); },
+  get showapiSign(){ return LS.get('showapi-sign', APP_DEFAULTS.showapi.sign); },
   set showapi(cfg){ LS.set('showapi-appid', cfg.appid||''); LS.set('showapi-sign', cfg.sign||''); },
-  get oiowebId(){ return LS.get('oioweb-id', ''); },
-  get oiowebKey(){ return LS.get('oioweb-key', ''); },
+  get oiowebId(){ return LS.get('oioweb-id', APP_DEFAULTS.oioweb.id); },
+  get oiowebKey(){ return LS.get('oioweb-key', APP_DEFAULTS.oioweb.key); },
   set oioweb(cfg){ LS.set('oioweb-id', cfg.id||''); LS.set('oioweb-key', cfg.key||''); },
-
   canShowApi(){ return !!(this.showapiAppId && this.showapiSign); },
   canOioweb(){ return !!(this.oiowebId && this.oiowebKey); },
 
-  pickAuto(){
-    if (this.canShowApi()) return 'showapi';
-    if (this.canOioweb()) return 'oioweb';
-    return 'wiki';
-  },
-
   async fetch(){
-    const src = this.current === 'auto' ? this.pickAuto() : this.current;
+    const src = this.current;
     if (src === 'showapi' && this.canShowApi()) return await this.fetchShowAPI();
     if (src === 'oioweb' && this.canOioweb()) return await this.fetchOioweb();
     return await this.fetchWiki();
   },
-
   async fetchWiki(){
-    const url = 'https://zh.wikipedia.org/api/rest_v1/page/random/summary';
-    const r = await fetch(url);
+    const r = await fetchWithTimeout('https://zh.wikipedia.org/api/rest_v1/page/random/summary');
     if (!r.ok) throw new Error('Wikipedia HTTP ' + r.status);
     const d = await r.json();
     if (!d.extract || d.extract.length < 40) throw new Error('Wikipedia 内容太短');
     return { source:'wiki', q: d.title, a: d.extract, key: '来源：维基百科 · ' + (d.description || '') };
   },
-
   async fetchShowAPI(){
-    const listUrl = `https://route.showapi.com/1706-1?showapi_appid=${encodeURIComponent(this.showapiAppId)}&showapi_sign=${encodeURIComponent(this.showapiSign)}&keyword=${encodeURIComponent(['地球','月亮','太阳','水','空气','火','动物','植物','人体','宇宙'][Math.floor(Math.random()*10)])}`;
-    const r = await fetch(listUrl);
-    if (!r.ok) throw new Error('ShowAPI 列表 HTTP ' + r.status);
+    const appid = this.showapiAppId, sign = this.showapiSign;
+    const keywords = ['地球','太阳','月亮','星星','火','水','风','树','鸟','鱼','猫','狗','汽车','飞机','彩虹','雪花'];
+    const keyword = keywords[Math.floor(Math.random() * keywords.length)];
+    const listUrl = `https://route.showapi.com/1706-1?showapi_appid=${encodeURIComponent(appid)}&showapi_sign=${encodeURIComponent(sign)}&keyword=${encodeURIComponent(keyword)}`;
+    const r = await fetchWithTimeout(listUrl);
+    if (!r.ok) throw new Error('ShowAPI HTTP ' + r.status);
     const d = await r.json();
+    if (d.showapi_res_code !== 0) throw new Error('ShowAPI code=' + d.showapi_res_code + ' ' + (d.showapi_res_error || ''));
     const body = d.showapi_res_body || {};
-    if (body.ret_code !== '0' && body.ret_code !== 0) throw new Error('ShowAPI 列表错误：' + (body.remark || ''));
-    const list = body.contentlist || [];
+    if (body.ret_code !== 0 && body.ret_code !== '0') throw new Error('ShowAPI ret=' + body.ret_code + ' ' + (body.remark || ''));
+    const list = body.contentlist || body.data || [];
     if (!list.length) throw new Error('ShowAPI 无数据');
-    const item = list[Math.floor(Math.random() * list.length)];
-    // 拿详情
-    const detailUrl = `https://route.showapi.com/1706-2?showapi_appid=${encodeURIComponent(this.showapiAppId)}&showapi_sign=${encodeURIComponent(this.showapiSign)}&id=${encodeURIComponent(item.id)}`;
-    const r2 = await fetch(detailUrl);
+    const pick = list[Math.floor(Math.random() * list.length)];
+    if (!pick.id) return { source:'showapi', q: pick.title || keyword, a: pick.content || pick.intro || '', key:'来源：ShowAPI' };
+    const detailUrl = `https://route.showapi.com/1706-2?showapi_appid=${encodeURIComponent(appid)}&showapi_sign=${encodeURIComponent(sign)}&id=${encodeURIComponent(pick.id)}`;
+    const r2 = await fetchWithTimeout(detailUrl);
     if (!r2.ok) throw new Error('ShowAPI 详情 HTTP ' + r2.status);
     const d2 = await r2.json();
+    if (d2.showapi_res_code !== 0) throw new Error('ShowAPI 详情 code=' + d2.showapi_res_code);
     const body2 = d2.showapi_res_body || {};
-    if (body2.ret_code !== '0' && body2.ret_code !== 0) throw new Error('ShowAPI 详情错误：' + (body2.remark || ''));
-    return { source:'showapi', q: body2.title || item.title, a: body2.content || '', key: '来源：ShowAPI 十万个为什么' };
+    return { source:'showapi', q: body2.title || pick.title, a: body2.content || '', key: '来源：ShowAPI 十万个为什么' };
   },
-
   async fetchOioweb(){
     const url = `https://cn.apihz.cn/api/zici/changshi.php?id=${encodeURIComponent(this.oiowebId)}&key=${encodeURIComponent(this.oiowebKey)}`;
-    const r = await fetch(url);
+    const r = await fetchWithTimeout(url);
     if (!r.ok) throw new Error('接口盒子 HTTP ' + r.status);
     const d = await r.json();
-    if (d.code !== 200) throw new Error('接口盒子错误：' + (d.msg || '未知'));
+    if (d.code !== 200) throw new Error('接口盒子 code=' + d.code + ' ' + (d.msg || ''));
     return { source:'oioweb', q: d.p, a: d.a, key: '来源：接口盒子 社会常识题' };
   },
-
-  async fetchWithRetry(maxRetry){
-    maxRetry = maxRetry || 3;
-    let lastErr = null;
-    for (let i = 0; i < maxRetry; i++){
-      try { return await this.fetch(); }
-      catch(e){
-        lastErr = e;
-        console.warn('知识获取失败，第 ' + (i+1) + ' 次：', e);
-        if (i < maxRetry - 1) await new Promise(res => setTimeout(res, 700));
-      }
+  async fetchWithFallback(){
+    const src = this.current;
+    if (src === 'showapi' && this.canShowApi()){
+      try { return await this.fetchShowAPI(); }
+      catch(e){ console.warn('ShowAPI 失败，回退 wiki：', e); return await this.fetchWiki(); }
     }
-    throw lastErr;
+    if (src === 'oioweb' && this.canOioweb()){
+      try { return await this.fetchOioweb(); }
+      catch(e){ console.warn('接口盒子失败，回退 wiki：', e); return await this.fetchWiki(); }
+    }
+    return await this.fetchWiki();
   }
 };
 
 /* ============================================================
-   Quote Garden（英文名言）
+   英文名言
    ============================================================ */
-const QuoteGarden = {
+const QuoteSource = {
   async fetch(){
-    const url = 'https://quote-garden.onrender.com/api/v3/quotes/random';
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('Quote Garden HTTP ' + r.status);
-    const d = await r.json();
-    const list = d.data || [];
-    if (!list.length) throw new Error('Quote Garden 无数据');
-    const q = list[0];
-    return { text: q.quoteText, author: q.quoteAuthor, genre: q.quoteGenre };
+    try {
+      const r = await fetchWithTimeout('https://api.quotable.io/random', null, 6000);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (!d.content) throw new Error('无数据');
+      return { text: d.content, author: d.author || 'Unknown', genre: (d.tags && d.tags[0]) || '', source:'quote' };
+    } catch(e){
+      console.warn('Quotable 失败，用内置：', e);
+      const idx = DAY % FALLBACK_QUOTES.length;
+      const q = FALLBACK_QUOTES[idx];
+      return { text: q.text, author: q.author, genre:'', source:'builtin' };
+    }
+  }
+};
+
+/* ============================================================
+   英文短文
+   ============================================================ */
+const StorySource = {
+  async fetch(){
+    try {
+      const r = await fetchWithTimeout('https://gutendex.com/books?languages=en&sort=popular&page=1', null, 7000);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      const list = d.results || [];
+      if (!list.length) throw new Error('无数据');
+      const book = list[Math.floor(Math.random() * Math.min(list.length, 10))];
+      const formats = book.formats || {};
+      const txtUrl = formats['text/plain; charset=utf-8'] || formats['text/plain; charset=us-ascii'] || formats['text/plain'];
+      if (!txtUrl) throw new Error('无文本链接');
+      const r2 = await fetchWithTimeout(txtUrl, null, 6000);
+      if (!r2.ok) throw new Error('文本 HTTP ' + r2.status);
+      const fullText = await r2.text();
+      let start = fullText.indexOf('*** START OF');
+      if (start > 0) start = fullText.indexOf('\n', start) + 1; else start = 0;
+      const preview = fullText.slice(start, start + 600).trim();
+      return { title: book.title, author: (book.authors || []).map(a => a.name).join(', '), preview: preview.slice(0, 500), url: txtUrl, source:'gutendex' };
+    } catch(e){
+      console.warn('Gutendex 失败，用内置：', e);
+      const s = FALLBACK_STORIES[DAY % FALLBACK_STORIES.length];
+      return { ...s, source:'builtin' };
+    }
+  }
+};
+
+/* ============================================================
+   中文金句
+   ============================================================ */
+const YiyanSource = {
+  async fetch(){
+    try {
+      const r = await fetchWithTimeout('https://v1.hitokoto.cn/', null, 6000);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (!d.hitokoto) throw new Error('无数据');
+      return { text: d.hitokoto, from: d.from || d.from_who || '', source:'hitokoto' };
+    } catch(e){
+      console.warn('一言失败，用内置：', e);
+      const y = FALLBACK_YIYAN[DAY % FALLBACK_YIYAN.length];
+      return { ...y, source:'builtin' };
+    }
+  }
+};
+
+/* ============================================================
+   例句（Tatoeba API + 本地缓存）
+   ============================================================ */
+const ExampleStore = {
+  _cache: null,
+  _loading: {},
+  get cache(){
+    if (!this._cache) this._cache = LS.get('example-cache', {});
+    return this._cache;
   },
-  async fetchWithRetry(n){
-    n = n || 2;
-    for (let i = 0; i < n; i++){
-      try { return await this.fetch(); }
-      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
-    }
-  }
-};
-
-/* ============================================================
-   Tatoeba（英文例句）
-   ============================================================ */
-const Tatoeba = {
-  async fetch(){
-    const url = 'https://api.tatoeba.org/v1/sentences?lang=eng&word_count=5-15&limit=1&sort=random';
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('Tatoeba HTTP ' + r.status);
-    const d = await r.json();
-    const list = d.data || d.results || [];
-    if (!list.length) throw new Error('Tatoeba 无数据');
-    const s = list[0];
-    return { text: s.text || s.sentence, lang: 'eng' };
+  has(word){
+    const c = this.cache[word];
+    return !!(c && c.en);
   },
-  async fetchWithRetry(n){
-    n = n || 2;
-    for (let i = 0; i < n; i++){
-      try { return await this.fetch(); }
-      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
+  get(word){
+    const c = this.cache[word];
+    return (c && c.en) ? c : null;
+  },
+  set(word, ex){
+    this.cache[word] = { ...ex, t: Date.now() };
+    const keys = Object.keys(this.cache);
+    if (keys.length > 2000){
+      keys.map(k => ({ k, t: this.cache[k].t || 0 }))
+          .sort((a, b) => a.t - b.t)
+          .slice(0, keys.length - 2000)
+          .forEach(x => delete this.cache[x.k]);
     }
+    LS.set('example-cache', this.cache);
+  },
+  async fetchFor(word){
+    if (this.has(word)) return this.get(word);
+    if (!word) return null;
+    try {
+      const url = `https://api.tatoeba.org/v1/sentences?lang=eng&q=${encodeURIComponent(word)}&limit=5&sort=relevance`;
+      const r = await fetchWithTimeout(url, null, 6000);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      const list = d.data || [];
+      if (!list.length){ this.set(word, { en:null }); return null; }
+      const pick = list.find(x => {
+        const t = (x.text || '').trim();
+        return t.length > 20 && t.length < 110 && !/["\[\]<>{}]/.test(t);
+      }) || list.find(x => (x.text || '').length > 10) || list[0];
+      const en = (pick.text || '').trim();
+      if (!en) return null;
+      const result = { en };
+      this.set(word, result);
+      return result;
+    } catch(e){
+      console.warn('例句获取失败：', word, e);
+      return null;
+    }
+  },
+  preload(words){
+    (words || []).forEach(w => {
+      if (!w || !w.w) return;
+      if (w.scene) return;
+      if (this.has(w.w)) return;
+      if (this._loading[w.w]) return;
+      this._loading[w.w] = true;
+      this.fetchFor(w.w).then(() => {
+        this._loading[w.w] = false;
+      });
+    });
   }
 };
 
 /* ============================================================
-   Gutendex（英文短文）
+   推荐数据源
    ============================================================ */
-const Gutendex = {
-  async fetch(){
-    // 随机选一个热门英文书
-    const url = 'https://gutendex.com/books?languages=en&sort=popular&page=1';
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('Gutendex HTTP ' + r.status);
+async function fetchOpenLibraryBook(){
+  try {
+    const r = await fetchWithTimeout('https://openlibrary.org/trending/daily.json?limit=30', null, 7000);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const works = d.works || [];
+    if (!works.length) throw new Error('无数据');
+    const pick = works[Math.floor(Math.random() * works.length)];
+    return {
+      name: pick.title || 'Unknown',
+      author: (pick.author_name || []).slice(0,2).join(', ') || 'Unknown',
+      emoji: '📖',
+      why: pick.first_sentence ? (Array.isArray(pick.first_sentence) ? pick.first_sentence[0] : pick.first_sentence) : 'Open Library 每日热门书目，来自全球读者的真实借阅趋势。',
+      scene: '每天翻翻有什么新书',
+      scheme: null,
+      packageName: '',
+      web: () => 'https://openlibrary.org' + (pick.key || '')
+    };
+  } catch(e){ console.warn('Open Library 失败：', e); return null; }
+}
+async function fetchTMDBTrending(mediaType){
+  try {
+    const apiKey = APP_DEFAULTS.tmdb.key;
+    const url = `https://api.themoviedb.org/3/trending/${mediaType}/day?api_key=${apiKey}&language=zh-CN`;
+    const r = await fetchWithTimeout(url, null, 7000);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
     const list = d.results || [];
-    if (!list.length) throw new Error('Gutendex 无数据');
-    const book = list[Math.floor(Math.random() * Math.min(list.length, 10))];
-    // 取纯文本链接
-    const formats = book.formats || {};
-    const txtUrl = formats['text/plain; charset=utf-8'] || formats['text/plain; charset=us-ascii'] || formats['text/plain'];
-    if (!txtUrl) throw new Error('Gutendex 无纯文本链接');
-    // 取前 500 字符
-    const r2 = await fetch(txtUrl);
-    if (!r2.ok) throw new Error('Gutendex 文本 HTTP ' + r2.status);
-    const fullText = await r2.text();
-    // 找正文开始位置（跳过 Gutenberg 头部）
-    let start = fullText.indexOf('*** START OF');
-    if (start < 0) start = fullText.indexOf('***START OF');
-    if (start > 0) start = fullText.indexOf('\n', start) + 1;
-    else start = 0;
-    const preview = fullText.slice(start, start + 600).trim();
+    if (!list.length) throw new Error('无数据');
+    const pick = list[Math.floor(Math.random() * Math.min(list.length, 15))];
+    const title = pick.title || pick.name || 'Unknown';
     return {
-      title: book.title,
-      author: (book.authors || []).map(a => a.name).join(', '),
-      preview: preview.slice(0, 500),
-      url: txtUrl
+      name: title,
+      author: (pick.release_date || pick.first_air_date || '').slice(0, 4),
+      emoji: mediaType === 'tv' ? '📺' : '🎬',
+      why: pick.overview ? pick.overview.slice(0, 100) : '正在热映/热播，来自 TMDB 全球热度榜。',
+      scene: mediaType === 'tv' ? '今晚追一集' : '今晚看点什么',
+      scheme: 'douban://',
+      packageName: 'com.douban.frodo',
+      web: () => `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(title)}`
     };
-  },
-  async fetchWithRetry(n){
-    n = n || 2;
-    for (let i = 0; i < n; i++){
-      try { return await this.fetch(); }
-      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
-    }
-  }
-};
-
-/* ============================================================
-   770a.cn 随机一言（中文短句）
-   ============================================================ */
-const Yiyan = {
-  async fetch(){
-    const url = 'https://www.770a.cn/yiyan/';
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('一言 HTTP ' + r.status);
-    const d = await r.json();
-    const text = d.hitokoto || d.text || d.content || '';
-    const from = d.from || d.author || '';
-    if (!text) throw new Error('一言无数据');
-    return { text, from };
-  },
-  async fetchWithRetry(n){
-    n = n || 2;
-    for (let i = 0; i < n; i++){
-      try { return await this.fetch(); }
-      catch(e){ if (i === n-1) throw e; await new Promise(r => setTimeout(r, 600)); }
-    }
-  }
-};
+  } catch(e){ console.warn('TMDB 失败：', e); return null; }
+}
 
 /* ============================================================
    语音
    ============================================================ */
-let _ttsAudio = null;
+const ttsPlayer = document.getElementById('ttsPlayer');
+let _currentBtn = null;
 function playOnlineTTS(text, lang, btn){
-  try{
-    if (_ttsAudio){ try{ _ttsAudio.pause(); }catch(e){} _ttsAudio = null; }
+  try {
+    if (ttsPlayer){ try{ ttsPlayer.pause(); }catch(e){} ttsPlayer.currentTime = 0; }
     const isZh = lang && lang.startsWith('zh');
     const type = (lang && lang === 'en-GB') ? 1 : 2;
     const url = isZh
       ? `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=zh`
       : `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=${type}`;
-    const audio = new Audio(url);
-    audio.crossOrigin = 'anonymous';
-    _ttsAudio = audio;
+    ttsPlayer.src = url;
+    _currentBtn = btn || null;
     if (btn){ btn.classList.add('playing'); if (btn.dataset.busy) btn.textContent = btn.dataset.busy; }
-    const cleanup = () => { if (btn){ btn.classList.remove('playing'); if (btn.dataset.idle) btn.textContent = btn.dataset.idle; } _ttsAudio = null; };
-    audio.onended = cleanup;
-    audio.onerror = () => { cleanup(); toast('在线朗读失败，请检查网络'); };
-    audio.play().catch(err => { cleanup(); toast('播放被拦截：' + err.message); });
-  }catch(e){ console.warn('在线 TTS 失败：', e); toast('朗读失败'); }
+    const cleanup = () => {
+      if (_currentBtn){ _currentBtn.classList.remove('playing'); if (_currentBtn.dataset.idle) _currentBtn.textContent = _currentBtn.dataset.idle; }
+      _currentBtn = null;
+    };
+    ttsPlayer.onended = cleanup;
+    ttsPlayer.onerror = () => { cleanup(); toast('朗读失败'); };
+    const p = ttsPlayer.play();
+    if (p && p.catch){ p.catch(err => { cleanup(); toast('播放被拦截，请再点一次'); }); }
+  } catch(e){ console.warn('TTS 失败：', e); toast('朗读失败'); }
 }
 function stopSpeak(){
   try{ if (window.AndroidBridge && window.AndroidBridge.stopSpeak) window.AndroidBridge.stopSpeak(); }catch(e){}
   try{ if ('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){}
-  try{ if (_ttsAudio){ _ttsAudio.pause(); _ttsAudio = null; } }catch(e){}
+  try{ if (ttsPlayer){ ttsPlayer.pause(); ttsPlayer.currentTime = 0; } }catch(e){}
   document.querySelectorAll('.playing').forEach(b => {
     b.classList.remove('playing');
     if (b.dataset.idle) b.textContent = b.dataset.idle;
   });
+  _currentBtn = null;
 }
 function toggleSpeak(text, lang, btn){
   if (!text) return;
@@ -1210,9 +1273,8 @@ function toggleSpeak(text, lang, btn){
     try{
       const u = new SpeechSynthesisUtterance(text);
       const accent = LS.get('voice-accent', 'en-US');
-      const speed = LS.get('voice-speed', 0.85);
       u.lang = lang && lang.startsWith('zh') ? lang : accent;
-      u.rate = lang && lang.startsWith('zh') ? 1 : speed;
+      u.rate = lang && lang.startsWith('zh') ? 1 : 0.85;
       const v = (speechSynthesis.getVoices() || []).find(x => x.lang.replace('_','-').toLowerCase().startsWith(u.lang.toLowerCase()));
       if (v) u.voice = v;
       if (btn){ btn.classList.add('playing'); if (btn.dataset.busy) btn.textContent = btn.dataset.busy; }
@@ -1242,58 +1304,34 @@ function copyText(text){
 function openExternal(url){
   try{
     const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
+    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
+    document.body.appendChild(a); a.click();
     setTimeout(() => a.remove(), 150);
-  }catch(err){ console.warn('打开链接失败：', err); toast('打开失败'); }
+  }catch(err){ toast('打开失败'); }
 }
 
 /* ============================================================
    State
    ============================================================ */
 const state = {
-  tab:'study',
-  studySub:'today',
+  tab:'study', studySub:'today',
   englishSub:'today',
   englishDeck: LS.get('english-deck', '') || (SEED.DECKS[0] && SEED.DECKS[0].id) || '',
-  englishPage: 1,
-  valvePage: 1,
-  workSub:'office',
-  discoverSub:'news',
-  recommendCat:'书',
-  openKnow:null,
-  openThink:null,
-  thinkHint:null,
-  searchQuery:'',
-  valveCat:'全部',
+  englishPage: 1, valvePage: 1,
+  workSub:'office', discoverSub:'news', recommendCat:'书',
+  openKnow:null, openThink:null, thinkHint:null,
+  searchQuery:'', valveCat:'全部',
   review:null,
-  aiLoading:false,
-  aiAnsweringFor:null,
-  aiInput:'',
+  aiLoading:false, aiAnsweringFor:null, aiInput:'',
   passageHidden:false,
-  currentWords:[],
   aiRole: LS.get('ai-role', 'engineer'),
   currentSearch: [],
-  // 各源缓存
-  generalKnowledge: null,
-  generalLoading: false,
-  generalError: null,
-  quoteData: null,
-  quoteLoading: false,
-  quoteError: null,
-  tatoebaData: null,
-  tatoebaLoading: false,
-  tatoebaError: null,
-  storyData: null,
-  storyLoading: false,
-  storyError: null,
-  yiyanData: null,
-  yiyanLoading: false,
-  yiyanError: null
+  generalKnowledge: null, generalLoading: false, generalError: null,
+  quoteData: null, quoteLoading: false,
+  storyData: null, storyLoading: false,
+  yiyanData: null, yiyanLoading: false,
+  recData: null, recLoading: false
 };
 
 const view = document.getElementById('view');
@@ -1344,8 +1382,6 @@ function todaySection(){
   const streak = Store.getStreak();
   const plan = Store.getStudyPlan();
   const totalWords = SEED.DECKS.reduce((s,d) => s + (d.count || 0), 0);
-  const dueEn = Store.getDueKeys('english').length;
-  const dueWk = Store.getDueKeys('work').length;
   const schedEn = Store.getAllScheduledKeys('english').length;
   const schedWk = Store.getAllScheduledKeys('work').length;
   return `
@@ -1367,26 +1403,22 @@ function todaySection(){
   ${(schedEn + schedWk > 0) ? `
   <div class="review-entry">
     <div class="r-title"><span>🔁 开始复习</span><span>共 ${schedEn + schedWk} 条已排程</span></div>
-    <div class="r-meta">
-      英语 <b>${dueEn}</b> 条到期 · 共 <b>${schedEn}</b> 条<br>
-      专业 <b>${dueWk}</b> 条到期 · 共 <b>${schedWk}</b> 条
-    </div>
+    <div class="r-meta">每次从已学过的内容里随机抽 5 个</div>
     <div style="display:flex;gap:8px;">
       ${schedEn ? `<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="english">英语复习</button>` : ''}
       ${schedWk ? `<button class="btn" style="flex:1;background:#92400e;color:#fff;" data-act="startReview" data-type="work">专业复习</button>` : ''}
     </div>
-    <div style="font-size:11.5px;color:#a16207;margin-top:10px;line-height:1.6;">💡 复习优先安排到期的，不够时从以前学过的词里穿插，让老词不断回来。</div>
   </div>` : ''}
 
   ${plan.length ? `
     <div class="card" style="background:linear-gradient(135deg,#eef0ff,#f6f0ff);border:1px solid #e2e5ff;">
       <div style="font-size:13px;font-weight:750;color:var(--brand);margin-bottom:8px;">🔗 工作带来的学习计划</div>
-      ${plan.slice(0, 5).map((p, i) => `<div style="padding:9px 0;border-bottom:1px dashed #e2e5ff;font-size:12.5px;line-height:1.65;color:#3f4658;">
-        <div style="font-weight:650;margin-bottom:3px;">${esc(p.problem)}</div>
+      ${plan.slice(0, 5).map((p, i) => `<div style="padding:9px 0;border-bottom:1px dashed #e2e5ff;font-size:12.5px;color:#3f4658;">
+        <div style="font-weight:650;">${esc(p.problem)}</div>
         <div style="margin-top:6px;"><button class="link-btn" data-act="removeStudyPlan" data-idx="${i}">移除</button></div>
       </div>`).join('')}
-    </div>
-  ` : ''}
+    </div>` : ''}
+
   <div class="sec-title">快速入口 <span class="muted">点一下跳转</span></div>
   <div class="hobby-grid">
     <button class="hobby-card" data-act="studySub" data-sub="english"><span class="emoji">🔤</span><span class="h-name">英语</span><span class="h-cost">${totalWords} 词 · ${SEED.DECKS.length} 词库</span></button>
@@ -1397,28 +1429,52 @@ function todaySection(){
 }
 
 function weeklyTestSection(){
-  const t = Store.getWeeklyTest();
-  const total = t.words.length + t.valves.length;
+  const words = Store.getWeekLearnedWords();
+  const knowledges = Store.getWeekLearnedKnowledge();
+  const total = words.length + knowledges.length;
+  const result = Store.getWeeklyResult();
+
   if (total === 0){
-    return `<div class="tip-card">本周还没有积累足够的单词和知识。先去学习吧，学满一周后会生成周测。</div>`;
+    return `<div class="tip-card">本周还没有学过的内容。先去学习，学满一周后就有题目了。</div>`;
   }
-  if (t.taken){
+
+  if (result){
     return `
     <div class="weekly-card">
       <div class="tag">WEEKLY TEST</div>
-      <div style="margin:10px 0 12px;"><div class="weekly-score">${t.score}<small style="font-size:14px;opacity:.55;font-weight:600;">/100</small></div></div>
-      <p>本周测试已完成于 ${new Date(t.takenAt).toLocaleDateString()}。</p>
-      <button class="btn" style="background:rgba(255,255,255,.9);color:var(--brand);" data-act="startWeekly">重新测试</button>
-    </div>`;
+      <div style="margin:10px 0 12px;">
+        <div class="weekly-score">${result.score}<small style="font-size:14px;opacity:.55;font-weight:600;">/100</small></div>
+      </div>
+      <p>共 ${result.total} 题 · 答对 ${result.correct} 题</p>
+      <p style="font-size:12px;opacity:.8;">完成于 ${new Date(result.takenAt).toLocaleDateString()}</p>
+      <button class="btn" style="background:rgba(255,255,255,.9);color:var(--brand);" data-act="restartWeekly">重新测试</button>
+    </div>
+    ${renderWeeklyReview(result.records)}
+    `;
   }
+
   return `
   <div class="weekly-card">
     <div class="tag">WEEKLY TEST</div>
     <h3>本周综合测试</h3>
-    <p>从你本周学过的内容里抽 ${t.words.length} 个单词 + ${t.valves.length} 条知识。答完后会给出总分。</p>
-    <button class="btn" style="background:#fff;color:var(--brand);font-weight:700;" data-act="startWeekly">开始测试 →</button>
+    <p>本周学了 <b>${words.length}</b> 个单词 + <b>${knowledges.length}</b> 条知识。从里面随机抽 10 题考考自己。</p>
+    <button class="btn" style="background:#fff;color:var(--brand);font-weight:700;" data-act="startWeeklyTest">开始测试 →</button>
   </div>
   <div class="tip-card">💡 周测的意义不是打分，是把「以为会了」变成「真的会了」。</div>`;
+}
+
+function renderWeeklyReview(records){
+  if (!records || !records.length) return '';
+  return `
+  <div class="sec-title">本次答题回顾 <span class="muted">${records.length} 题</span></div>
+  ${records.map((r, i) => `<div class="card" style="border-left:3px solid ${r.correct?'#059669':'#dc2626'};">
+    <div style="font-size:11px;font-weight:750;color:${r.correct?'#059669':'#dc2626'};margin-bottom:6px;">第 ${i+1} 题 · ${r.correct?'✓ 答对':'✗ 答错'}</div>
+    <div style="font-size:13.5px;font-weight:650;color:#2b3244;margin-bottom:8px;">${esc(r.q)}</div>
+    <div style="font-size:12.5px;color:#4b5265;line-height:1.7;padding:9px 11px;background:#f8f9fd;border-radius:8px;">
+      <div><b>你的答案：</b>${esc(r.userAnswer)}</div>
+      ${!r.correct ? `<div style="margin-top:6px;"><b>参考答案：</b>${esc(r.reference)}</div>` : ''}
+    </div>
+  </div>`).join('')}`;
 }
 
 /* ============================================================
@@ -1426,10 +1482,8 @@ function weeklyTestSection(){
    ============================================================ */
 function renderDeckLoading(msg){
   return `<div class="loading-card">
-    <div style="font-size:42px;line-height:1;animation:pulse 1.4s ease-in-out infinite;">📚</div>
-    <div style="font-size:14px;font-weight:750;margin-top:14px;margin-bottom:8px;">${esc(msg || '正在加载词库…')}</div>
-    <div style="font-size:12px;color:var(--sub);line-height:1.7;">大词库首次加载可能需要几秒钟</div>
-    <div class="progress-bar" style="margin-top:16px;"><div style="width:100%;animation:pulse 1.4s ease-in-out infinite;"></div></div>
+    <div style="font-size:42px;animation:pulse 1.4s ease-in-out infinite;">📚</div>
+    <div style="font-size:14px;font-weight:750;margin-top:14px;">${esc(msg || '正在加载词库…')}</div>
   </div>`;
 }
 
@@ -1441,14 +1495,15 @@ async function englishSection(){
     curDeck = (SEED.DECKS[0] && SEED.DECKS[0].id) || '';
     state.englishDeck = curDeck;
   }
-
   if (!SEED.DECKS.length){
-    return `<div class="tip-card">还没有配置词库。请在 data/decks.js 里添加词库信息。</div>`;
+    return `<div class="tip-card">还没有配置词库。</div>`;
   }
 
   if (curDeck === 'all'){
     if (!DeckLoader.allLoaded()){
-      DeckLoader.loadAll().then(() => render()).catch(() => {});
+      SEED.DECKS.forEach(d => DeckLoader.load(d.id).then(() => {
+        if (DeckLoader.allLoaded() && state.tab==='study' && state.studySub==='english') render();
+      }).catch(()=>{}));
       return renderDeckLoading('正在加载全部词库（共 ' + SEED.DECKS.length + ' 个）…');
     }
   } else {
@@ -1469,19 +1524,18 @@ async function englishSection(){
   const learnedCount = deckWords.filter(w => learnedAll.has(w.w)).length;
   const pct = totalCount ? Math.round(learnedCount / totalCount * 100) : 0;
   const schedEn = Store.getAllScheduledKeys('english').length;
-  const dueEn = Store.getDueKeys('english').length;
 
   const head = `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">ENGLISH DECK</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${SEED.DECKS.reduce((s,d)=>s+(d.count||0),0)} 词 · ${SEED.DECKS.length} 个词库</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已学 ${Store.getAllLearnedEver().length} 词 · 已排程 ${schedEn} 词 · 待复习 ${dueEn}</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已学 ${Store.getAllLearnedEver().length} 词 · 已排程 ${schedEn} 词</div>
   </div>
 
   ${schedEn ? `
   <div class="review-entry">
-    <div class="r-title"><span>🔁 英语复习</span><span>到期 ${dueEn} / 共 ${schedEn}</span></div>
-    <div class="r-meta">复习优先安排到期的，不够时从以前学过的词里随机穿插。</div>
+    <div class="r-title"><span>🔁 英语复习</span><span>共 ${schedEn} 条</span></div>
+    <div class="r-meta">从学过的词里随机抽 5 个复习。</div>
     <button class="btn" style="background:#92400e;color:#fff;width:100%;" data-act="startReview" data-type="english">开始复习 →</button>
   </div>` : ''}
 
@@ -1517,41 +1571,37 @@ async function englishSection(){
     <button class="subtab ${sub==='learned'?'on':''}" data-act="englishSub" data-sub="learned">已学</button>
   </div>`;
 
-  if (sub === 'today') return head + englishTodayBlock(deckWords, learnedToday, learnedAll);
-  if (sub === 'all') return head + englishAllBlock(deckWords, learnedAll, learnedToday);
+  if (sub === 'today') return head + englishTodayBlock(curDeck, deckWords, learnedToday);
+  if (sub === 'all') return head + englishAllBlock(deckWords, learnedAll);
   if (sub === 'learned') return head + englishLearnedBlock(deckWords, learnedAll);
   return head;
 }
 
-function englishTodayBlock(deckWords, learnedToday, learnedAll){
-  const newWords = deckWords.filter(w => !learnedAll.has(w.w)).slice(0, DAILY_WORD_COUNT);
-  const allDone = newWords.length === 0;
-  if (allDone){
-    return `
-    <div class="card" style="text-align:center;padding:30px 16px;">
-      <div style="font-size:44px;margin-bottom:10px;">🎓</div>
-      <div style="font-size:15px;font-weight:750;margin-bottom:8px;">这个词库已全部学完！</div>
-      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">换个词库，或去复习已学的单词。</div>
-      <button class="btn primary" data-act="englishSub" data-sub="learned">查看已学单词</button>
-    </div>`;
-  }
+function englishTodayBlock(deckId, deckWords, learnedToday){
+  const todayNames = Store.getTodayWordNames(deckId);
+  const todayWords = todayNames.map(w => deckWords.find(x => x.w === w)).filter(Boolean);
+  const doneCount = todayWords.filter(w => learnedToday.has(w.w)).length;
+  const allDone = todayWords.length > 0 && doneCount === todayWords.length;
+
+  // 后台预加载今日单词的例句
+  ExampleStore.preload(todayWords.filter(w => !learnedToday.has(w.w)));
+
   return `
-  <div class="sec-title">今日待学 <span class="muted">${newWords.length} 个 · 学完自动划掉</span></div>
-  ${newWords.map((w,i) => wordCard(w, i, false, learnedToday.has(w.w))).join('')}
-  <div class="tip-card">💡 点卡片左侧圆圈 = 标记已掌握。标记后卡片会被划掉，进入复习队列。</div>`;
+  <div class="sec-title">今日待学 <span class="muted">${doneCount}/${todayWords.length} 已完成</span></div>
+  ${allDone ? `<div style="margin-bottom:12px;padding:10px 14px;background:#ecfdf5;border-radius:12px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">🎉 今天的 5 个单词都学完了！明天会换新的</div>` : ''}
+  ${todayWords.length ? todayWords.map((w,i) => wordCard(w, i, learnedToday.has(w.w), true)).join('') : '<div class="tip-card">这个词库已全部学完。</div>'}
+  <div class="tip-card">💡 点卡片左侧圆圈 = 标记已掌握。没有例句的词点「🔍 获取例句」自动从 Tatoeba 抓取。</div>`;
 }
 
-function englishAllBlock(deckWords, learnedAll, learnedToday){
+function englishAllBlock(deckWords, learnedAll){
   const pageSize = state.englishPage * PAGE_SIZE;
   const visible = deckWords.slice(0, pageSize);
   const hasMore = deckWords.length > pageSize;
+
+  // 后台预加载前 20 个词的例句
+  ExampleStore.preload(visible.slice(0, 20));
+
   return `
-  <div class="card" style="padding:14px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;">
-      <div style="font-size:13px;font-weight:750;">词库总览</div>
-      <div style="font-size:13px;color:var(--brand);font-weight:750;">${deckWords.length} 词</div>
-    </div>
-  </div>
   <div class="sec-title">全部单词 <span class="muted">显示 ${visible.length}/${deckWords.length}</span></div>
   ${visible.map((w) => {
     const done = learnedAll.has(w.w);
@@ -1562,15 +1612,12 @@ function englishAllBlock(deckWords, learnedAll, learnedToday){
       <button class="top-icon-btn" style="width:30px;height:30px;border-radius:9px;font-size:13px;" data-act="speak" data-text="${esc(w.w)}" data-lang="en-US" onclick="event.stopPropagation();">🔊</button>
     </div>`;
   }).join('')}
-  ${hasMore ? `<button class="load-more" data-act="englishLoadMore">加载更多（还有 ${deckWords.length - pageSize} 个）</button>` : ''}
-  <div class="tip-card">💡 点左侧圆圈标记已掌握。已掌握的词会有删除线。</div>`;
+  ${hasMore ? `<button class="load-more" data-act="englishLoadMore">加载更多（还有 ${deckWords.length - pageSize} 个）</button>` : ''}`;
 }
 
 function englishLearnedBlock(deckWords, learnedAll){
   const list = deckWords.filter(w => learnedAll.has(w.w));
-  if (!list.length){
-    return `<div class="tip-card">这个范围还没有学过任何单词。去「今日待学」或「全部」开始学习吧。</div>`;
-  }
+  if (!list.length) return `<div class="tip-card">还没有学过任何单词。</div>`;
   const pageSize = state.englishPage * PAGE_SIZE;
   const visible = list.slice(0, pageSize);
   const hasMore = list.length > pageSize;
@@ -1581,6 +1628,40 @@ function englishLearnedBlock(deckWords, learnedAll){
 }
 
 function wordCard(w, i, isDone, isDoneToday){
+  // 例句显示逻辑
+  let exampleHTML = '';
+  const ex = ExampleStore.get(w.w);
+
+  if (w.scene){
+    // 词库自带例句
+    exampleHTML = `
+      <div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:6px;">📝 例句</div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:#2b3244;line-height:1.6;${isDone?'text-decoration:line-through;':''}">
+          <span style="flex:1">${esc(w.scene)}</span>
+          <button style="border:0;background:#f3f4fa;width:26px;height:26px;border-radius:9px;font-size:12px;cursor:pointer;flex-shrink:0;" data-act="speak" data-text="${esc(w.scene)}" data-lang="en-US">🔊</button>
+        </div>
+        ${w.sceneCn ? `<div style="font-size:12.5px;color:var(--sub);margin-top:5px;">${esc(w.sceneCn)}</div>` : ''}
+      </div>`;
+  } else if (ex && ex.en){
+    // 已从 Tatoeba 缓存
+    exampleHTML = `
+      <div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:6px;">📝 例句</div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:#2b3244;line-height:1.6;${isDone?'text-decoration:line-through;':''}">
+          <span style="flex:1">${esc(ex.en)}</span>
+          <button style="border:0;background:#f3f4fa;width:26px;height:26px;border-radius:9px;font-size:12px;cursor:pointer;flex-shrink:0;" data-act="speak" data-text="${esc(ex.en)}" data-lang="en-US">🔊</button>
+        </div>
+      </div>`;
+  } else {
+    // 没有例句：显示"获取例句"按钮
+    exampleHTML = `
+      <div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;" data-ex-wrap="${esc(w.w)}">
+        <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:6px;">📝 例句</div>
+        <button style="border:0;background:#eef0ff;color:var(--brand);padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:650;cursor:pointer;font-family:inherit;" data-act="loadExample" data-word="${esc(w.w)}">🔍 获取例句</button>
+      </div>`;
+  }
+
   return `<div class="card ${isDone?'done':''}" data-word="${esc(w.w)}" data-deck="${esc(w.deck||'')}" style="position:relative;">
     <div style="display:flex;align-items:flex-start;gap:12px;cursor:pointer" data-act="learnWord">
       <div style="width:26px;height:26px;border-radius:50%;background:${isDone?'var(--brand)':'#f0f1f8'};color:${isDone?'#fff':'#8a90a6'};display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">${isDone?'✓':i+1}</div>
@@ -1594,13 +1675,7 @@ function wordCard(w, i, isDone, isDoneToday){
       </div>
     </div>
     <div style="font-size:14px;color:#333a4d;margin-top:10px;font-weight:600;line-height:1.55;${isDone?'text-decoration:line-through;color:#aab0c0;':''}">${esc(w.cn||'')}</div>
-    ${w.scene ? `<div style="margin-top:11px;padding-top:11px;border-top:1px dashed #eceef4;${isDone?'text-decoration:line-through;':''}">
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:#2b3244;line-height:1.55;">
-        <span style="flex:1">${esc(w.scene)}</span>
-        <button style="border:0;background:#f3f4fa;width:26px;height:26px;border-radius:9px;font-size:12px;cursor:pointer;flex-shrink:0;" data-act="speak" data-text="${esc(w.scene)}" data-lang="en-US">🔊</button>
-      </div>
-      <div style="font-size:12.5px;color:var(--sub);margin-top:5px;">${esc(w.sceneCn||'')}</div>
-    </div>` : ''}
+    ${exampleHTML}
     <button style="position:absolute;top:14px;right:14px;border:0;background:#f3f4fa;width:34px;height:34px;border-radius:11px;font-size:15px;cursor:pointer;" data-act="speak" data-text="${esc(w.w)}" data-lang="en-US">🔊</button>
   </div>`;
 }
@@ -1614,15 +1689,11 @@ function valveSection(){
   const knowDoneEver = new Set(Store.getAllKnowDoneEver());
   const knowDoneToday = new Set(Store.getKnowDone());
 
-  let list = [];
-  let titleSuffix = '';
+  let list = [], titleSuffix = '';
   if (q.trim()){
     list = SEED.VALVE_ALL.filter(v =>
-      v.q.toLowerCase().includes(q.toLowerCase()) ||
-      v.a.toLowerCase().includes(q.toLowerCase()) ||
-      (v.key||'').toLowerCase().includes(q.toLowerCase()) ||
-      v.cat.toLowerCase().includes(q.toLowerCase())
-    );
+      v.q.toLowerCase().includes(q.toLowerCase()) || v.a.toLowerCase().includes(q.toLowerCase()) ||
+      (v.key||'').toLowerCase().includes(q.toLowerCase()) || v.cat.toLowerCase().includes(q.toLowerCase()));
     titleSuffix = `搜索结果 (${list.length})`;
   } else if (cat === '全部'){
     const unlearned = SEED.VALVE_ALL.filter(v => !knowDoneEver.has(v.q));
@@ -1635,32 +1706,26 @@ function valveSection(){
   }
 
   const schedWk = Store.getAllScheduledKeys('work').length;
-  const dueWk = Store.getDueKeys('work').length;
   const wrongBook = Store.getWrongBook().filter(x => x.type === 'work');
   const cats = ['全部', ...Object.keys(SEED.VALVE)];
-  const loaded = DATA_STATUS.valveOk;
 
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">VALVE KNOWLEDGE</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${SEED.VALVE_ALL.length} 条专业知识</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已掌握 ${Store.getAllKnowDoneEver().length} 条 · 待复习 ${dueWk}</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">已掌握 ${Store.getAllKnowDoneEver().length} 条</div>
   </div>
-  ${!loaded ? `<div class="tip-card" style="background:#fef3c7;border-color:#fde68a;color:#92400e;">⚠️ valve.js 未加载成功，当前使用内置的 ${SEED.VALVE_ALL.length} 条数据。</div>` : ''}
-
   ${schedWk ? `
   <div class="review-entry">
-    <div class="r-title"><span>🔁 专业复习</span><span>到期 ${dueWk} / 共 ${schedWk}</span></div>
-    <div class="r-meta">复习优先安排到期的，不够时从以前学过的知识里随机穿插。</div>
+    <div class="r-title"><span>🔁 专业复习</span><span>共 ${schedWk} 条</span></div>
+    <div class="r-meta">从学过的知识里随机抽 5 个复习。</div>
     <button class="btn" style="background:#92400e;color:#fff;width:100%;" data-act="startReview" data-type="work">开始复习 →</button>
   </div>` : ''}
-
   ${wrongBook.length ? `
   <div class="card" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fca5a5;">
     <div style="font-size:13px;font-weight:750;color:#b91c1c;margin-bottom:8px;">📕 错题本（${wrongBook.length} 条）</div>
     <button class="btn" style="background:#b91c1c;color:#fff;width:100%;" data-act="reviewWrong">复习错题 →</button>
   </div>` : ''}
-
   <div class="search-box">
     <span style="font-size:15px;opacity:.5;">🔍</span>
     <input type="search" class="search-input" id="valveSearch" placeholder="搜索：WCB / API 600 / 填料外漏…" value="${esc(q)}">
@@ -1670,7 +1735,7 @@ function valveSection(){
     ${cats.map(c => `<button class="chip ${c===cat&&!q.trim()?'on':''}" data-act="valveCat" data-cat="${esc(c)}">${esc(c)}${c!=='全部'?` · ${(SEED.VALVE[c]||[]).length}`:''}</button>`).join('')}
   </div>
   <div class="sec-title">${titleSuffix} <span class="muted">点卡片展开</span></div>
-  ${list.length ? list.map((v,i) => knowCard(v, i, knowDoneEver.has(v.q), knowDoneToday.has(v.q))).join('') : '<div class="tip-card">没有找到。试试别的关键词。</div>'}
+  ${list.length ? list.map((v,i) => knowCard(v, i, knowDoneEver.has(v.q), knowDoneToday.has(v.q))).join('') : '<div class="tip-card">没有找到。</div>'}
   ${(cat === '全部' && !q.trim() && list.length < SEED.VALVE_ALL.filter(v => !knowDoneEver.has(v.q)).length) ? `<button class="load-more" data-act="valveLoadMore">加载更多</button>` : ''}`;
 }
 
@@ -1685,7 +1750,7 @@ function knowCard(v, i, isDone, isDoneToday){
     <div style="cursor:pointer" data-act="knowToggle">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
         <div style="flex:1;min-width:0;">
-          <div class="know-cat">${esc(v.cat)}${isDone?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#047857;font-weight:600;background:#ecfdf5;padding:1px 6px;border-radius:5px;">✓ 已掌握</span>':''}${note?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:var(--brand);font-weight:600;background:#eef0ff;padding:1px 6px;border-radius:5px;">📝</span>':''}${hasAsk?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#b45309;font-weight:600;background:#fef3c7;padding:1px 6px;border-radius:5px;">💬</span>':''}</div>
+          <div class="know-cat">${esc(v.cat)}${isDone?'<span style="display:inline-block;margin-left:6px;font-size:11px;color:#047857;font-weight:600;background:#ecfdf5;padding:1px 6px;border-radius:5px;">✓ 已掌握</span>':''}</div>
           <div class="know-q" style="${isDone?'text-decoration:line-through;color:#aab0c0;':''}">${esc(v.q)}</div>
         </div>
         <span style="font-size:12px;color:var(--sub);flex-shrink:0;">${open?'▴':'▾'}</span>
@@ -1702,7 +1767,6 @@ function knowCard(v, i, isDone, isDoneToday){
           ${hasAsk?`<button class="qa-btn ghost" data-act="saveAskToNote" data-q="${esc(v.q)}">📝 记入笔记</button><button class="qa-btn ghost" data-act="clearAsk" data-q="${esc(v.q)}">清除</button>`:''}
         </div>
         ${hasAsk ? `<div class="qa-answer"><div class="qa-answer-head">🤖 AI 解答</div><div class="qa-answer-body">${esc(askCache.answer)}</div></div>` : ''}
-        ${!AI.enabled() && !hasAsk ? `<div style="font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.6;">⚠️ 未配置 AI。去「我的」页填入 API Key 后即可提问。</div>` : ''}
       </div>
       <div class="note-block">
         <div class="note-label">📝 我的笔记</div>
@@ -1714,7 +1778,7 @@ function knowCard(v, i, isDone, isDoneToday){
 }
 
 /* ============================================================
-   每日知识（多源）
+   每日知识
    ============================================================ */
 async function generalSection(){
   const doneToday = LS.get('general-done:' + DAY, false);
@@ -1723,8 +1787,7 @@ async function generalSection(){
   if (!cached && !state.generalLoading && !state.generalError){
     state.generalLoading = true;
     try {
-      const item = await KnowledgeSource.fetchWithRetry(3);
-      state.generalKnowledge = item;
+      state.generalKnowledge = await KnowledgeSource.fetchWithFallback();
       state.generalLoading = false;
       if (state.tab === 'study' && state.studySub === 'general') render();
     } catch(e){
@@ -1737,30 +1800,23 @@ async function generalSection(){
   let body = '';
   if (state.generalLoading || (!state.generalKnowledge && !state.generalError)){
     body = `<div class="loading-card">
-      <div style="font-size:38px;line-height:1;animation:pulse 1.2s ease-in-out infinite;">🌐</div>
-      <div style="font-size:13.5px;font-weight:750;margin-top:14px;margin-bottom:6px;">正在获取今日知识…</div>
-      <div style="font-size:12px;color:var(--sub);">实时抓取，内容每次都不一样</div>
+      <div style="font-size:38px;animation:pulse 1.2s ease-in-out infinite;">🌐</div>
+      <div style="font-size:13.5px;font-weight:750;margin-top:14px;">正在获取今日知识…</div>
     </div>`;
   } else if (state.generalError && !state.generalKnowledge){
     body = `<div class="card" style="text-align:center;padding:24px 16px;">
       <div style="font-size:38px;margin-bottom:10px;">⚠️</div>
       <div style="font-size:14px;font-weight:750;margin-bottom:6px;">获取失败</div>
-      <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">${esc(state.generalError)}<br>可能是网络问题，或知识源配置有误。点下面重试。</div>
-      <button class="btn primary" data-act="retryGeneral">🔄 重新获取</button>
-      <button class="btn ghost" style="margin-top:8px;" data-act="studySub" data-sub="today">返回今日</button>
+      <div style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:14px;">${esc(state.generalError)}</div>
+      <button class="btn primary" data-act="retryGeneral">🔄 重试</button>
     </div>`;
   } else if (state.generalKnowledge){
     const g = state.generalKnowledge;
-    const srcLabel = g.source === 'wiki' ? '维基百科'
-      : g.source === 'showapi' ? 'ShowAPI 十万个为什么'
-      : g.source === 'oioweb' ? '接口盒子' : '知识源';
-    const srcClass = g.source === 'wiki' ? 'wiki'
-      : g.source === 'showapi' ? 'showapi'
-      : g.source === 'oioweb' ? 'oioweb' : 'wiki';
+    const srcLabel = g.source === 'wiki' ? '维基百科' : g.source === 'showapi' ? 'ShowAPI' : g.source === 'oioweb' ? '接口盒子' : '知识源';
     body = `
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
-        <span class="src-tag ${srcClass}">来源：${esc(srcLabel)}</span>
+        <span class="src-tag ${g.source || 'wiki'}">来源：${esc(srcLabel)}</span>
         <span style="font-size:10.5px;color:var(--sub);">${todayStr()}</span>
       </div>
       <div class="know-q" style="font-size:18px;font-weight:800;line-height:1.4;">${esc(g.q)}</div>
@@ -1771,22 +1827,17 @@ async function generalSection(){
         <button class="btn ghost" data-act="speakGeneral" data-title="${esc(g.q)}" data-body="${esc(g.a)}">🔊 朗读</button>
         <button class="btn ghost" data-act="refreshGeneral">🔄 换一条</button>
       </div>
-    </div>
-    <div class="tip-card">💡 内容实时抓取，每次刷新都不一样。看到有趣的可以朗读或复制保存。</div>`;
+    </div>`;
   }
-
-  const srcName = KnowledgeSource.current === 'auto' ? '自动' : KnowledgeSource.current;
-  const canShow = KnowledgeSource.canShowApi();
-  const canOio = KnowledgeSource.canOioweb();
 
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">DAILY KNOWLEDGE</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每日知识 · 联网抓取</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">内容源：${esc(srcName)} ${canShow?'· ShowAPI 已配':''} ${canOio?'· 接口盒子已配':''}</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">默认用维基百科，稳定可靠</div>
   </div>
   ${body}
-  <div class="tip-card" style="margin-top:12px;">⚙️ 想换知识源？去「我的」页 → 知识源配置，可以配置 ShowAPI 的 appid/sign 或接口盒子的 id/key。默认用维基百科，无需配置。</div>`;
+  <div class="tip-card" style="margin-top:12px;">💡 默认从维基百科抓，内容每次不一样。如果想用 ShowAPI 或接口盒子，去「我的」页切换。</div>`;
 }
 
 /* ============================================================
@@ -1794,9 +1845,7 @@ async function generalSection(){
    ============================================================ */
 function logicSection(){
   const all = SEED.THINKING;
-  const learned = all.filter(m => Store.getThinkDoneDays(m.name).length > 0);
   const unlearned = all.filter(m => Store.getThinkDoneDays(m.name).length === 0);
-
   let today = null;
   if (unlearned.length > 0){
     today = dailyPick(unlearned, 1, 201)[0];
@@ -1804,27 +1853,17 @@ function logicSection(){
     const sorted = all.slice().sort((a, b) => Store.getThinkDoneDays(a.name).length - Store.getThinkDoneDays(b.name).length);
     today = sorted[0];
   }
-
   const totalLearned = all.filter(m => Store.getThinkDoneDays(m.name).length > 0).length;
   const todayDone = today && Store.getThinkDoneDays(today.name).includes(todayStr());
-
-  let body = '';
-  if (!today){
-    body = `<div class="tip-card">没有可用的思维模型。</div>`;
-  } else {
-    body = `
-    ${todayDone ? `<div style="margin-bottom:12px;padding:10px 14px;background:#ecfdf5;border-radius:12px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">✓ 今天的思维模型已练习完成</div>` : ''}
-    ${logicCard(today, todayDone)}
-    <div class="tip-card">💡 每天推荐 1 个思维模型，直到所有 ${all.length} 个都学过一遍，之后按最少练习次数轮换。</div>`;
-  }
 
   return `
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">THINKING MODEL</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">每天一个思维模型</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">共 ${all.length} 个 · 已学 ${totalLearned} 个 · 每天 1 个不重复</div>
+    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">共 ${all.length} 个 · 已学 ${totalLearned} 个</div>
   </div>
-  ${body}`;
+  ${todayDone ? `<div style="margin-bottom:12px;padding:10px 14px;background:#ecfdf5;border-radius:12px;font-size:12.5px;color:#047857;font-weight:650;text-align:center;">✓ 今天的思维模型已练习完成</div>` : ''}
+  ${today ? logicCard(today, todayDone) : '<div class="tip-card">没有可用的思维模型。</div>'}`;
 }
 
 function logicCard(m, todayDone){
@@ -1840,7 +1879,7 @@ function logicCard(m, todayDone){
           <div class="know-q" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             ${esc(m.name)}
             ${hasAns?'<span style="font-size:11px;color:#047857;font-weight:600;background:#ecfdf5;padding:1px 7px;border-radius:5px;">✓ 已练</span>':''}
-            ${practicedDays > 0 ? `<span style="font-size:10.5px;color:var(--sub);font-weight:600;">练过 ${practicedDays} 天</span>` : ''}
+            ${practicedDays > 0 ? `<span style="font-size:10.5px;color:var(--sub);">练过 ${practicedDays} 天</span>` : ''}
           </div>
           <div style="font-size:12.5px;color:var(--sub);margin-top:6px;line-height:1.6;">${esc(m.core)}</div>
         </div>
@@ -1867,11 +1906,11 @@ function logicCard(m, todayDone){
 }
 
 /* ============================================================
-   表达（多源）
+   表达
    ============================================================ */
 async function expressSection(){
   const passage = dailyPick(SEED.EXPRESS_PASSAGES, 1, 41)[0];
-  const sceneCats = Object.keys(SEED.SCENES).filter(c => c !== '英语表达');
+  const sceneCats = Object.keys(SEED.SCENES);
   const allScenes = sceneCats.flatMap(c => SEED.SCENES[c].map(s => ({ ...s, cat:c })));
   const todayScene = dailyPick(allScenes, 1, 47)[0];
   const key = 'expr-' + todayScene.cat + '-' + todayScene.q;
@@ -1879,34 +1918,27 @@ async function expressSection(){
   const savedGrade = LS.get('expr-grade:' + key, null);
   const passageDone = LS.get('passage-done:' + DAY, false);
 
-  // 触发各源加载
   const quoteDone = LS.get('quote-done:' + DAY, false);
   const storyDone = LS.get('story-done:' + DAY, false);
   const yiyanDone = LS.get('yiyan-done:' + DAY, false);
 
-  if (!state.quoteData && !state.quoteLoading && !state.quoteError){
+  if (!state.quoteData && !state.quoteLoading){
     state.quoteLoading = true;
-    QuoteGarden.fetchWithRetry(3).then(d => { state.quoteData = d; state.quoteLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
-      .catch(e => { state.quoteLoading = false; state.quoteError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+    QuoteSource.fetch().then(d => { state.quoteData = d; state.quoteLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); });
   }
-  if (!state.storyData && !state.storyLoading && !state.storyError){
+  if (!state.storyData && !state.storyLoading){
     state.storyLoading = true;
-    Gutendex.fetchWithRetry(3).then(d => { state.storyData = d; state.storyLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
-      .catch(e => { state.storyLoading = false; state.storyError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+    StorySource.fetch().then(d => { state.storyData = d; state.storyLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); });
   }
-  if (!state.yiyanData && !state.yiyanLoading && !state.yiyanError){
+  if (!state.yiyanData && !state.yiyanLoading){
     state.yiyanLoading = true;
-    Yiyan.fetchWithRetry(3).then(d => { state.yiyanData = d; state.yiyanLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); })
-      .catch(e => { state.yiyanLoading = false; state.yiyanError = e.message; if (state.tab==='study'&&state.studySub==='express') render(); });
+    YiyanSource.fetch().then(d => { state.yiyanData = d; state.yiyanLoading = false; if (state.tab==='study'&&state.studySub==='express') render(); });
   }
 
-  // 中文金句
   let yiyanBlock = '';
-  if (state.yiyanLoading || (!state.yiyanData && !state.yiyanError)){
+  if (state.yiyanLoading || !state.yiyanData){
     yiyanBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">💬</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载中文金句…</div></div>`;
-  } else if (state.yiyanError && !state.yiyanData){
-    yiyanBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">中文金句加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryYiyan">🔄 重试</button></div>`;
-  } else if (state.yiyanData){
+  } else {
     const y = state.yiyanData;
     yiyanBlock = `
     <div class="quote-card">
@@ -1920,13 +1952,10 @@ async function expressSection(){
     </div>`;
   }
 
-  // 英文名言
   let quoteBlock = '';
-  if (state.quoteLoading || (!state.quoteData && !state.quoteError)){
+  if (state.quoteLoading || !state.quoteData){
     quoteBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">💬</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载英文名言…</div></div>`;
-  } else if (state.quoteError && !state.quoteData){
-    quoteBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">英文名言加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryQuote">🔄 重试</button></div>`;
-  } else if (state.quoteData){
+  } else {
     const q = state.quoteData;
     quoteBlock = `
     <div class="quote-card">
@@ -1940,13 +1969,10 @@ async function expressSection(){
     </div>`;
   }
 
-  // 英文短文
   let storyBlock = '';
-  if (state.storyLoading || (!state.storyData && !state.storyError)){
+  if (state.storyLoading || !state.storyData){
     storyBlock = `<div class="loading-card" style="padding:18px;"><div style="font-size:24px;animation:pulse 1.2s ease-in-out infinite;">📖</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">加载英文短文…</div></div>`;
-  } else if (state.storyError && !state.storyData){
-    storyBlock = `<div class="card" style="text-align:center;padding:16px;"><div style="font-size:13px;color:var(--warn);">英文短文加载失败</div><button class="btn ghost" style="margin-top:8px;" data-act="retryStory">🔄 重试</button></div>`;
-  } else if (state.storyData){
+  } else {
     const s = state.storyData;
     storyBlock = `
     <div class="story-card">
@@ -1975,13 +2001,13 @@ async function expressSection(){
     <div style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.25);font-size:12.5px;line-height:1.7;opacity:.85;"><b>朗读要点：</b>${esc(passage.tips)}</div>
   </div>
 
-  <div class="sec-title">中文金句 <span class="muted">770a.cn 一言</span></div>
+  <div class="sec-title">中文金句 <span class="muted">一言 / 内置</span></div>
   ${yiyanBlock}
 
-  <div class="sec-title">英文名言 <span class="muted">Quote Garden</span></div>
+  <div class="sec-title">英文名言 <span class="muted">Quotable / 内置</span></div>
   ${quoteBlock}
 
-  <div class="sec-title">英文短文 <span class="muted">Gutendex · Project Gutenberg</span></div>
+  <div class="sec-title">英文短文 <span class="muted">Gutendex / 内置</span></div>
   ${storyBlock}
 
   <div class="sec-title">今日场景练习 <span class="muted">每天随机一题</span></div>
@@ -1989,7 +2015,7 @@ async function expressSection(){
     <div style="display:inline-block;font-size:11px;font-weight:750;color:#b45309;background:#fef3c7;padding:3px 9px;border-radius:6px;margin-bottom:10px;">${esc(todayScene.cat)}</div>
     <div class="know-q">${esc(todayScene.q)}</div>
     <div style="margin-top:11px;padding:11px 13px;background:#f8f9fd;border-left:3px solid var(--brand);border-radius:0 10px 10px 0;font-size:12.5px;line-height:1.75;color:#4b5265;"><b>要求：</b>${esc(todayScene.guide)}</div>
-    <textarea class="answer-input" id="exprAnswer" placeholder="写下你的回答。不要打草稿，直接写，越真实越好。">${esc(savedAnswer)}</textarea>
+    <textarea class="answer-input" id="exprAnswer" placeholder="写下你的回答…">${esc(savedAnswer)}</textarea>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
       <button class="btn primary" data-act="gradeAnswer" data-scene="${esc(todayScene.cat)}" data-q="${esc(todayScene.q)}" data-guide="${esc(todayScene.guide)}">${savedGrade?'🔄 重新评分':'✨ 让 AI 评分'}</button>
       <button class="btn ghost" data-act="clearExprAnswer" data-scene="${esc(todayScene.cat)}" data-q="${esc(todayScene.q)}">清空</button>
@@ -2000,14 +2026,12 @@ async function expressSection(){
 
 function renderGradeCard(g){
   if (!g) return '';
-  if (g.error){
-    return `<div class="score-card" style="background:#fef3c7;border-color:#fde68a;"><div style="font-size:13px;color:#92400e;line-height:1.7;">⚠️ ${esc(g.error)}</div></div>`;
-  }
+  if (g.error) return `<div class="score-card" style="background:#fef3c7;"><div style="font-size:13px;color:#92400e;">⚠️ ${esc(g.error)}</div></div>`;
   const score = g.score || 0;
   const level = g.level || (score >= 85 ? '优秀' : score >= 70 ? '良好' : score >= 55 ? '合格' : '待提升');
   return `<div class="score-card">
     <div class="score-head">
-      <div class="score-num">${score}<span style="font-size:14px;opacity:.55;font-weight:600;letter-spacing:0;margin-left:2px;">/100</span></div>
+      <div class="score-num">${score}<span style="font-size:14px;opacity:.55;font-weight:600;">/100</span></div>
       <div class="score-label">${esc(level)} · AI 评分</div>
     </div>
     ${g.strengths && g.strengths.length ? `<div class="score-row"><div class="score-row-title" style="color:var(--ok)">✅ 优点</div><ul class="score-list">${g.strengths.map(s => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''}
@@ -2021,15 +2045,11 @@ function renderGradeCard(g){
    工作视图
    ============================================================ */
 async function workView(){
-  const sub = state.workSub;
   const subs = [
     { id:'office', label:'AI 办公' },
     { id:'record', label:'工作记录' }
   ];
-  if (sub !== 'office' && sub !== 'record') state.workSub = 'office';
-  let content = '';
-  if (state.workSub === 'office') content = officeSection();
-  else content = recordSection();
+  let content = state.workSub === 'record' ? recordSection() : officeSection();
   return `
   <div class="hero"><div class="hero-k">工作 · 解决问题</div><h1>把学到的用起来</h1></div>
   <div class="subtabs">${subs.map(s => `<button class="subtab ${s.id===state.workSub?'on':''}" data-act="workSub" data-sub="${s.id}">${s.label}</button>`).join('')}</div>
@@ -2041,7 +2061,6 @@ function officeSection(){
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">🤖 AI 办公</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">邮件 · 合同 · Excel · 翻译</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">点右下角 🤖 打开 AI 助手，直接提问。</div>
   </div>
   <div class="sec-title">常用场景 <span class="muted">点一下直接问</span></div>
   ${[
@@ -2070,27 +2089,24 @@ function recordSection(){
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">📝 工作记录</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">今天解决了什么问题？</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">记录问题 → 解决方案 → 关键词。</div>
   </div>
   <div class="card">
     <div style="font-size:12px;color:var(--sub);font-weight:700;margin-bottom:8px;">今天遇到的问题</div>
-    <textarea class="answer-input" id="workProblem" style="min-height:70px" placeholder="例如：客户询问 DN300 截止阀压力问题…">${esc(todayRec.problem || '')}</textarea>
+    <textarea class="answer-input" id="workProblem" style="min-height:70px">${esc(todayRec.problem || '')}</textarea>
     <div style="font-size:12px;color:var(--sub);font-weight:700;margin:14px 0 8px;">怎么解决的</div>
-    <textarea class="answer-input" id="workSolution" style="min-height:70px" placeholder="例如：查了 GB/T 12235，确认压力等级…">${esc(todayRec.solution || '')}</textarea>
-    <div style="font-size:12px;color:var(--sub);font-weight:700;margin:14px 0 8px;">关键词（逗号分隔）</div>
-    <input type="text" class="answer-input" id="workKeywords" style="min-height:auto;padding:11px 12px;" placeholder="压力等级, 密封, 选型" value="${esc(todayRec.keywords || '')}">
+    <textarea class="answer-input" id="workSolution" style="min-height:70px">${esc(todayRec.solution || '')}</textarea>
+    <div style="font-size:12px;color:var(--sub);font-weight:700;margin:14px 0 8px;">关键词</div>
+    <input type="text" class="answer-input" id="workKeywords" style="min-height:auto;padding:11px 12px;" value="${esc(todayRec.keywords || '')}">
     <button class="btn primary wide" style="margin-top:14px" data-act="saveWorkRecord">保存今天的记录</button>
   </div>
   ${records.length ? `
     <div class="sec-title">历史记录 <span class="muted">${records.length} 条</span></div>
     ${records.slice(0, 20).map((r, idx) => `<div class="card">
       <div style="font-size:11px;color:var(--sub);margin-bottom:6px;">${esc(r.date)}</div>
-      <div style="font-size:13.5px;line-height:1.7;color:#2b3244;white-space:pre-wrap;">${esc(r.problem)}</div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #eceef4;font-size:13px;line-height:1.7;color:#4b5265;white-space:pre-wrap;">${esc(r.solution)}</div>
-      ${r.keywords ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">${r.keywords.split(/[,，]/).map(k => k.trim()).filter(Boolean).map(k => `<span style="font-size:11.5px;background:#eef0ff;color:var(--brand);padding:3px 9px;border-radius:7px;font-weight:650;">${esc(k)}</span>`).join('')}</div>` : ''}
+      <div style="font-size:13.5px;color:#2b3244;white-space:pre-wrap;">${esc(r.problem)}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #eceef4;font-size:13px;color:#4b5265;white-space:pre-wrap;">${esc(r.solution)}</div>
       <div style="margin-top:10px;"><button class="link-btn" data-act="linkToStudy" data-idx="${idx}">🔗 加入学习计划</button></div>
-    </div>`).join('')}
-  ` : ''}`;
+    </div>`).join('')}` : ''}`;
 }
 
 /* ============================================================
@@ -2102,9 +2118,7 @@ async function discoverView(){
     { id:'news', label:'今日世界' },
     { id:'recommend', label:'推荐' }
   ];
-  let content = '';
-  if (sub === 'news') content = newsSection();
-  else content = recommendSection();
+  let content = sub === 'recommend' ? await recommendSection() : newsSection();
   return `
   <div class="hero"><div class="hero-k">发现 · 认知提升</div><h1>${sub === 'news' ? '今日世界' : '发现好东西'}</h1></div>
   <div class="subtabs">${subs.map(s => `<button class="subtab ${s.id===sub?'on':''}" data-act="discoverSub" data-sub="${s.id}">${s.label}</button>`).join('')}</div>
@@ -2117,8 +2131,7 @@ function newsSection(){
   <div class="card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:0;">
     <div style="font-size:11px;letter-spacing:1.5px;font-weight:750;opacity:.75;margin-bottom:8px;">🌍 今日世界</div>
     <div style="font-size:19px;font-weight:750;margin-bottom:10px;">${DAILY_NEWS_COUNT} 条值得关注的动态</div>
-    <div style="font-size:13.5px;opacity:.92;line-height:1.7;">不只看新闻，还要想：这和我有什么关系？</div>
-    <div class="news-source-row" style="margin-top:14px;">
+    <div class="news-source-row">
       <button class="news-source cctv" data-act="openNews" data-url="https://news.cctv.com/">📺 央视新闻</button>
       <button class="news-source cctvnews" data-act="openNews" data-url="https://news.cctv.com/tech/">🔬 央视科技</button>
     </div>
@@ -2136,40 +2149,74 @@ function newsSection(){
         <textarea data-news-think="${esc(thinkKey)}" placeholder="这条新闻对我意味着什么？">${esc(think)}</textarea>
       </div>
     </div>`;
-  }).join('')}
-  <div class="tip-card">💡 卡片里的新闻是内置的行业观察（每天轮换）。想看实时新闻，点上面的「央视新闻 / 央视科技」按钮。</div>`;
+  }).join('')}`;
 }
 
-function recommendSection(){
-  const cats = Object.keys(SEED.RECOMMEND);
-  const cat = state.recommendCat || cats[0];
-  const all = SEED.RECOMMEND[cat] || [];
-  const salt = 200 + cats.indexOf(cat) * 17;
-  const list = dailyPick(all, 1, salt);
-  const catEmoji = { '书':'📚', '电影':'🎬', '播客':'🎧', '工具':'🛠️' };
+async function recommendSection(){
+  const catList = ['书', '电影', '电视剧', '播客', '工具'];
+  const catIdx = DAY % catList.length;
+  const todayCat = state.recommendCat && catList.includes(state.recommendCat) ? state.recommendCat : catList[catIdx];
+
+  if (!state.recData || state.recData.cat !== todayCat){
+    if (!state.recLoading || (state.recData && state.recData.cat !== todayCat)){
+      state.recLoading = true;
+      let data = null;
+      if (todayCat === '书'){
+        data = await fetchOpenLibraryBook();
+        if (!data) data = SEED.RECOMMEND['书'][DAY % SEED.RECOMMEND['书'].length];
+      } else if (todayCat === '电影'){
+        data = await fetchTMDBTrending('movie');
+        if (!data) data = SEED.RECOMMEND['电影'][DAY % SEED.RECOMMEND['电影'].length];
+      } else if (todayCat === '电视剧'){
+        data = await fetchTMDBTrending('tv');
+        if (!data) data = SEED.RECOMMEND['电影'][DAY % SEED.RECOMMEND['电影'].length];
+      } else if (todayCat === '播客'){
+        const list = SEED.RECOMMEND['播客'];
+        data = list[DAY % list.length];
+      } else {
+        const list = SEED.RECOMMEND['工具'];
+        data = list[DAY % list.length];
+      }
+      state.recData = { cat: todayCat, item: data };
+      state.recLoading = false;
+      if (state.tab === 'discover' && state.discoverSub === 'recommend') render();
+    }
+  }
+
+  const catEmoji = { '书':'📚', '电影':'🎬', '电视剧':'📺', '播客':'🎧', '工具':'🛠️' };
+
+  let body = '';
+  if (state.recLoading && (!state.recData || state.recData.cat !== todayCat)){
+    body = `<div class="loading-card" style="padding:24px;"><div style="font-size:28px;animation:pulse 1.2s ease-in-out infinite;">${catEmoji[todayCat]}</div><div style="font-size:12px;color:var(--sub);margin-top:8px;">正在获取今日推荐…</div></div>`;
+  } else if (state.recData && state.recData.item){
+    const r = state.recData.item;
+    body = `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+        <span class="src-tag">${catEmoji[todayCat]} ${todayCat} · 今日推荐</span>
+        <span style="font-size:10.5px;color:var(--sub);">${todayStr()}</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="font-size:34px;line-height:1;flex-shrink:0;">${r.emoji || catEmoji[todayCat]}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:17px;font-weight:750;line-height:1.4;letter-spacing:-.3px;">${esc(r.name)}</div>
+          <div style="font-size:12.5px;color:var(--sub);margin-top:4px;">${esc(r.author || '')}</div>
+        </div>
+      </div>
+      <div style="font-size:13.5px;line-height:1.78;color:#3f4658;margin-top:13px;padding-top:13px;border-top:1px dashed #eceef4;">${esc(r.why || '')}</div>
+      ${r.scene ? `<div style="margin-top:11px;padding:9px 12px;background:#f8f9fd;border-left:3px solid var(--brand);border-radius:0 10px 10px 0;font-size:12.5px;color:#4b5265;"><b style="color:var(--brand)">适合场景：</b>${esc(r.scene)}</div>` : ''}
+      <div class="recommend-open">
+        ${r.scheme ? `<button class="rec-btn app" data-act="openApp" data-scheme="${esc(r.scheme)}" data-name="${esc(r.name)}" data-cat="${esc(todayCat)}">📱 打开 App</button>` : ''}
+        <button class="rec-btn web" data-act="openWeb" data-cat="${esc(todayCat)}">🌐 网页打开</button>
+      </div>
+    </div>`;
+  }
+
   return `
   <div class="chips" data-scroll-id="recCat">
-    ${cats.map(c => `<button class="chip ${c===cat?'on':''}" data-act="recCat" data-cat="${esc(c)}">${catEmoji[c]||'✨'} ${esc(c)} · ${(SEED.RECOMMEND[c]||[]).length}</button>`).join('')}
+    ${catList.map(c => `<button class="chip ${c===todayCat?'on':''}" data-act="recCat" data-cat="${esc(c)}">${catEmoji[c]} ${esc(c)}</button>`).join('')}
   </div>
-  <div class="tip-card" style="margin-bottom:12px;">📅 每天从 ${all.length} 条里抽 1 条，天天不同。</div>
-  ${list.map((r) => {
-    const realIdx = all.indexOf(r);
-    return `<div class="card">
-    <div style="display:flex;align-items:flex-start;gap:12px;">
-      <div style="font-size:30px;line-height:1;flex-shrink:0;">${r.emoji}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:16.5px;font-weight:750;line-height:1.4;letter-spacing:-.3px;">${esc(r.name)}</div>
-        <div style="font-size:12.5px;color:var(--sub);margin-top:4px;">${esc(r.author)}</div>
-      </div>
-    </div>
-    <div style="font-size:13.5px;line-height:1.78;color:#3f4658;margin-top:13px;padding-top:13px;border-top:1px dashed #eceef4;">${esc(r.why)}</div>
-    <div style="margin-top:11px;padding:9px 12px;background:#f8f9fd;border-left:3px solid var(--brand);border-radius:0 10px 10px 0;font-size:12.5px;color:#4b5265;"><b style="color:var(--brand)">适合场景：</b>${esc(r.scene)}</div>
-    <div class="recommend-open">
-      ${r.scheme ? `<button class="rec-btn app" data-act="openApp" data-scheme="${esc(r.scheme)}" data-name="${esc(r.name)}" data-cat="${esc(cat)}" data-idx="${realIdx}">📱 打开 App</button>` : ''}
-      <button class="rec-btn web" data-act="openWeb" data-cat="${esc(cat)}" data-idx="${realIdx}">🌐 网页打开</button>
-    </div>
-  </div>`;
-  }).join('')}`;
+  <div class="tip-card" style="margin-bottom:12px;">📅 每天从不同类别里推 1 个。书用 Open Library，影视用 TMDB。</div>
+  ${body}`;
 }
 
 /* ============================================================
@@ -2179,24 +2226,18 @@ async function meView(){
   try{
     const stats = Store.stats();
     const streak = Store.getStreak();
-    const notes = Store.getAllNotes();
     const growth = Store.getGrowth() || {};
     const dataStatus = window.__dataStatus || { valve:0, words:0, decks:0, valveOk:false, wordsOk:false };
     const bridgeOk = !!(window.AndroidBridge);
     const bridgeSpeak = !!(window.AndroidBridge && window.AndroidBridge.speak);
-    const bridgeOpen = !!(window.AndroidBridge && window.AndroidBridge.openUrl);
     const webSpeech = ('speechSynthesis' in window);
-
     const ks = KnowledgeSource;
-    const srcCurrent = ks.current;
-    const canShow = ks.canShowApi();
-    const canOio = ks.canOioweb();
 
     return `
     <div class="hero">
       <div class="hero-k">我的</div>
       <h1>数据管理</h1>
-      ${streak.count > 0 ? `<div style="margin-top:12px"><span class="streak-badge" style="font-size:13px;padding:5px 12px;">🔥 已连续学习 ${streak.count} 天 · 最长 ${streak.best} 天</span></div>` : ''}
+      ${streak.count > 0 ? `<div style="margin-top:12px"><span class="streak-badge" style="font-size:13px;padding:5px 12px;">🔥 已连续学习 ${streak.count} 天</span></div>` : ''}
     </div>
 
     <div class="card">
@@ -2204,70 +2245,39 @@ async function meView(){
       <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px;">
         <span class="status-badge ${dataStatus.valveOk?'ok':'warn'}">${dataStatus.valveOk?'✓':'⚠'}</span>
         <span style="flex:1;color:#4b5265;">阀门知识库</span>
-        <span style="font-weight:700;color:${dataStatus.valveOk?'#047857':'#b45309'};">${dataStatus.valve} 条</span>
+        <span style="font-weight:700;">${dataStatus.valve} 条</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px;">
         <span class="status-badge ${dataStatus.wordsOk?'ok':'warn'}">${dataStatus.wordsOk?'✓':'⚠'}</span>
         <span style="flex:1;color:#4b5265;">英语词库</span>
-        <span style="font-weight:700;color:${dataStatus.wordsOk?'#047857':'#b45309'};">${dataStatus.words} 词 · ${dataStatus.decks} 词库</span>
+        <span style="font-weight:700;">${dataStatus.words} 词 · ${dataStatus.decks} 词库</span>
       </div>
     </div>
 
     <div class="card">
-      <div style="font-size:14px;font-weight:750;margin-bottom:6px;">🌐 知识源配置</div>
+      <div style="font-size:14px;font-weight:750;margin-bottom:6px;">🌐 知识源</div>
       <div style="font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:14px;">
-        每日知识支持 3 个数据源。默认用维基百科（免配置，无限额度）。你也可以配置 ShowAPI 或接口盒子，配置后会优先使用。
+        默认用维基百科（稳定）。ShowAPI / 接口盒子可选，如果 key 失效会自动降级到维基百科。
       </div>
-
       <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">使用的源</label>
       <select id="knowledgeSource" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
-        <option value="auto" ${srcCurrent==='auto'?'selected':''}>自动（ShowAPI → 接口盒子 → 维基百科）</option>
-        <option value="wiki" ${srcCurrent==='wiki'?'selected':''}>维基百科（免配置，无限额度）</option>
-        <option value="showapi" ${srcCurrent==='showapi'?'selected':''}>ShowAPI 十万个为什么</option>
-        <option value="oioweb" ${srcCurrent==='oioweb'?'selected':''}>接口盒子 社会常识题</option>
+        <option value="auto" ${ks.current==='auto'?'selected':''}>维基百科（推荐）</option>
+        <option value="showapi" ${ks.current==='showapi'?'selected':''}>ShowAPI</option>
+        <option value="oioweb" ${ks.current==='oioweb'?'selected':''}>接口盒子</option>
       </select>
-
-      <div style="margin-top:18px;padding:12px 14px;background:#f8f9fd;border-radius:12px;">
-        <div style="font-size:12.5px;font-weight:750;margin-bottom:8px;color:#3b4256;">
-          ShowAPI ${canShow?'<span style="color:#047857;font-weight:650;">✓ 已配</span>':'<span style="color:#b45309;font-weight:650;">未配</span>'}
-        </div>
-        <div style="font-size:11.5px;color:var(--sub);line-height:1.65;margin-bottom:8px;">
-          去 showapi.com 注册免费账号，创建应用后能拿到 appid 和 sign。免费版每天 500 次左右。
-        </div>
-        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">appid</label>
-        <input type="text" id="showapiAppId" placeholder="例如：123456" value="${esc(ks.showapiAppId)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
-        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">sign</label>
-        <input type="password" id="showapiSign" placeholder="你的密钥" value="${esc(ks.showapiSign)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
-      </div>
-
-      <div style="margin-top:12px;padding:12px 14px;background:#f8f9fd;border-radius:12px;">
-        <div style="font-size:12.5px;font-weight:750;margin-bottom:8px;color:#3b4256;">
-          接口盒子 ${canOio?'<span style="color:#047857;font-weight:650;">✓ 已配</span>':'<span style="color:#b45309;font-weight:650;">未配</span>'}
-        </div>
-        <div style="font-size:11.5px;color:var(--sub);line-height:1.65;margin-bottom:8px;">
-          去 apihz.cn 注册免费账号，在用户中心获取数字 ID 和通讯密钥。
-        </div>
-        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">用户 ID</label>
-        <input type="text" id="oiowebId" placeholder="例如：10000000" value="${esc(ks.oiowebId)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
-        <label style="display:block;font-size:11.5px;font-weight:650;color:#4b5265;margin:8px 0 4px;">通讯密钥</label>
-        <input type="password" id="oiowebKey" placeholder="你的通讯密钥" value="${esc(ks.oiowebKey)}" style="width:100%;border:1px solid #e6e8f0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12.5px;background:#fff;">
-      </div>
-
-      <button class="btn primary wide" style="margin-top:14px" data-act="saveKnowledgeSource">保存知识源配置</button>
-      <button class="btn ghost wide" style="margin-top:8px" data-act="testKnowledgeSource">🧪 测试当前知识源</button>
+      <button class="btn primary wide" style="margin-top:14px" data-act="saveKnowledgeSource">保存</button>
     </div>
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:12px;">🔧 环境诊断</div>
       <div style="font-size:12.5px;line-height:1.9;color:#4b5265;">
-        <div>Android 桥：<b style="color:${bridgeOk?'#047857':'#b45309'};">${bridgeOk?'✓ 存在':'✗ 不存在'}</b></div>
-        <div>桥.speak：<b style="color:${bridgeSpeak?'#047857':'#b45309'};">${bridgeSpeak?'✓ 有':'✗ 无'}</b></div>
-        <div>桥.openUrl：<b style="color:${bridgeOpen?'#047857':'#b45309'};">${bridgeOpen?'✓ 有':'✗ 无'}</b></div>
-        <div>Web Speech：<b style="color:${webSpeech?'#047857':'#b45309'};">${webSpeech?'✓ 支持':'✗ 不支持'}</b></div>
+        <div>Android 桥：<b style="color:${bridgeOk?'#047857':'#b45309'};">${bridgeOk?'✓':'✗'}</b></div>
+        <div>桥.speak：<b style="color:${bridgeSpeak?'#047857':'#b45309'};">${bridgeSpeak?'✓':'✗'}</b></div>
+        <div>Web Speech：<b style="color:${webSpeech?'#047857':'#b45309'};">${webSpeech?'✓':'✗'}</b></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
         <button class="btn ghost" data-act="diagTTS">🔊 测试朗读</button>
-        <button class="btn ghost" data-act="diagOnline">🌐 测试在线TTS</button>
+        <button class="btn ghost" data-act="diagOnline">🌐 在线TTS</button>
       </div>
     </div>
 
@@ -2275,37 +2285,28 @@ async function meView(){
       <div style="font-size:14px;font-weight:750;margin-bottom:12px;">📅 累计数据</div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
         <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.learnedEver}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已学过（共 ${stats.totalWords} 词）</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
-        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.scheduledEnglish}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已排入复习</span>
+        <span style="font-size:13px;color:#4b5265;font-weight:600;">个单词已学过</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
         <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.knowDoneEver}</span>
         <span style="font-size:13px;color:#4b5265;font-weight:600;">条阀门知识已掌握</span>
       </div>
-      <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;border-bottom:1px solid #f0f1f6;">
+      <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;">
         <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.wrongCount}</span>
         <span style="font-size:13px;color:#4b5265;font-weight:600;">条错题</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:8px;padding:10px 4px;">
-        <span style="font-size:22px;font-weight:850;color:var(--brand);min-width:52px;">${stats.totalValve}</span>
-        <span style="font-size:13px;color:#4b5265;font-weight:600;">条知识库总量</span>
       </div>
     </div>
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:8px;">💭 今日感悟</div>
-      <textarea class="answer-input" id="growthReflection" style="min-height:80px" placeholder="今天有什么感受、发现、想法…">${esc(growth.reflection || '')}</textarea>
+      <textarea class="answer-input" id="growthReflection" style="min-height:80px">${esc(growth.reflection || '')}</textarea>
       <div style="font-size:14px;font-weight:750;margin:16px 0 8px;">🎯 明天调整</div>
-      <textarea class="answer-input" id="growthTomorrow" style="min-height:70px" placeholder="明天想改什么、做什么…">${esc(growth.tomorrow || '')}</textarea>
+      <textarea class="answer-input" id="growthTomorrow" style="min-height:70px">${esc(growth.tomorrow || '')}</textarea>
       <button class="btn primary wide" style="margin-top:14px" data-act="saveGrowth">保存今天</button>
     </div>
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:6px;">🔊 语音设置</div>
-      <div style="font-size:12.5px;font-weight:650;color:#4b5265;margin-bottom:6px;">口音</div>
       <div class="accent-row">
         <button class="accent-btn ${LS.get('voice-accent','en-US')==='en-US'?'on':''}" data-act="setAccent" data-accent="en-US">🇺🇸 美音</button>
         <button class="accent-btn ${LS.get('voice-accent','en-US')==='en-GB'?'on':''}" data-act="setAccent" data-accent="en-GB">🇬🇧 英音</button>
@@ -2314,20 +2315,15 @@ async function meView(){
 
     <div class="card">
       <div style="font-size:14px;font-weight:750;margin-bottom:12px;">🤖 AI 助手配置</div>
-      <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">服务商</label>
       <select id="aiProvider" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
         <option value="none" ${AI.provider==='none'?'selected':''}>不启用</option>
-        <option value="deepseek" ${AI.provider==='deepseek'?'selected':''}>DeepSeek（推荐）</option>
+        <option value="deepseek" ${AI.provider==='deepseek'?'selected':''}>DeepSeek</option>
         <option value="qwen" ${AI.provider==='qwen'?'selected':''}>通义千问</option>
         <option value="zhipu" ${AI.provider==='zhipu'?'selected':''}>智谱 GLM</option>
-        <option value="custom" ${AI.provider==='custom'?'selected':''}>自定义</option>
       </select>
-      <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">API Key</label>
-      <input type="password" id="aiKey" placeholder="sk-..." value="${esc(AI.apiKey)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
-      <label style="display:block;font-size:12.5px;font-weight:650;color:#4b5265;margin:13px 0 6px;">模型名（留空用默认）</label>
-      <input type="text" id="aiModel" placeholder="deepseek-chat" value="${esc(AI.model)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;">
+      <input type="password" id="aiKey" placeholder="sk-..." value="${esc(AI.apiKey)}" style="width:100%;border:1px solid #e6e8f0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;background:#fafbfe;margin-top:10px;">
       <button class="btn primary wide" style="margin-top:14px" data-act="saveAI">保存配置</button>
-      <div style="margin-top:10px;font-size:12px;padding:8px 12px;border-radius:9px;${AI.enabled()?'background:#ecfdf5;color:#047857;':'background:#f1f2f9;color:#6b7280;'}">${AI.enabled() ? `✅ 已启用 · ${AI.provider}` : '⚪ 未启用 · 使用本地关键词判卷'}</div>
+      <div style="margin-top:10px;font-size:12px;padding:8px 12px;border-radius:9px;${AI.enabled()?'background:#ecfdf5;color:#047857;':'background:#f1f2f9;color:#6b7280;'}">${AI.enabled() ? '✅ 已启用' : '⚪ 未启用'}</div>
     </div>
 
     <div class="card">
@@ -2341,10 +2337,9 @@ async function meView(){
       <button class="btn danger wide" data-act="clearData">🗑 清空本设备数据</button>
     </div>
 
-    <div class="foot-note">数据保存在本设备 · 词库打包在 App 内</div>`;
+    <div class="foot-note">数据保存在本设备</div>`;
   }catch(e){
-    console.error('meView 渲染失败：', e);
-    return `<div class="tip-card">我的页面加载失败：${esc(e.message)}</div>`;
+    return `<div class="tip-card">加载失败：${esc(e.message)}</div>`;
   }
 }
 
@@ -2359,10 +2354,10 @@ const TABS = [
 ];
 const VIEWS = { study:studyView, work:workView, discover:discoverView, me:meView };
 const SKELETON = {
-  study:`<div class="sk" style="height:140px"></div><div class="sk" style="height:44px;border-radius:14px"></div><div class="sk" style="height:180px"></div>`,
-  work:`<div class="sk" style="height:140px"></div><div class="sk" style="height:44px;border-radius:14px"></div><div class="sk" style="height:180px"></div>`,
-  discover:`<div class="sk" style="height:140px"></div><div class="sk" style="height:44px;border-radius:14px"></div><div class="sk" style="height:200px"></div>`,
-  me:`<div class="sk" style="height:180px"></div><div class="sk" style="height:200px"></div>`
+  study:`<div class="sk" style="height:140px"></div><div class="sk" style="height:44px;border-radius:14px"></div>`,
+  work:`<div class="sk" style="height:140px"></div>`,
+  discover:`<div class="sk" style="height:140px"></div>`,
+  me:`<div class="sk" style="height:180px"></div>`
 };
 const chipsScrollMemory = {};
 function renderTabs(){
@@ -2391,7 +2386,7 @@ async function render(){
 }
 
 /* ============================================================
-   弹层
+   弹层 + 复习
    ============================================================ */
 function sheetHTML(html){ return `<div class="sheet-mask" data-act="closeSheet"></div><div class="sheet-body">${html}</div>`; }
 function openSheet(html){
@@ -2409,19 +2404,8 @@ function closeSheet(){
   state.review = null;
   setTimeout(() => { if (!sheet.classList.contains('open')) sheet.innerHTML = ''; }, 320);
 }
-
-/* ============================================================
-   复习
-   ============================================================ */
 function startReview(type, list){
   state.review = { type, list, index:0, answer:'', result:null, judged:false, loading:false, history:[] };
-  renderReviewSheet();
-}
-function startWeeklyTest(){
-  const t = Store.getWeeklyTest();
-  const list = [...t.words.map(w => ({ ...w, _type:'english' })), ...t.valves.map(v => ({ ...v, _type:'work' }))];
-  if (!list.length){ toast('本周还没有内容'); return; }
-  state.review = { type:'weekly', list, index:0, answer:'', result:null, judged:false, loading:false, history:[] };
   renderReviewSheet();
 }
 function renderReviewSheet(){
@@ -2430,21 +2414,21 @@ function renderReviewSheet(){
   if (r.index >= r.list.length){
     const correct = r.history.filter(h => h.correct).length;
     const score = Math.round(correct / r.list.length * 100);
-    if (r.type === 'weekly') Store.saveWeeklyResult({ score });
+    if (r.type === 'weekly'){
+      Store.saveWeeklyResult({ score, correct, total: r.list.length, records: r.history, takenAt: Date.now() });
+    }
     updateSheet(`
-      <div class="sheet-head"><div class="sheet-emoji">🎉</div><div><h2>复习完成</h2><div class="muted">共 ${r.list.length} 题 · 答对 ${correct} 题 · 得分 ${score}</div></div></div>
-      <div class="sheet-sec"><h4>本轮结果</h4>
-        ${r.history.map(h => `<div style="padding:9px 0;border-bottom:1px dashed #eceef4;">
-          <div style="font-size:13.5px;font-weight:650;color:${h.correct?'#047857':'#b45309'};line-height:1.5;">${h.correct?'✓':'✗'} ${esc(h.q)}</div>
-          ${h.feedback?`<div style="font-size:12.5px;color:${h.correct?'#047857':'#b45309'};margin-top:4px;line-height:1.6;">${esc(h.feedback)}</div>`:''}
-        </div>`).join('')}
-      </div>
-      <button class="btn primary wide" style="margin-top:20px" data-act="closeSheet">完成</button>
+      <div class="sheet-head"><div class="sheet-emoji">🎉</div><div><h2>完成</h2><div class="muted">共 ${r.list.length} 题 · 答对 ${correct} 题 · 得分 ${score}</div></div></div>
+      <button class="btn primary wide" style="margin-top:20px" data-act="closeSheet">关闭</button>
     `);
+    if (r.type === 'weekly'){
+      state.tab = 'study'; state.studySub = 'weekly';
+      setTimeout(() => { closeSheet(); render(); }, 1200);
+    }
     return;
   }
   const item = r.list[r.index];
-  const isEn = (r.type === 'english') || (r.type === 'weekly' && item._type === 'english');
+  const isEn = (r.type === 'english') || (item.type === 'english');
   const q = isEn ? item.w : item.q;
   const ref = isEn ? item.cn : (item.a + '\n\n要点：' + (item.key||''));
   const body = `
@@ -2456,40 +2440,33 @@ function renderReviewSheet(){
       </div>
     </div>
     <div style="background:#f8f9fd;border-radius:14px;padding:16px;margin:14px 0;">
-      <div style="font-size:11px;font-weight:750;color:var(--brand);letter-spacing:.6px;margin-bottom:8px;">${isEn ? '🔊 听发音，写出中文意思' : '题目'}</div>
-      ${isEn ? `<div style="font-size:28px;font-weight:850;letter-spacing:-.6px;color:#2b3244;margin-bottom:8px;">${esc(q)}</div>
+      ${isEn ? `<div style="font-size:28px;font-weight:850;color:#2b3244;margin-bottom:8px;">${esc(q)}</div>
         <button class="btn ghost" data-act="reviewSpeak" data-text="${esc(q)}" data-lang="en-US">🔊 再听一遍</button>`
         : `<div style="font-size:15.5px;font-weight:750;line-height:1.5;color:#2b3244;">${esc(q)}</div>`}
     </div>
-    <div style="font-size:13px;font-weight:700;color:#3b4256;margin-bottom:8px;">${isEn ? '你的中文翻译' : '你的答案'}</div>
-    <textarea class="answer-input" id="reviewAnswer" placeholder="${isEn ? '写出这个单词的中文意思…' : '写下你的答案…'}" ${r.judged?'readonly':''}>${esc(r.answer||'')}</textarea>
+    <div style="font-size:13px;font-weight:700;color:#3b4256;margin-bottom:8px;">${isEn ? '中文翻译' : '你的答案'}</div>
+    <textarea class="answer-input" id="reviewAnswer" placeholder="${isEn ? '写出中文意思…' : '写下你的答案…'}" ${r.judged?'readonly':''}>${esc(r.answer||'')}</textarea>
     ${r.judged && r.result ? `
       <div class="score-card" style="${r.result.correct?'':'background:#fff7ed;border-color:#fdba74;'}">
         <div class="score-head">
-          <div class="score-num" style="${r.result.correct?'':'color:#c2410c;'}">${r.result.accuracy || r.result.score || 0}<span style="font-size:14px;opacity:.55;font-weight:600;letter-spacing:0;margin-left:2px;">%</span></div>
+          <div class="score-num" style="${r.result.correct?'':'color:#c2410c;'}">${r.result.accuracy || r.result.score || 0}<span style="font-size:14px;opacity:.55;">%</span></div>
           <div class="score-label" style="${r.result.correct?'':'color:#c2410c;'}">${r.result.correct ? '✓ 正确' : '✗ 再想想'}</div>
         </div>
-        ${r.result.correct_points && r.result.correct_points.length ? `<div class="score-row"><div class="score-row-title" style="color:var(--ok);">✅ 正确点</div><ul class="score-list">${r.result.correct_points.map(s => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''}
-        ${r.result.missing && r.result.missing.length ? `<div class="score-row"><div class="score-row-title" style="color:var(--warn);">⚠️ 不足 / 遗漏</div><ul class="score-list">${r.result.missing.map(s => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''}
-        ${r.result.supplement ? `<div class="score-row"><div class="score-row-title">🔧 工程师补充</div><div class="score-extra">${esc(r.result.supplement)}</div></div>` : ''}
-        ${r.result.keywords && r.result.keywords.length ? `<div class="score-row"><div class="score-row-title">🔑 记忆关键词</div><div class="score-keywords">${r.result.keywords.map(k => `<span>${esc(k)}</span>`).join('')}</div></div>` : ''}
+        ${r.result.supplement ? `<div class="score-row"><div class="score-row-title">🔧 补充</div><div class="score-extra">${esc(r.result.supplement)}</div></div>` : ''}
         ${r.result.feedback ? `<div class="score-row"><div class="score-row-title">点评</div><div class="score-extra">${esc(r.result.feedback)}</div></div>` : ''}
-        ${!r.result.correct && !r.result.supplement ? `<div class="score-row"><div class="score-row-title">参考答案</div><div class="score-extra">${esc(ref)}</div></div>` : ''}
+        ${!r.result.correct ? `<div class="score-row"><div class="score-row-title">参考答案</div><div class="score-extra">${esc(ref)}</div></div>` : ''}
       </div>
     ` : ''}
     <div style="margin-top:16px;">
-      ${r.loading ? `<button class="btn primary wide" disabled>⏳ AI 判定中…</button>`
+      ${r.loading ? `<button class="btn primary wide" disabled>⏳ 判定中…</button>`
         : r.judged ? `
-          <div style="font-size:13px;font-weight:700;color:#3b4256;margin-bottom:10px;text-align:center;">这道题你掌握得怎么样？</div>
+          <div style="font-size:13px;font-weight:700;color:#3b4256;margin-bottom:10px;text-align:center;">掌握得怎么样？</div>
           <div class="rate-row">
             <button class="rate-btn again" data-act="rate" data-rating="again">完全不会</button>
             <button class="rate-btn hard" data-act="rate" data-rating="hard">模糊</button>
             <button class="rate-btn good" data-act="rate" data-rating="good">熟练</button>
           </div>
         ` : `<button class="btn primary wide" data-act="reviewSubmit">提交答案</button>`}
-    </div>
-    <div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.65;text-align:center;">
-      ${AI.enabled() ? '由 AI 判定对错' : '未配置 AI，使用本地关键词判定'}
     </div>`;
   updateSheet(body);
   if (isEn && !r.judged && !r.answer){
@@ -2506,7 +2483,7 @@ async function submitReviewAnswer(){
   if (!answer){ toast('先写下你的答案'); return; }
   r.answer = answer;
   const item = r.list[r.index];
-  const isEn = (r.type === 'english') || (r.type === 'weekly' && item._type === 'english');
+  const isEn = (r.type === 'english') || (item.type === 'english');
   const q = isEn ? item.w : item.q;
   const ref = isEn ? item.cn : (item.a + '\n\n要点：' + (item.key||''));
   r.loading = true;
@@ -2527,11 +2504,9 @@ async function submitReviewAnswer(){
     const lj = localJudge(answer, ref);
     result = { correct:lj.correct, accuracy:lj.score, score:lj.score, feedback:lj.feedback };
   }
-  r.loading = false;
-  r.judged = true;
-  r.result = result;
-  r.history.push({ q, correct:!!result.correct, feedback: result.feedback || (result.correct ? '答对了' : '再看一遍参考答案') });
-  if (!result.correct) Store.addWrong(r.type === 'weekly' ? (item._type||'work') : r.type, item.w || item.q, q, answer, result.feedback || '');
+  r.loading = false; r.judged = true; r.result = result;
+  r.history.push({ q, correct:!!result.correct, userAnswer: answer, reference: ref, feedback: result.feedback || (result.correct ? '答对了' : '再看一遍参考答案') });
+  if (!result.correct) Store.addWrong(isEn ? 'english' : 'work', item.w || item.q, q, answer, result.feedback || '');
   renderReviewSheet();
   toast(result.correct ? '✓ 答对了' : '✗ 已加入错题本');
 }
@@ -2540,33 +2515,43 @@ function rateAndNext(rating){
   if (!r) return;
   const item = r.list[r.index];
   const key = item.w || item.q;
-  const type = r.type === 'weekly' ? (item._type || 'work') : r.type;
-  Store.rateItem(type, key, rating);
-  if (rating !== 'again') Store.removeWrong(type, key);
-  r.index += 1;
-  r.answer = '';
-  r.result = null;
-  r.judged = false;
+  const type = item.type || r.type;
+  if (r.type !== 'weekly'){
+    Store.rateItem(type, key, rating);
+    if (rating !== 'again') Store.removeWrong(type, key);
+  }
+  r.index += 1; r.answer = ''; r.result = null; r.judged = false;
+  renderReviewSheet();
+}
+
+function startWeeklyTest(){
+  const words = Store.getWeekLearnedWords();
+  const knowledges = Store.getWeekLearnedKnowledge();
+  const pool = [];
+  words.forEach(w => {
+    const item = DeckLoader.findWord(w) || { w, cn:'' };
+    pool.push({ type:'english', q: item.w, ref: item.cn, item });
+  });
+  knowledges.forEach(k => {
+    const item = SEED.VALVE_ALL.find(v => v.q === k);
+    if (item) pool.push({ type:'work', q: item.q, ref: item.a + '\n\n要点：' + (item.key||''), item });
+  });
+  if (!pool.length){ toast('还没有学过的内容'); return; }
+  const selected = shuffle(pool).slice(0, Math.min(10, pool.length));
+  state.review = { type:'weekly', list: selected, index:0, answer:'', result:null, judged:false, loading:false, history:[] };
   renderReviewSheet();
 }
 
 /* ============================================================
    全局搜索
    ============================================================ */
-let _allDecksLoading = null;
-function ensureAllDecksLoaded(){
-  if (DeckLoader.allLoaded()) return Promise.resolve();
-  if (_allDecksLoading) return _allDecksLoading;
-  _allDecksLoading = DeckLoader.loadAll();
-  return _allDecksLoading;
-}
 function openGlobalSearch(){
   openSheet(`
     <div class="sheet-head">
       <div class="sheet-emoji">🔍</div>
       <div style="flex:1;min-width:0;">
         <h2>全局搜索</h2>
-        <div class="muted">知识 / 单词 / 笔记 / AI 对话</div>
+        <div class="muted">知识 / 单词</div>
       </div>
     </div>
     <div class="global-search-bar" style="margin-top:14px;">
@@ -2584,7 +2569,7 @@ function openGlobalSearch(){
     }
   }, 100);
 }
-async function runGlobalSearch(q){
+function runGlobalSearch(q){
   const el = document.getElementById('globalSearchResults');
   if (!el) return;
   q = (q || '').trim();
@@ -2596,25 +2581,15 @@ async function runGlobalSearch(q){
       results.push({ type:'valve', typeLabel:'知识', q:v.q, snippet:v.a.slice(0, 80) });
     }
   });
-  if (!DeckLoader.allLoaded()){
-    el.innerHTML = `<div style="text-align:center;padding:20px 0;font-size:12.5px;color:var(--sub);">正在加载全部词库以搜索…</div>`;
-    renderResults(results);
-    await ensureAllDecksLoaded();
-    if (document.getElementById('globalSearchInput')) return runGlobalSearch(q);
-    return;
-  }
-  const allWords = DeckLoader.get('all');
-  allWords.forEach(w => {
-    if (w.w.toLowerCase().includes(lq) || (w.cn||'').includes(q)){
-      results.push({ type:'word', typeLabel:'单词', q:w.w, snippet: (w.cn||'') + (w.deck ? ' · ' + w.deck : '') });
-    }
+  const loadedIds = Object.keys(DeckLoader.loaded);
+  loadedIds.forEach(id => {
+    (DeckLoader.loaded[id]||[]).forEach(w => {
+      if (w.w.toLowerCase().includes(lq) || (w.cn||'').includes(q)){
+        results.push({ type:'word', typeLabel:'单词', q:w.w, snippet: (w.cn||'') + ' · ' + id });
+      }
+    });
   });
-  renderResults(results);
-}
-function renderResults(results){
-  const el = document.getElementById('globalSearchResults');
-  if (!el) return;
-  if (!results.length){ el.innerHTML = `<div style="font-size:12.5px;color:var(--sub);text-align:center;padding:20px 0;">没有找到匹配结果</div>`; return; }
+  if (!results.length){ el.innerHTML = `<div style="font-size:12.5px;color:var(--sub);text-align:center;padding:20px 0;">没有找到「${esc(q)}」</div>`; return; }
   state.currentSearch = results;
   el.innerHTML = results.slice(0, 50).map((r, i) => `
     <div class="search-result" data-act="globalSearchJump" data-type="${r.type}" data-idx="${i}">
@@ -2628,22 +2603,13 @@ function handleSearchJump(type, idx){
   const r = (state.currentSearch || [])[idx];
   if (!r) return;
   if (type === 'valve'){
-    state.tab = 'study';
-    state.studySub = 'valve';
-    state.searchQuery = r.q;
-    state.openKnow = r.q;
-    closeSheet();
-    render();
+    state.tab = 'study'; state.studySub = 'valve';
+    state.searchQuery = r.q; state.openKnow = r.q;
+    closeSheet(); render();
   } else if (type === 'word'){
-    const map = LS.get('word-deck-map', {});
-    const deckId = map[r.q];
-    if (deckId){ state.englishDeck = deckId; LS.set('english-deck', deckId); }
-    state.tab = 'study';
-    state.studySub = 'english';
-    state.englishSub = 'all';
-    state.englishPage = 1;
-    closeSheet();
-    render();
+    state.tab = 'study'; state.studySub = 'english';
+    state.englishSub = 'all'; state.englishPage = 1;
+    closeSheet(); render();
   }
 }
 
@@ -2659,7 +2625,7 @@ function openAIAssistant(){
       <div class="sheet-emoji">🤖</div>
       <div style="flex:1;min-width:0;">
         <h2>AI 助手</h2>
-        <div class="muted">阀门 / 工作 / 学习 / 任何问题</div>
+        <div class="muted">阀门 / 工作 / 学习</div>
       </div>
       ${msgs.length ? `<button class="link-btn" data-act="clearAIHistory">清空</button>` : ''}
     </div>
@@ -2667,15 +2633,15 @@ function openAIAssistant(){
       ${roles.map(r => `<button class="ai-role-btn ${r.id===role?'on':''}" data-act="aiRole" data-role="${r.id}">${r.name}</button>`).join('')}
     </div>
     <div id="aiChat" style="margin-top:14px;max-height:50vh;overflow-y:auto;">
-      ${msgs.length === 0 ? `<div style="text-align:center;font-size:12.5px;color:var(--sub);padding:20px 0;line-height:1.7;">试试问我：<br>· DN200 闸阀怎么选？<br>· B7 和 B7M 有什么区别？</div>` : ''}
-      ${msgs.map((m, i) => `<div class="ai-msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.content)}</div>`).join('')}
+      ${msgs.length === 0 ? `<div style="text-align:center;font-size:12.5px;color:var(--sub);padding:20px 0;">试试问我：DN200 闸阀怎么选？</div>` : ''}
+      ${msgs.map(m => `<div class="ai-msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.content)}</div>`).join('')}
       ${state.aiLoading ? `<div class="ai-msg bot">⏳ 思考中…</div>` : ''}
     </div>
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <textarea class="answer-input" id="aiInput" style="min-height:52px;margin:0;flex:1;" placeholder="输入你的问题…">${esc(state.aiInput||'')}</textarea>
+      <textarea class="answer-input" id="aiInput" style="min-height:52px;margin:0;flex:1;" placeholder="输入问题…">${esc(state.aiInput||'')}</textarea>
       <button class="btn primary" style="align-self:flex-end;padding:12px 16px;" data-act="aiSend">发送</button>
     </div>
-    ${!AI.enabled() ? `<div class="tip-card" style="margin-top:12px;">⚠️ AI 未配置。去「我的」页填入 API Key 后即可使用。</div>` : ''}
+    ${!AI.enabled() ? `<div class="tip-card" style="margin-top:12px;">⚠️ 未配置 AI</div>` : ''}
   `);
   setTimeout(() => {
     const chat = document.getElementById('aiChat');
@@ -2686,17 +2652,15 @@ async function sendAIMessage(){
   const input = document.getElementById('aiInput');
   const q = (input && input.value || '').trim();
   if (!q) return;
-  if (!AI.enabled()){ toast('请先在「我的」页配置 AI'); return; }
+  if (!AI.enabled()){ toast('请先配置 AI'); return; }
   Store.addAIHistory('user', q);
   state.aiInput = '';
   state.aiLoading = true;
   openAIAssistant();
   try{
     const answer = await AI.assistant(q, state.aiRole);
-    Store.addAIHistory('bot', answer || '（没有返回内容）');
-  }catch(e){
-    Store.addAIHistory('bot', '调用失败：' + (e.message || '未知错误'));
-  }
+    Store.addAIHistory('bot', answer || '（无返回）');
+  }catch(e){ Store.addAIHistory('bot', '调用失败：' + (e.message || '未知错误')); }
   state.aiLoading = false;
   openAIAssistant();
 }
@@ -2708,31 +2672,19 @@ function doExport(){
   const data = Store.buildExportData();
   const json = JSON.stringify(data, null, 2);
   openSheet(`
-    <div class="sheet-head">
-      <div class="sheet-emoji">📤</div>
-      <div style="flex:1;min-width:0;">
-        <h2>导出备份</h2>
-        <div class="muted">长按全选复制，保存到便签或文件</div>
-      </div>
-    </div>
+    <div class="sheet-head"><div class="sheet-emoji">📤</div><div><h2>导出备份</h2></div></div>
     <div class="sheet-sec">
-      <textarea id="exportText" readonly style="width:100%;height:300px;font-family:ui-monospace,monospace;font-size:11px;padding:10px;border:1px solid #e6e8f0;border-radius:10px;background:#fafbfe;color:var(--ink);-webkit-user-select:text;user-select:text;">${esc(json)}</textarea>
-      <button class="btn primary wide" style="margin-top:14px;" data-act="copyExport">📋 复制全部到剪贴板</button>
+      <textarea id="exportText" readonly style="width:100%;height:300px;font-family:ui-monospace,monospace;font-size:11px;padding:10px;border:1px solid #e6e8f0;border-radius:10px;background:#fafbfe;">${esc(json)}</textarea>
+      <button class="btn primary wide" style="margin-top:14px;" data-act="copyExport">📋 复制全部</button>
     </div>
   `);
 }
 function doImport(){
   openSheet(`
-    <div class="sheet-head">
-      <div class="sheet-emoji">📥</div>
-      <div style="flex:1;min-width:0;">
-        <h2>导入备份</h2>
-        <div class="muted">把之前复制的备份文本粘贴到下面</div>
-      </div>
-    </div>
+    <div class="sheet-head"><div class="sheet-emoji">📥</div><div><h2>导入备份</h2></div></div>
     <div class="sheet-sec">
-      <textarea id="importText" placeholder="在这里粘贴备份 JSON 文本…" style="width:100%;height:300px;font-family:ui-monospace,monospace;font-size:11px;padding:10px;border:1px solid #e6e8f0;border-radius:10px;background:#fafbfe;color:var(--ink);-webkit-user-select:text;user-select:text;"></textarea>
-      <button class="btn primary wide" style="margin-top:14px;" data-act="doImportConfirm">导入备份</button>
+      <textarea id="importText" placeholder="粘贴备份文本…" style="width:100%;height:300px;font-family:ui-monospace,monospace;font-size:11px;padding:10px;border:1px solid #e6e8f0;border-radius:10px;background:#fafbfe;"></textarea>
+      <button class="btn primary wide" style="margin-top:14px;" data-act="doImportConfirm">导入</button>
     </div>
   `);
 }
@@ -2768,13 +2720,36 @@ view.addEventListener('click', async (e) => {
 
   if (act === 'speak'){ e.stopPropagation(); toggleSpeak(t.dataset.text, t.dataset.lang || 'en-US', t); return; }
 
+  if (act === 'loadExample'){
+    e.stopPropagation();
+    const word = t.dataset.word;
+    const wrap = t.closest('[data-ex-wrap]');
+    if (!wrap) return;
+    t.disabled = true;
+    t.textContent = '⏳ 获取中…';
+    const ex = await ExampleStore.fetchFor(word);
+    if (ex && ex.en){
+      wrap.innerHTML = `
+        <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:6px;">📝 例句</div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:#2b3244;line-height:1.6;">
+          <span style="flex:1">${esc(ex.en)}</span>
+          <button style="border:0;background:#f3f4fa;width:26px;height:26px;border-radius:9px;font-size:12px;cursor:pointer;flex-shrink:0;" data-act="speak" data-text="${esc(ex.en)}" data-lang="en-US">🔊</button>
+        </div>`;
+    } else {
+      wrap.innerHTML = `
+        <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:6px;">📝 例句</div>
+        <div style="font-size:12px;color:var(--sub);">暂时没找到例句</div>
+        <button style="border:0;background:#eef0ff;color:var(--brand);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:650;cursor:pointer;font-family:inherit;margin-top:8px;" data-act="loadExample" data-word="${esc(word)}">🔄 重试</button>`;
+    }
+    return;
+  }
+
   if (act === 'studySub'){ state.studySub = t.dataset.sub; render(); return; }
   if (act === 'englishSub'){ state.englishSub = t.dataset.sub; state.englishPage = 1; render(); return; }
   if (act === 'englishDeck'){
     state.englishDeck = t.dataset.deck;
     LS.set('english-deck', state.englishDeck);
-    state.englishPage = 1;
-    render();
+    state.englishPage = 1; render();
     return;
   }
   if (act === 'englishLoadMore'){ state.englishPage += 1; render(); return; }
@@ -2791,8 +2766,7 @@ view.addEventListener('click', async (e) => {
     else if (key === 'general') state.studySub = 'general';
     else if (key === 'yiyan' || key === 'quote' || key === 'story') state.studySub = 'express';
     else if (key === 'news'){ state.tab = 'discover'; state.discoverSub = 'news'; }
-    render();
-    return;
+    render(); return;
   }
 
   if (act === 'learnWord'){
@@ -2801,13 +2775,8 @@ view.addEventListener('click', async (e) => {
     const deck = card.dataset.deck;
     const learned = Store.getLearned();
     const i = learned.indexOf(w);
-    if (i < 0){
-      learned.push(w);
-      Store.ensureSchedule('english', w);
-      if (deck) Store.setWordDeck(w, deck);
-    } else {
-      learned.splice(i,1);
-    }
+    if (i < 0){ learned.push(w); Store.ensureSchedule('english', w); if (deck) Store.setWordDeck(w, deck); }
+    else learned.splice(i,1);
     Store.setLearned(learned);
     render();
     toast(i < 0 ? '已标记为已学' : '已取消');
@@ -2819,8 +2788,7 @@ view.addEventListener('click', async (e) => {
     const q = card ? card.dataset.q : null;
     if (!q) return;
     state.openKnow = state.openKnow === q ? null : q;
-    render();
-    return;
+    render(); return;
   }
 
   if (act === 'knowDone'){
@@ -2834,8 +2802,7 @@ view.addEventListener('click', async (e) => {
     else done.splice(i, 1);
     Store.setKnowDone(done);
     toast(i < 0 ? '已标记掌握' : '已取消');
-    render();
-    return;
+    render(); return;
   }
 
   if (act === 'thinkToggle'){
@@ -2844,30 +2811,15 @@ view.addEventListener('click', async (e) => {
     if (!name) return;
     state.openThink = state.openThink === name ? null : name;
     if (state.openThink !== name) state.thinkHint = null;
-    render();
-    return;
+    render(); return;
   }
-  if (act === 'thinkHint'){
-    e.stopPropagation();
-    const name = t.dataset.name;
-    state.thinkHint = state.thinkHint === name ? null : name;
-    render();
-    return;
-  }
-  if (act === 'thinkDone'){
-    e.stopPropagation();
-    const name = t.dataset.name;
-    Store.markThinkDone(name);
-    toast('已记录今日练习');
-    render();
-    return;
-  }
+  if (act === 'thinkHint'){ e.stopPropagation(); const name = t.dataset.name; state.thinkHint = state.thinkHint === name ? null : name; render(); return; }
+  if (act === 'thinkDone'){ e.stopPropagation(); Store.markThinkDone(t.dataset.name); toast('已记录'); render(); return; }
 
   if (act === 'valveCat'){ state.valveCat = t.dataset.cat; state.searchQuery = ''; state.openKnow = null; state.valvePage = 1; render(); return; }
   if (act === 'searchClear'){ state.searchQuery = ''; render(); return; }
   if (act === 'markPassageDone'){ Store.markTodayDone('passage'); render(); toast('已记录'); return; }
   if (act === 'removeStudyPlan'){ Store.removeStudyPlan(+t.dataset.idx); render(); return; }
-
   if (act === 'linkToStudy'){
     const idx = +t.dataset.idx;
     const records = LS.get('work-records', []);
@@ -2875,68 +2827,31 @@ view.addEventListener('click', async (e) => {
     if (rec){ Store.linkWorkToStudy(rec); toast('已加入学习计划'); render(); }
     return;
   }
-
   if (act === 'openNews'){ e.stopPropagation(); openExternal(t.dataset.url); return; }
 
-  /* ---------- 每日知识 ---------- */
   if (act === 'retryGeneral'){ state.generalError = null; state.generalKnowledge = null; render(); return; }
   if (act === 'refreshGeneral'){ state.generalKnowledge = null; state.generalError = null; render(); return; }
   if (act === 'markGeneralDone'){ LS.set('general-done:' + DAY, true); toast('已记录'); render(); return; }
-  if (act === 'speakGeneral'){
-    const title = t.dataset.title;
-    const body = t.dataset.body;
-    toggleSpeak(title + '。' + body, 'zh-CN', t);
-    return;
-  }
+  if (act === 'speakGeneral'){ toggleSpeak(t.dataset.title + '。' + t.dataset.body, 'zh-CN', t); return; }
 
-  /* ---------- 表达区各源 ---------- */
-  if (act === 'retryYiyan'){ state.yiyanError = null; state.yiyanData = null; render(); return; }
   if (act === 'speakYiyan'){ toggleSpeak(t.dataset.text, 'zh-CN', t); return; }
   if (act === 'copyYiyan'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
   if (act === 'markYiyanDone'){ LS.set('yiyan-done:' + DAY, true); toast('已记录'); render(); return; }
 
-  if (act === 'retryQuote'){ state.quoteError = null; state.quoteData = null; render(); return; }
   if (act === 'speakQuote'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
   if (act === 'copyQuote'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
   if (act === 'markQuoteDone'){ LS.set('quote-done:' + DAY, true); toast('已记录'); render(); return; }
 
-  if (act === 'retryStory'){ state.storyError = null; state.storyData = null; render(); return; }
   if (act === 'speakStory'){ toggleSpeak(t.dataset.text, 'en-US', t); return; }
   if (act === 'copyStory'){ copyText(t.dataset.text).then(ok => toast(ok?'已复制':'复制失败')); return; }
   if (act === 'openStory'){ openExternal(t.dataset.url); return; }
   if (act === 'markStoryDone'){ LS.set('story-done:' + DAY, true); toast('已记录'); render(); return; }
 
-  if (act === 'retryTatoeba'){ state.tatoebaError = null; state.tatoebaData = null; render(); return; }
-
-  /* ---------- 知识源配置 ---------- */
   if (act === 'saveKnowledgeSource'){
     const src = document.getElementById('knowledgeSource').value;
-    const appid = document.getElementById('showapiAppId').value.trim();
-    const sign = document.getElementById('showapiSign').value.trim();
-    const oioId = document.getElementById('oiowebId').value.trim();
-    const oioKey = document.getElementById('oiowebKey').value.trim();
     KnowledgeSource.current = src;
-    KnowledgeSource.showapi = { appid, sign };
-    KnowledgeSource.oioweb = { id: oioId, key: oioKey };
-    state.generalKnowledge = null;
-    state.generalError = null;
-    toast('已保存');
-    render();
-    return;
-  }
-  if (act === 'testKnowledgeSource'){
-    toast('测试中…');
-    state.generalKnowledge = null;
-    state.generalError = null;
-    try {
-      const item = await KnowledgeSource.fetchWithRetry(1);
-      state.generalKnowledge = item;
-      toast('✓ 成功：' + (item.source || '') + ' — ' + item.q.slice(0, 20));
-    } catch(err){
-      state.generalError = err.message || '测试失败';
-      toast('✗ ' + (err.message || '失败'));
-    }
-    render();
+    state.generalKnowledge = null; state.generalError = null;
+    toast('已保存'); render();
     return;
   }
 
@@ -2950,36 +2865,30 @@ view.addEventListener('click', async (e) => {
     if (!question){ toast('先输入问题'); return; }
     if (!AI.enabled()){ toast('请先在「我的」页配置 AI'); return; }
     LS.set('ask-text:' + q, question);
-    state.aiAnsweringFor = q;
-    state.aiLoading = true;
+    state.aiAnsweringFor = q; state.aiLoading = true;
     render();
     try{
       const item = SEED.VALVE_ALL.find(v => v.q === q);
       const context = item ? `${item.cat}：${item.a} ${item.key}` : '';
       const answer = await AI.answerQuestion(question, context);
-      LS.set('ask-cache:' + q, { question, answer: answer || '（没有返回内容）', t: Date.now() });
+      LS.set('ask-cache:' + q, { question, answer: answer || '（无返回）', t: Date.now() });
       toast('AI 已解答');
     }catch(err){
       LS.set('ask-cache:' + q, { question, answer: '调用失败：' + (err.message || '未知错误'), t: Date.now() });
       toast('调用失败');
     }
-    state.aiLoading = false;
-    state.aiAnsweringFor = null;
-    render();
-    return;
+    state.aiLoading = false; state.aiAnsweringFor = null;
+    render(); return;
   }
-
   if (act === 'saveAskToNote'){
     e.stopPropagation();
     const q = t.dataset.q;
     const cache = LS.get('ask-cache:' + q, null);
     if (!cache) return;
     const cur = Store.getNote(q);
-    const text = '【我的提问】' + cache.question + '\n\n【AI 解答】\n' + cache.answer;
+    const text = '【提问】' + cache.question + '\n\n【AI 解答】\n' + cache.answer;
     Store.setNote(q, cur ? (cur + '\n\n' + text) : text);
-    toast('已记入笔记');
-    render();
-    return;
+    toast('已记入笔记'); render(); return;
   }
   if (act === 'clearAsk'){ LS.del('ask-cache:' + t.dataset.q); render(); return; }
 
@@ -2987,21 +2896,22 @@ view.addEventListener('click', async (e) => {
     e.stopPropagation();
     const type = t.dataset.type;
     if (type === 'english'){
-      toast('加载复习数据…');
+      toast('加载中…');
       try { await DeckLoader.ensureForReview(); } catch(err){ console.warn(err); }
       const keys = Store.getReviewList('english', REVIEW_TARGET);
       const list = keys.map(k => DeckLoader.findWord(k)).filter(Boolean);
-      if (!list.length){ toast('暂时没有需要复习的'); return; }
+      if (!list.length){ toast('还没有学过的单词'); return; }
       startReview(type, list);
     } else {
       const keys = Store.getReviewList('work', REVIEW_TARGET);
       const list = keys.map(k => SEED.VALVE_ALL.find(v => v.q === k)).filter(Boolean);
-      if (!list.length){ toast('暂时没有需要复习的'); return; }
+      if (!list.length){ toast('还没有学过的知识'); return; }
       startReview(type, list);
     }
     return;
   }
-  if (act === 'startWeekly'){ startWeeklyTest(); return; }
+  if (act === 'startWeeklyTest'){ startWeeklyTest(); return; }
+  if (act === 'restartWeekly'){ Store.saveWeeklyResult(null); render(); return; }
   if (act === 'reviewWrong'){
     const list = Store.getWrongBook().filter(x => x.type === 'work').map(x => SEED.VALVE_ALL.find(v => v.q === x.key)).filter(Boolean);
     if (!list.length){ toast('错题本是空的'); return; }
@@ -3011,17 +2921,14 @@ view.addEventListener('click', async (e) => {
 
   if (act === 'togglePassage'){ state.passageHidden = !state.passageHidden; render(); return; }
   if (act === 'speakPassage'){
-    const title = t.dataset.title;
-    const p = SEED.EXPRESS_PASSAGES.find(x => x.title === title);
+    const p = SEED.EXPRESS_PASSAGES.find(x => x.title === t.dataset.title);
     if (p) toggleSpeak(p.text, 'zh-CN', t);
     return;
   }
 
   if (act === 'gradeAnswer'){
     e.stopPropagation();
-    const scene = t.dataset.scene;
-    const q = t.dataset.q;
-    const guide = t.dataset.guide;
+    const scene = t.dataset.scene, q = t.dataset.q, guide = t.dataset.guide;
     const ta = document.getElementById('exprAnswer');
     const answer = (ta && ta.value || '').trim();
     if (!answer){ toast('先写下你的回答'); return; }
@@ -3029,94 +2936,59 @@ view.addEventListener('click', async (e) => {
     if (!AI.enabled()){ toast('请先在「我的」页配置 AI'); return; }
     const key = 'expr-' + scene + '-' + q;
     LS.set('expr-ans:' + key, answer);
-    t.disabled = true;
-    t.textContent = '⏳ AI 评分中…';
+    t.disabled = true; t.textContent = '⏳ 评分中…';
     const resultEl = document.getElementById('gradeResult');
-    if (resultEl) resultEl.innerHTML = `<div style="margin-top:12px;padding:14px;background:#f8f9fd;border-radius:12px;font-size:13px;color:var(--sub);text-align:center;">AI 正在评分…</div>`;
+    if (resultEl) resultEl.innerHTML = `<div style="margin-top:12px;padding:14px;background:#f8f9fd;border-radius:12px;font-size:13px;color:var(--sub);text-align:center;">AI 评分中…</div>`;
     try{
       const result = await AI.gradeExpression(scene, q, guide, answer);
-      if (result){
-        LS.set('expr-grade:' + key, result);
-        if (resultEl) resultEl.innerHTML = renderGradeCard(result);
-        toast('评分完成');
-      } else {
-        if (resultEl) resultEl.innerHTML = renderGradeCard({ error:'AI 没有返回内容' });
-      }
+      if (result){ LS.set('expr-grade:' + key, result); if (resultEl) resultEl.innerHTML = renderGradeCard(result); toast('评分完成'); }
+      else { if (resultEl) resultEl.innerHTML = renderGradeCard({ error:'AI 无返回' }); }
     }catch(err){
       if (resultEl) resultEl.innerHTML = renderGradeCard({ error:'调用失败：' + (err.message || '未知错误') });
-    }finally{
-      t.disabled = false;
-      t.textContent = '🔄 重新评分';
-    }
+    }finally{ t.disabled = false; t.textContent = '🔄 重新评分'; }
     return;
   }
   if (act === 'clearExprAnswer'){
-    if (!confirm('清空这次回答和评分？')) return;
+    if (!confirm('清空？')) return;
     const key = 'expr-' + t.dataset.scene + '-' + t.dataset.q;
-    LS.del('expr-ans:' + key);
-    LS.del('expr-grade:' + key);
-    toast('已清空');
-    render();
-    return;
+    LS.del('expr-ans:' + key); LS.del('expr-grade:' + key);
+    toast('已清空'); render(); return;
   }
 
-  if (act === 'recCat'){ state.recommendCat = t.dataset.cat; render(); return; }
+  if (act === 'recCat'){ state.recommendCat = t.dataset.cat; state.recData = null; render(); return; }
 
   if (act === 'openApp'){
     e.stopPropagation();
     const scheme = t.dataset.scheme;
     const name = t.dataset.name;
     const cat = t.dataset.cat;
-    const idx = +t.dataset.idx;
-    const item = (SEED.RECOMMEND[cat] || [])[idx] || {};
-    const pkg = item.packageName || '';
-    if (!scheme){ toast('这个 App 没有配置'); return; }
+    const item = (state.recData && state.recData.item) || (SEED.RECOMMEND[cat] || [])[0] || {};
+    if (!scheme){ toast('没有配置'); return; }
     const schemeName = scheme.replace(/:\/\/.*$/, '');
-    copyText(name).then(() => toast('关键词已复制：' + name));
+    copyText(name);
     if (window.AndroidBridge && typeof window.AndroidBridge.openUrl === 'function'){
       try{
+        const pkg = item.packageName || '';
         if (pkg){
           const intentUrl = `intent://#Intent;scheme=${schemeName};package=${pkg};end`;
-          if (window.AndroidBridge.openUrl(intentUrl)){ toast('正在打开 ' + name + '…'); return; }
+          if (window.AndroidBridge.openUrl(intentUrl)){ toast('正在打开…'); return; }
         }
-        if (window.AndroidBridge.openUrl(scheme)){ toast('正在打开 ' + name + '…'); return; }
-      }catch(err){ console.warn('Bridge openUrl 失败：', err); }
-    }
-    if (pkg){
-      try{
-        const fallback = item.web ? item.web(name) : '';
-        const intentUrl = `intent://#Intent;scheme=${schemeName};package=${pkg};` +
-          (fallback ? `S.browser_fallback_url=${encodeURIComponent(fallback)};` : '') + 'end';
-        const a = document.createElement('a');
-        a.href = intentUrl;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => a.remove(), 200);
-        return;
-      }catch(err){ console.warn('intent:// 失败：', err); }
+        if (window.AndroidBridge.openUrl(scheme)){ toast('正在打开…'); return; }
+      }catch(err){}
     }
     try{
       const a = document.createElement('a');
-      a.href = scheme;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
+      a.href = scheme; a.style.display = 'none';
+      document.body.appendChild(a); a.click();
       setTimeout(() => a.remove(), 200);
-      return;
-    }catch(err){ console.warn('裸 scheme 失败：', err); }
-    toast('App 未安装或无法唤起，已打开网页版');
-    if (item.web) openExternal(item.web(name));
+    }catch(err){}
     return;
   }
-
   if (act === 'openWeb'){
     e.stopPropagation();
     const cat = t.dataset.cat;
-    const idx = +t.dataset.idx;
-    const list = SEED.RECOMMEND[cat] || [];
-    const r = list[idx];
-    if (r && r.web) openExternal(r.web(r.name));
+    const item = (state.recData && state.recData.item) || (SEED.RECOMMEND[cat] || [])[0];
+    if (item && item.web) openExternal(item.web(item.name));
     return;
   }
 
@@ -3128,10 +3000,8 @@ view.addEventListener('click', async (e) => {
     growth.tomorrow = tomorrow ? tomorrow.value : '';
     Store.setGrowth(growth);
     Store.pushGrowthLog({ date: todayStr(), reflection: growth.reflection, tomorrow: growth.tomorrow, t: Date.now() });
-    toast('已保存');
-    return;
+    toast('已保存'); return;
   }
-
   if (act === 'saveWorkRecord'){
     const p = document.getElementById('workProblem');
     const s = document.getElementById('workSolution');
@@ -3143,22 +3013,18 @@ view.addEventListener('click', async (e) => {
     const filtered = list.filter(x => x.date !== rec.date);
     filtered.unshift(rec);
     LS.set('work-records', filtered.slice(0, 200));
-    toast('已保存');
-    render();
-    return;
+    toast('已保存'); render(); return;
   }
 
   if (act === 'quickAsk'){
-    if (!AI.enabled()){ toast('请先在「我的」页配置 AI'); return; }
+    if (!AI.enabled()){ toast('请先配置 AI'); return; }
     Store.addAIHistory('user', t.dataset.prompt);
     state.aiLoading = true;
     openAIAssistant();
     try{
       const answer = await AI.assistant(t.dataset.prompt, state.aiRole);
       Store.addAIHistory('bot', answer || '（无返回）');
-    }catch(e){
-      Store.addAIHistory('bot', '调用失败：' + (e.message || '未知错误'));
-    }
+    }catch(e){ Store.addAIHistory('bot', '调用失败：' + (e.message || '未知错误')); }
     state.aiLoading = false;
     openAIAssistant();
     return;
@@ -3169,10 +3035,9 @@ view.addEventListener('click', async (e) => {
   if (act === 'clearAIHistory'){ if (confirm('清空所有 AI 对话历史？')){ Store.clearAIHistory(); openAIAssistant(); } return; }
 
   if (act === 'setAccent'){ LS.set('voice-accent', t.dataset.accent); render(); return; }
-  if (act === 'setSpeed'){ LS.set('voice-speed', +t.dataset.speed); render(); return; }
 
-  if (act === 'diagTTS'){ toggleSpeak('Hello, this is a test. 测试朗读。', 'en-US'); return; }
-  if (act === 'diagOnline'){ playOnlineTTS('Hello, this is an online TTS test.', 'en-US'); return; }
+  if (act === 'diagTTS'){ toggleSpeak('Hello, this is a test. 测试。', 'en-US'); return; }
+  if (act === 'diagOnline'){ playOnlineTTS('Hello, online TTS test.', 'en-US'); return; }
 
   if (act === 'exportData'){ doExport(); return; }
   if (act === 'importData'){ doImport(); return; }
@@ -3180,23 +3045,19 @@ view.addEventListener('click', async (e) => {
   if (act === 'saveAI'){
     const provider = document.getElementById('aiProvider').value;
     const key = document.getElementById('aiKey').value.trim();
-    const model = document.getElementById('aiModel').value.trim();
     if (provider !== 'none' && !key){ toast('请填入 API Key'); return; }
-    AI.set(provider, key, model, '');
+    AI.set(provider, key, '');
     toast(provider === 'none' ? '已关闭 AI' : '已保存');
-    render();
-    return;
+    render(); return;
   }
-
   if (act === 'clearData'){
-    if (confirm('确定清空本设备所有学习进度？建议先导出备份。')){
+    if (confirm('确定清空所有数据？')){
       Store.clearAll();
       toast('已清空');
       setTimeout(() => location.reload(), 500);
     }
     return;
   }
-
   if (act === 'globalSearchJump'){ handleSearchJump(t.dataset.type, +t.dataset.idx); return; }
 });
 
@@ -3217,7 +3078,7 @@ sheet.addEventListener('click', async (e) => {
     if (ta){
       ta.select();
       ta.setSelectionRange(0, ta.value.length);
-      copyText(ta.value).then(ok => toast(ok ? '已复制到剪贴板' : '复制失败，请长按选择'));
+      copyText(ta.value).then(ok => toast(ok ? '已复制' : '复制失败'));
     }
     return;
   }
@@ -3227,12 +3088,10 @@ sheet.addEventListener('click', async (e) => {
     if (!text){ toast('请粘贴备份文本'); return; }
     try{
       Store.importDataFromText(text);
-      toast('导入成功，正在刷新…');
+      toast('导入成功，刷新中…');
       closeSheet();
       setTimeout(() => location.reload(), 700);
-    }catch(err){
-      toast('格式不对：' + err.message);
-    }
+    }catch(err){ toast('格式不对：' + err.message); }
     return;
   }
 });
